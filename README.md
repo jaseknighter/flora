@@ -1,2 +1,2 @@
-# flora
+# flora (BETA)
 l-systems sequencer and bandpass filtered sawtooth engine for monome norns
