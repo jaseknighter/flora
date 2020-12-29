@@ -1,5 +1,5 @@
 
-![](images/plants.png)
+![](images/three_plants.png)
 
 # Flora 
 (beta) 
