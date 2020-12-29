@@ -26,7 +26,7 @@ l-systems sequencer and bandpass filtered sawtooth engine for monome norns
   * [References](#references)
 
 ## Overview
-### Sequencing with L-systems
+### L-systems and their sequencing
 #### L-system basics
 An L-system is a parallel rewriting mechanism originally conceived by Aristid Lindenmayer in 1968 as a mathematical model of plant development. 
 
