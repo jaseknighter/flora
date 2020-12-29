@@ -6,9 +6,9 @@ l-systems sequencer and bandpass filtered sawtooth engine for monome norns
 
 - [Flora](#flora)
   * [Overview](#overview)
-    + [Sequencing with L-systems](#sequencing-with-l-systems)
+    + [L-systems and their sequencing](#l-systems-and-their-sequencing)
       - [L-system basics](#l-system-basics)
-      - [Simple example](#simple-example)
+      - [Simple rewriting example (excluding the turtle and angle)](#simple-rewriting-example--excluding-the-turtle-and-angle-)
       - [Sequencing the L-system](#sequencing-the-l-system)
         * [The Flora alphabet](#the-flora-alphabet)
     + [Bandsaw](#bandsaw)
