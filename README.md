@@ -12,6 +12,7 @@ l-systems sequencer and bandpass filtered sawtooth engine for monome norns
       - [Simple rewriting example](#simple-rewriting-example)
       - [Sequencing the L-system](#sequencing-the-l-system)
         * [The Flora alphabet](#the-flora-alphabet)
+        * [Changes in pitch](#changes-in-pitch)
     + [Bandsaw](#bandsaw)
   * [Requirements](#requirements)
   * [Instructions for Norns](#instructions-for-norns)
@@ -57,8 +58,12 @@ The above axiom and rulesets will result in the following sentences when run 5 t
 
 
 #### Sequencing the L-system
-Flora leverages L-systems to algorithmically generate music, taking the angles written into L-system sentences as indicators of a change in pitch. 
+
 ##### The Flora alphabet
+
+##### Changes in pitch
+Flora leverages L-systems to algorithmically generate music, taking the angles written into L-system sentences as indicators of an increase or decrease in pitch. The amount of change in pitch is set by the angle measured in radians multiplied by the current pitch. Currently, the changes in pitch are quantized, so if an angle multiplied by the current pitch is not greater than a whole number, the pitch stays the same. 
+
 ### Bandsaw
 ## Requirements
 
