@@ -1,11 +1,11 @@
 
-
-# Flora 
 ![](images/three_plants_inv.png)
-(beta) 
+
+# Flora - beta
+
 l-systems sequencer and bandpass filtered sawtooth engine for monome norns
 
-- [Flora](#flora)
+- [Flora - beta](#flora - beta)
   * [Overview](#overview)
     + [L-systems and their sequencing](#l-systems-and-their-sequencing)
       - [L-system basics](#l-system-basics)
