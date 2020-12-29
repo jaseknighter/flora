@@ -40,7 +40,7 @@ The basic building blocks of most L-systems include:
 * Angle: An angle used by the turtle to rotate clockwise or counterclockwise, giving it a new direction to move the next time it receives an instruction to draw a line.
 * Generations: A generation represents a completed execution of the L-system algorithm.
 #### Simple rewriting example 
-(excluding the turtle and angle)
+
 Take the following: 
 * Axiom: b
 * Ruleset 1: b->a 
