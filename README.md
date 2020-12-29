@@ -1,3 +1,7 @@
+# Flora 
+(beta) 
+l-systems sequencer and bandpass filtered sawtooth engine for monome norns
+
 (insert screenshots of sample generations)
 
 - [Flora](#flora)
@@ -20,10 +24,6 @@
   * [Roadmap](#roadmap)
   * [Credits](#credits)
   * [References](#references)
-
-# Flora 
-(beta) 
-l-systems sequencer and bandpass filtered sawtooth engine for monome norns
 
 ## Overview
 ### Sequencing with L-systems
