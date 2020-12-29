@@ -1,6 +1,7 @@
 
 
 # Flora 
+![](images/three_plants_inverted.png)
 (beta) 
 l-systems sequencer and bandpass filtered sawtooth engine for monome norns
 
