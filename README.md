@@ -5,12 +5,11 @@
 (beta) 
 l-systems sequencer and bandpass filtered sawtooth engine for monome norns
 
-
 - [Flora](#flora)
   * [Overview](#overview)
     + [L-systems and their sequencing](#l-systems-and-their-sequencing)
       - [L-system basics](#l-system-basics)
-      - [Simple rewriting example (excluding the turtle and angle)](#simple-rewriting-example--excluding-the-turtle-and-angle-)
+      - [Simple rewriting example](#simple-rewriting-example)
       - [Sequencing the L-system](#sequencing-the-l-system)
         * [The Flora alphabet](#the-flora-alphabet)
     + [Bandsaw](#bandsaw)
@@ -26,21 +25,22 @@ l-systems sequencer and bandpass filtered sawtooth engine for monome norns
   * [Roadmap](#roadmap)
   * [Credits](#credits)
   * [References](#references)
-
+  
 ## Overview
 ### L-systems and their sequencing
 #### L-system basics
 An L-system is a parallel rewriting mechanism originally conceived by Aristid Lindenmayer in 1968 as a mathematical model of plant development. 
 
-The basic building blocks of an L-system include:
+The basic building blocks of most L-systems include:
 
-* Turtle graphics engine: First developed for the [Logo](https://en.wikipedia.org/wiki/Logo_(programming_language) programming language, a turtle creates a drawing from instructions that dictate when to move forward and when to rotate.
-* Alphabet: A set of characters, each representing an instruction for an L-system algorythm to interpret (e.g. rotate, move forward, turn around, draw a line).
-* Axiom: A letter or sentence representing the starting point of an L-system algorythm
-* Rulesets: Each ruleset of an L-system contains two sentences. The first sentence always contains a single character. The second sentence contains one or more character. Each time it the algorythm runs, if the first sentence in the ruleset is encountered, it will replace the first sentence character with the character(s) of the second sentence. 
-* Angle: An angle used by the turtle to rotate clockwise or counterclockwise, giving a new direction the next time it receives an instruction to draw a line.
-* Generations: A generation represents a single execution of the L-system algorythm.
-#### Simple rewriting example (excluding the turtle and angle)
+* Turtle graphics engine: First developed for the [Logo](https://en.wikipedia.org/wiki/Logo_(programming_language) programming language, a turtle creates a drawing from instructions that dictate when to move forward and draw and when to rotate to point in a different direction.
+* Alphabet: A set of characters, each representing an instruction for an L-system algorithm to interpret (e.g. rotate, move forward, turn around, draw a line, etc.).
+* Axiom: A sentence containing one or more characters that represents the starting point of an L-system algorithm.
+* Rulesets: Each ruleset of an L-system contains two sentences. The first sentence typically contains a single character. The second sentence contains one or more character. Each time the algorithm runs, if the character contained in the first sentence of the ruleset is encountered, it will replace that character with the character(s) of the second sentence. 
+* Angle: An angle used by the turtle to rotate clockwise or counterclockwise, giving it a new direction to move the next time it receives an instruction to draw a line.
+* Generations: A generation represents a completed execution of the L-system algorithm.
+#### Simple rewriting example 
+(excluding the turtle and angle)
 Take the following: 
 * Axiom: b
 * Ruleset 1: b->a 
