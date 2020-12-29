@@ -2,7 +2,8 @@
 (beta) 
 l-systems sequencer and bandpass filtered sawtooth engine for monome norns
 
-(insert screenshots of sample generations)
+![](images/plants.png)
+
 
 - [Flora](#flora)
   * [Overview](#overview)
