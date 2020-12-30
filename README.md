@@ -15,8 +15,8 @@ TODO: insert link to youtube and lines
       - [Sequencing the L-system](#sequencing-the-l-system)
         * [The Flora alphabet](#the-flora-alphabet)
         * [Changes in pitch](#changes-in-pitch)
-    + [Bandsaw](#bandsaw)
-        -[IMPORTANT SAFETY NOTES](#important-safety-notes)
+    + [Bandsaw](#bandsaw)  
+        - [IMPORTANT SAFETY NOTES](#important-safety-notes)
   * [Norns UI](#norns-ui)
     + [Pages](#pages)
       - [Plant](#plant)
@@ -90,15 +90,15 @@ Unlike a 'typical' oscillator, where the frequency of the oscillator is perceive
 The parameters of this instrument may be set in the PARAMETERS->EDIT menu or on the *water* page of the Flora program (see *water* below for more details)
 
 #### IMPORTANT SAFETY NOTES
-* Note #1*
-The SuperCollider documentation for its [BandPassFilter (BPF)](https://doc.sccode.org/Classes/BPF.html) contains the following warning:
-```
-WARNING: due to the nature of its implementation frequency values close to 0 may cause glitches and/or extremely loud audio artifacts!
-```
+**Note #1**   
+The SuperCollider documentation for its [BandPassFilter (BPF)](https://doc.sccode.org/Classes/BPF.html) contains the following warning:  
+
+**WARNING: due to the nature of its implementation frequency values close to 0 may cause glitches and/or extremely loud audio artifacts!**  
+
 For safety purposes, note frequency is limited to 0.2 to prevent loud noises in both the Bandsaw engine and the lua code for norns.
 
-*Note #2*
-The Bandsaw engine becomes loudly percussive as rqmin and rqmax increase. Please take care not to hurt your ears, especially when using headphones. 
+**Note #2**  
+The Bandsaw engine becomes loudly percussive as the values for rqmin and rqmax are increased above five. Please take care not to hurt your ears, especially when using headphones.
 
 ![](images/three_more_plants_inv.png)
 
