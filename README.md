@@ -195,3 +195,8 @@ Flora's L-system code is a Lua-translation of the code presented in Daniel Shiff
 ![](images/yet_three_more_plants_inv.png)
 
 
+
+
+
+
+
