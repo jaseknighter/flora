@@ -5,6 +5,8 @@
 
 An L-systems sequencer and bandpass filtered sawtooth engine for monome norns
 
+TODO: add warning about loud percussive sounds that occur from time to time.
+    WARNING: due to the nature of its implementation frequency values close to 0 may cause glitches and/or extremely loud audio artifacts!
 TODO: insert link to youtube and lines
 
 - [Flora - beta](#flora---beta)
