@@ -93,7 +93,7 @@ The parameters of this instrument may be set in the PARAMETERS->EDIT menu or on 
 **Note #1**   
 The SuperCollider documentation for its [BandPassFilter (BPF)](https://doc.sccode.org/Classes/BPF.html) contains the following warning:  
 
-**WARNING: due to the nature of its implementation frequency values close to 0 may cause glitches and/or extremely loud audio artifacts!**  
+> **WARNING: due to the nature of its implementation frequency values close to 0 may cause glitches and/or extremely loud audio artifacts!**  
 
 For safety purposes, note frequency is limited to 0.2 to prevent loud noises in both the Bandsaw engine and the lua code for norns.
 
