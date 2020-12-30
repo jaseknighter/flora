@@ -90,9 +90,9 @@ The parameters of this instrument may be set in the PARAMETERS->EDIT menu or on 
 
 ## Norns UI
 
-Flora's interface consists of five pages (or screens). Navigation between pages occurs using Encoder 1 (E1). The controls for each screen vary and can always be accessed using the key combination: Key 1 (K1) + Key 2 (K2). The instructions may also be found in the *flora_instructions.lua* file contained in the /lib directory.
+Flora's interface consists of five pages (or screens). Navigation between pages occurs using Encoder 1 (E1). While the controls for each screen vary, basic instructions for each screen can always be accessed using the key combination: Key 1 (K1) + Key 2 (K2). The instructions may also be found in the 'flora_instructions.lua' file contained in the /lib directory.
 
-For many parameter updated using the Encoder 2 (E2) and Encoder 3 (E3), fine-grained changes can be made by pressing K1 along with the encoder (specifics are detailed below.) 
+For many parameters, fine-grained adjustments can be made by pressing K1 along with the encoder (specifics are detailed below.) 
 
 ### Screens
 #### Plant 
