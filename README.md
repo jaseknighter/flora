@@ -14,7 +14,6 @@ l-systems sequencer and bandpass filtered sawtooth engine for monome norns
         * [The Flora alphabet](#the-flora-alphabet)
         * [Changes in pitch](#changes-in-pitch)
     + [Bandsaw](#bandsaw)
-  * [Requirements](#requirements)
   * [Norns UI](#norns-ui)
     + [Pages](#pages)
       - [Plant](#plant)
@@ -24,6 +23,7 @@ l-systems sequencer and bandpass filtered sawtooth engine for monome norns
       - [Water](#water)
     + [Generating new L-system axioms and rulesets](#generating-new-l-system-axioms-and-rulesets)
       - [Advanced sequencing](#advanced-sequencing)
+  * [Requirements](#requirements)
   * [Roadmap](#roadmap)
   * [Credits](#credits)
   * [References](#references)
@@ -63,25 +63,16 @@ The above axiom and rulesets will result in the following sentences when run 5 t
 
 ##### The Flora alphabet
 
-
-
-]: restore the previously saved position
-+: rotate clockwise (by t.theta)
--: rotate counterclockwise (by -t.theta)
-f: move forward without drawing
-|: turn around 180 degrees
-
-
 | Character | Turtle Behavior | Sound Behavior  |
 | ---------- | --------------- | --------------- |
 | F   | Move the turtle forward and draw a line and a circle    | Play current note |
 | G   | Move the turtle forward and draw a line | Resting note (silence)    |
 | \[   | Save the current position    | Save the current note     |
 | ]   | Restore the last saved position    | Restore the last saved note   |
-| +   | Rotate the turtle clockwise by the current angle    | Increase the active note (see Changes in pitch below) |
-| -   | Rotate the turtle counterclockwise by the current angle     | Increase the active note (see *Changes in pitch below*) |
+| +   | Rotate the turtle counterclockwise by the current angle    | Increase the active note (see Changes in pitch below) |
+| -   | Rotate the turtle clockwise by the current angle     | Increase the active note (see *Changes in pitch below*) |
 | \|   | Rotate the turtle 180 degrees   | No sound behavior    |
-| other | Other characters used in axioms and rulesets are ignored by the turtle | No sounds behavior |
+| other | Other characters used in axioms and rulesets are ignored by the turtle | No sound behavior |
 
 ##### Changes in pitch
 Flora leverages L-systems to algorithmically generate music, taking the angles written into L-system sentences as indicators of an increase or decrease in pitch. The amount of change in pitch is set by the angle measured in radians multiplied by the current pitch. Currently, the changes in pitch are quantized, so if an angle multiplied by the current pitch is not greater than a whole number, the pitch stays the same. 
@@ -89,18 +80,69 @@ Flora leverages L-systems to algorithmically generate music, taking the angles w
 If a change in angle results in a pitch that is greater than the number of notes in the active scale, the active note becomes the root note of the active scale. Conversely, if a change in angle results in a pitch that is less than the root note of the active scale, the active note becomes the last note in the active scale.
 
 ### Bandsaw
-## Requirements
+If the *output* parameter is set to include *audio*, notes will be played using *Bandsaw*, a bandpass filtered sawtooth wave, based on the marimba instrument demonstrated by Eli Fieldsteel in his [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag). 
+
+The parameters of this instrument may be set in the PARAMETERS->EDIT menu or on the *water* page of the Flora program (see *water* below for more details)
 
 ## Norns UI
-### Pages
+
+Flora's interface consists of 5 screens (or 'pages'). Navigation between pages occurs using encoder 1 (E1). The controls for each screen vary and can always be accessed using the key combination: Key 1 (K1) + Key 2 (K2). The instructions may also be found in the *flora_instructions.lua* file contained in the /lib directory.
+
+For many parameter updated using the Encoder 2 (E2) and Encoder 3 (E3), fine-grained changes can be made by pressing K1 along with the encoder (specifics are detailed below.) 
+
+### Screens
 #### Plant
+![](images/plant.png)
+
+e1: next page
+k1 + e1: switch active plant
+e3: inc/decr angle
+k2/k3: prev/next generation
+k1 + k3: reset plants
+
+
+
 #### Modify
+![](images/modify.png)
+
+e1: next/prev page
+k1 + e1: switch active plant
+e2: go to next/prev letter
+e3: change letter
+k2/k3: -/+ letter
+k1 + k3: reset plants
+
 #### Observe
+![](images/observe.png)
+
+e1: next/prev page
+k1 + e1: switch active plant
+e2: move up/down
+e3: move left/right
+k2/k3: zoom out/in
+k1 + k3: reset plants
+
 #### Plow
+![](images/plow.png)
+
+e1: next/prev page
+k1 + e1: switch active plant
+e2: change control
+e3: change control value
+k2/k3: -/+ control point
+k1 + k3: reset plants
+
 #### Water
+![](images/water.png)
+
+e1: prev page
+e2: change control
+e3: change control value
 
 ### Generating new L-system axioms and rulesets
 #### Advanced sequencing
+
+## Requirements
 
 ## Roadmap
 
