@@ -3,7 +3,7 @@
 
 # Flora - beta
 
-l-systems sequencer and bandpass filtered sawtooth engine for monome norns
+An L-systems sequencer and bandpass filtered sawtooth engine for monome norns
 
 TODO: insert link to youtube and lines
 
