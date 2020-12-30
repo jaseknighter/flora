@@ -91,54 +91,54 @@ Flora's interface consists of 5 screens (or 'pages'). Navigation between pages o
 For many parameter updated using the Encoder 2 (E2) and Encoder 3 (E3), fine-grained changes can be made by pressing K1 along with the encoder (specifics are detailed below.) 
 
 ### Screens
-#### Plant
+#### Plant 
 ![](images/plant.png)
+```
+e1: next page  
+k1 + e1: switch active plant  
+e3: inc/decr angle  
+k2/k3: prev/next generation  
+k1 + k3: reset plants  
+```
 
-e1: next page
-k1 + e1: switch active plant
-e3: inc/decr angle
-k2/k3: prev/next generation
-k1 + k3: reset plants
 
-
-
-#### Modify
+#### Modify 
 ![](images/modify.png)
-
-e1: next/prev page
-k1 + e1: switch active plant
-e2: go to next/prev letter
-e3: change letter
-k2/k3: -/+ letter
-k1 + k3: reset plants
-
-#### Observe
+```
+e1: next/prev page  
+k1 + e1: switch active plant  
+e2: go to next/prev letter  
+e3: change letter  
+k2/k3: -/+ letter  
+k1 + k3: reset plants  
+```
+#### Observe 
 ![](images/observe.png)
-
-e1: next/prev page
-k1 + e1: switch active plant
-e2: move up/down
-e3: move left/right
-k2/k3: zoom out/in
-k1 + k3: reset plants
-
-#### Plow
+```
+e1: next/prev page  
+k1 + e1: switch active plant  
+e2: move up/down  
+e3: move left/right  
+k2/k3: zoom out/in  
+k1 + k3: reset plants  
+```
+#### Plow 
 ![](images/plow.png)
-
-e1: next/prev page
-k1 + e1: switch active plant
-e2: change control
-e3: change control value
-k2/k3: -/+ control point
-k1 + k3: reset plants
-
-#### Water
+```
+e1: next/prev page 
+k1 + e1: switch active plant  
+e2: change control  
+e3: change control value  
+k2/k3: -/+ control point  
+k1 + k3: reset plants  
+```
+#### Water 
 ![](images/water.png)
-
-e1: prev page
-e2: change control
-e3: change control value
-
+```
+e1: prev page  
+e2: change control  
+e3: change control value  
+```
 ### Generating new L-system axioms and rulesets
 #### Advanced sequencing
 
