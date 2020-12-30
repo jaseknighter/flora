@@ -34,7 +34,7 @@ An L-system is a parallel rewriting mechanism originally conceived by Aristid Li
 
 The basic building blocks of most L-systems include:
 
-* Turtle graphics engine: First developed for the [Logo](https://en.wikipedia.org/wiki/Logo_(programming_language) programming language, a turtle creates a drawing from instructions that dictate when to move forward and draw and when to rotate to point in a different direction.
+* Turtle graphics engine: First developed for the Logo programming language, a turtle creates a drawing from instructions that dictate when to move forward and draw and when to rotate to point in a different direction.
 * Alphabet: A set of characters, each representing an instruction for an L-system algorithm to interpret (e.g. rotate, move forward, turn around, draw a line, etc.).
 * Axiom: A sentence containing one or more characters that represents the starting point of an L-system algorithm.
 * Rulesets: Each ruleset of an L-system contains two sentences. The first sentence typically contains a single character. The second sentence contains one or more character. Each time the algorithm runs, if the character contained in the first sentence of the ruleset is encountered, it will replace that character with the character(s) of the second sentence. 
