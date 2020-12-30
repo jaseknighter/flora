@@ -71,8 +71,8 @@ The above axiom and rulesets will result in the following sentences when run 5 t
 | G   | Move the turtle forward and draw a line | Resting note (silence)    |
 | \[   | Save the current position    | Save the current note     |
 | ]   | Restore the last saved position    | Restore the last saved note   |
-| +   | Rotate the turtle counterclockwise by the current angle    | Increase the active note (see Changes in pitch below) |
-| -   | Rotate the turtle clockwise by the current angle     | Increase the active note (see *Changes in pitch below*) |
+| +   | Rotate the turtle counterclockwise by the current angle    | Increase the active note's pitch (see Changes in pitch below) |
+| -   | Rotate the turtle clockwise by the current angle     | Decrease the active note's pitch (see *Changes in pitch below*) |
 | \|   | Rotate the turtle 180 degrees   | No sound behavior    |
 | other | Other characters used in axioms and rulesets are ignored by the turtle | No sound behavior |
 
