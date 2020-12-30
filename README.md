@@ -94,7 +94,7 @@ For many parameter updated using the Encoder 2 (E2) and Encoder 3 (E3), fine-gra
 
 ### Screens
 #### Plant 
-![](images/plant.png)
+![](images/plant_wide.png)
 ```
 e1: next page  
 k1 + e1: switch active plant  
@@ -105,7 +105,7 @@ k1 + k3: reset plants
 Plant interface format: plant \[instruction number] \[current generation/max generations] a\[degree angle (degree radians)]
 
 #### Modify 
-![](images/modify.png)
+![](images/modify_wide.png)
 ```
 e1: next/prev page  
 k1 + e1: switch active plant  
@@ -117,7 +117,7 @@ k1 + k3: reset plants
 Modify interface format: modify \[current sentence]
 
 #### Observe 
-![](images/observe.png)
+![](images/observe_wide.png)
 ```
 e1: next/prev page  
 k1 + e1: switch active plant  
@@ -128,7 +128,7 @@ k1 + k3: reset plants
 ```
 
 #### Plow 
-![](images/plow.png)
+![](images/plow_wide.png)
 ```
 e1: next/prev page 
 k1 + e1: switch active plant  
@@ -153,7 +153,7 @@ node angle: the shape of the ramp from the prior node to the current node
 All of the envelope controls allow for fine grain control using K1+E3
 
 #### Water 
-![](images/water.png)
+![](images/water_wide.png)
 ```
 e1: prev page  
 e2: change control  
