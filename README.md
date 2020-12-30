@@ -26,7 +26,7 @@ TODO: insert link to youtube and lines
     + [Generating new L-system axioms and rulesets](#generating-new-l-system-axioms-and-rulesets)
       - [Advanced sequencing](#advanced-sequencing)
   * [Requirements](#requirements)
-  * [Roadmap](#roadmap)
+  * [Roadmap and feedback](#roadmap-and-feedback)
   * [Credits](#credits)
   * [References](#references)
 
@@ -84,7 +84,7 @@ If a change in angle results in a pitch that is greater than the number of notes
 ### Bandsaw
 If the *output* parameter is set to include *audio*, notes will be played using *Bandsaw*, a bandpass filtered sawtooth wave, based on the marimba instrument demonstrated by Eli Fieldsteel in his [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag). 
 
-Unlike a 'typical' oscillator, where the tone of the oscillator is perceived as the note being played, the note typically heard when the Bandsaw is played is determined by the center frequency of the bandpass filter.
+Unlike a 'typical' oscillator, where the frequency of the oscillator is perceived as the note being played, the note's typically heard when the Bandsaw is played are determined by the center frequency of the bandpass filter, not the sawtooth oscillators frequency.
 
 The parameters of this instrument may be set in the PARAMETERS->EDIT menu or on the *water* page of the Flora program (see *water* below for more details)
 
@@ -172,7 +172,7 @@ Fine grain controls: All of the water controls specified with the characters '(f
 
 ## Requirements
 
-## Roadmap
+## Roadmap and feedback
 
 ## Credits
 Flora's L-system code is a Lua-translation of the code presented in Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/)
