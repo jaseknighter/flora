@@ -61,8 +61,30 @@ The above axiom and rulesets will result in the following sentences when run 5 t
 
 ##### The Flora alphabet
 
+
+
+]: restore the previously saved position
++: rotate clockwise (by t.theta)
+-: rotate counterclockwise (by -t.theta)
+f: move forward without drawing
+|: turn around 180 degrees
+
+
+| Character | Turtle Behavior | Sound Behavior  |
+| ---------- | --------------- | --------------- |
+| F   | Move the turtle forward and draw a line and a circle    | Play current note |
+| G   | Move the turtle forward and draw a line | Resting note (silence)    |
+| \[   | Save the current position    | Save the current note     |
+| ]   | Restore the last saved position    | Restore the last saved note   |
+| +   | Rotate the turtle clockwise by the current angle    | Increase the active note (see Changes in pitch below) |
+| -   | Rotate the turtle counterclockwise by the current angle     | Increase the active note (see *Changes in pitch below*) |
+| \|   | Rotate the turtle 180 degrees   | No sound behavior    |
+| other | Other characters used in axioms and rulesets are ignored by the turtle | No sounds behavior |
+
 ##### Changes in pitch
 Flora leverages L-systems to algorithmically generate music, taking the angles written into L-system sentences as indicators of an increase or decrease in pitch. The amount of change in pitch is set by the angle measured in radians multiplied by the current pitch. Currently, the changes in pitch are quantized, so if an angle multiplied by the current pitch is not greater than a whole number, the pitch stays the same. 
+
+If a change in angle results in a pitch that is greater than the number of notes in the active scale, the active note becomes the root note of the active scale. Conversely, if a change in angle results in a pitch that is less than the root note of the active scale, the active note becomes the last note in the active scale.
 
 ### Bandsaw
 ## Requirements
