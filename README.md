@@ -23,9 +23,11 @@ l-systems sequencer and bandpass filtered sawtooth engine for monome norns
       - [Plow](#plow)
       - [Water](#water)
     + [Generating new L-system axioms and rulesets](#generating-new-l-system-axioms-and-rulesets)
+      - [Advanced sequencing](#advanced-sequencing)
   * [Roadmap](#roadmap)
   * [Credits](#credits)
   * [References](#references)
+
 
 ## Overview
 ### L-systems and their sequencing
@@ -99,6 +101,7 @@ Basic instructions
 #### Water
 
 ### Generating new L-system axioms and rulesets
+#### Advanced sequencing
 
 ## Roadmap
 
