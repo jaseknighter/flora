@@ -90,6 +90,9 @@ Unlike a 'typical' oscillator, where the frequency of the oscillator is perceive
 
 The parameters of this instrument may be set in the PARAMETERS->EDIT menu or on the *water* page of the Flora program (see *water* below for more details)
 
+
+![](images/three_more_plants_inv.png)
+
 ## Norns UI
 
 Flora's interface consists of five pages (or screens). Navigation between pages occurs using Encoder 1 (E1). While the controls for each screen vary, basic instructions for each screen can always be accessed using the key combination: Key 1 (K1) + Key 2 (K2). The instructions may also be found in the 'flora_instructions.lua' file contained in the /lib directory.
