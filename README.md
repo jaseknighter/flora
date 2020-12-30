@@ -100,7 +100,7 @@ e3: inc/decr angle
 k2/k3: prev/next generation  
 k1 + k3: reset plants  
 ```
-
+Plant interface format: plant \[instruction number] \[current generation/max generations] a\[degree angle (degree radians)]
 
 #### Modify 
 ![](images/modify.png)
@@ -112,6 +112,8 @@ e3: change letter
 k2/k3: -/+ letter  
 k1 + k3: reset plants  
 ```
+Modify interface format: modify \[current sentence]
+
 #### Observe 
 ![](images/observe.png)
 ```
@@ -122,6 +124,7 @@ e3: move left/right
 k2/k3: zoom out/in  
 k1 + k3: reset plants  
 ```
+
 #### Plow 
 ![](images/plow.png)
 ```
@@ -132,6 +135,18 @@ e3: change control value
 k2/k3: -/+ control point  
 k1 + k3: reset plants  
 ```
+Plow interface format:  plow \[control name]\[control value]
+
+The Plow screen provides controls for two envelopes, one for each Plant sequence. An extension of Mark Eats' [envgraph class](https://github.com/monome/norns/blob/main/lua/lib/envgraph.lua), the envelopes controlled on this screen are applied to the Bandsaw engine when the envelopes'  respective Plant sequence triggers a note to play.
+
+There are 5 controls for each of the two envelopes:
+env level: the maximum amplitude of the envelope
+env length: the length of the envelope
+node time: when the node is processed by the envelope
+node level: the level of the envelope at the node time
+node angle: the ramp from the prior  node to the current node
+
+
 #### Water 
 ![](images/water.png)
 ```
@@ -139,6 +154,7 @@ e1: prev page
 e2: change control  
 e3: change control value  
 ```
+The water interface provides 
 ### Generating new L-system axioms and rulesets
 #### Advanced sequencing
 
