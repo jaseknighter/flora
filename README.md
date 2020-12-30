@@ -82,11 +82,13 @@ If a change in angle results in a pitch that is greater than the number of notes
 ### Bandsaw
 If the *output* parameter is set to include *audio*, notes will be played using *Bandsaw*, a bandpass filtered sawtooth wave, based on the marimba instrument demonstrated by Eli Fieldsteel in his [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag). 
 
+Unlike a 'typical' oscillator, where the tone of the oscillator is perceived as the note being played, the note typically heard when the Bandsaw is played is determined by the center frequency of the bandpass filter.
+
 The parameters of this instrument may be set in the PARAMETERS->EDIT menu or on the *water* page of the Flora program (see *water* below for more details)
 
 ## Norns UI
 
-Flora's interface consists of 5 screens (or 'pages'). Navigation between pages occurs using encoder 1 (E1). The controls for each screen vary and can always be accessed using the key combination: Key 1 (K1) + Key 2 (K2). The instructions may also be found in the *flora_instructions.lua* file contained in the /lib directory.
+Flora's interface consists of five pages (or screens). Navigation between pages occurs using Encoder 1 (E1). The controls for each screen vary and can always be accessed using the key combination: Key 1 (K1) + Key 2 (K2). The instructions may also be found in the *flora_instructions.lua* file contained in the /lib directory.
 
 For many parameter updated using the Encoder 2 (E2) and Encoder 3 (E3), fine-grained changes can be made by pressing K1 along with the encoder (specifics are detailed below.) 
 
@@ -139,13 +141,16 @@ Plow interface format:  plow \[control name]\[control value]
 
 The Plow screen provides controls for two envelopes, one for each Plant sequence. An extension of Mark Eats' [envgraph class](https://github.com/monome/norns/blob/main/lua/lib/envgraph.lua), the envelopes controlled on this screen are applied to the Bandsaw engine when the envelopes'  respective Plant sequence triggers a note to play.
 
+Unlike typical envelopes (AR, AD, ADSR, etc.), the Envelope class developed for this program  allows for a variable number of control points or 'nodes.' The program allows for anywhere from 3-20 nodes per envelope.
+
 There are 5 controls for each of the two envelopes:
 env level: the maximum amplitude of the envelope
 env length: the length of the envelope
 node time: when the node is processed by the envelope
 node level: the level of the envelope at the node time
-node angle: the ramp from the prior  node to the current node
+node angle: the shape of the ramp from the prior node to the current node
 
+All of the envelope controls allow for fine grain control using K1+E3
 
 #### Water 
 ![](images/water.png)
@@ -154,7 +159,15 @@ e1: prev page
 e2: change control  
 e3: change control value  
 ```
-The water interface provides 
+The water interface provides control of output parameters:
+(all outputs) amp: amplitude 
+(all outputs) p1 note dur: The length of each note for the first plant
+(all outputs) p2 note dur: The length of each note for the second plant
+(all outputs) note scalar: This value is multiplied by the current angle of the plant, which is then added to the current note to determine the next note
+(Bandsaw only) cf scalars: 1-4 CF (Center Frequency) Scalars are applied to the center frequency of the Bandsaw engine's bandpass filter to set the octave of the notes played by the plants. If more than one CF Scalar is activated, the active scalars are randomly selected each time a note is played.
+(Bandsaw only) rq min/rq max: These two parameters set the range of reciprocal of the bandpass filter's [Quality](https://www.circuitstoday.com/band-pass-filters) values.
+(Bandsaw only) note frequencies: the number of times the Bandsaw will oscillate per second. Values less than ~20 will sound like individual tones. For greater values, the oscillations will begine to blend into one another creating a single tone, not related to the note set by the center frequency of the Bandsaw's bandpass filter.
+
 ### Generating new L-system axioms and rulesets
 #### Advanced sequencing
 
@@ -166,5 +179,7 @@ The water interface provides
 Flora's L-system code is a Lua-translation of the code presented in Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/)
 
 *Bandsaw*, the bandpass-filtered sawtooth engine is based on Eli Fieldsteel's marimba presented in his [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag)
+
+
 ## References
 
