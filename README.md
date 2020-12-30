@@ -141,12 +141,15 @@ The Plow screen provides controls for two envelopes, one for each Plant sequence
 
 Unlike typical envelopes (AR, AD, ADSR, etc.), the Envelope class developed for this program  allows for a variable number of control points or 'nodes.' The program allows for anywhere from 3-20 nodes per envelope.
 
-There are 5 controls for each of the two envelopes:  
+There are 5 types of controls for each of the two envelopes: 
+
 env level: the maximum amplitude of the envelope  
 env length: the length of the envelope  
 node time: when the node is processed by the envelope  
 node level: the level of the envelope at the node time  
 node angle: the shape of the ramp from the prior node to the current node  
+
+With a few exceptions, the last of the three types (node time, node level, and node angle) are adjustable for each of envelopes nodes.
 
 Fine grain controls: All of the envelope controls allow for fine grain control using K1+E3
 
