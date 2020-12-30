@@ -160,17 +160,19 @@ e1: prev page
 e2: change control  
 e3: change control value  
 ```
-The water interface provides control of output parameters:  
+The water interface provides control for the output parameters:  
 * (all outputs) amp (fg): the overall amplitude of the outputs  
 * (all outputs) p1 note dur: The length of each note for the first plant  
 * (all outputs) p2 note dur: The length of each note for the second plant  
-* (all outputs) note scalar (fg): This value is multiplied by the current angle of the plant, which is then added to the current note to determine the next note.
-* (Bandsaw only) cf scalars: 1-4 CF (Center Frequency) Scalars are applied to the center frequency of the Bandsaw engine's bandpass filter to set the octave of the notes played by the plants. If more than one CF Scalar is activated, the active scalars are randomly selected each time a note is played.  
-* (Bandsaw only) rq min/rq max (fg): These two parameters set the range of reciprocal of the bandpass filter's [Quality](https://www.circuitstoday.com/band-pass-filters) values.  
-* (Bandsaw only) note frequencies (fg): the number of times the Bandsaw will oscillate per second. Values less than ~20 will sound like individual tones. For greater values, the oscillations will begine to blend into one another creating a single tone, not related to the note set by the center frequency of the Bandsaw's bandpass filter.  The third note frequency parameter of each selected note frequency allows for fine grain control.
+* (all outputs) note scalar (fg): This value is multiplied by the current angle of the plant, which is then added to the current note. This sets the next note to be played.
+* (Bandsaw only) cf scalars: 1-4 CF (Center Frequency) Scalars are applied to the center frequency of the Bandsaw engine's bandpass filter to set the octave of the notes played by each plant. If more than one CF Scalar is activate, the active scalars are randomly selected each time a note is played.  
+* (Bandsaw only) rq min/rq max (fg): These two parameters set the range of the reciprocal of the bandpass filter's [Quality](https://www.circuitstoday.com/band-pass-filters) values.  
+* (Bandsaw only) note frequencies (fg): this sets the frequency of the Bandsaw's oscillations. Values less than ~20 will sound like individual tones. With larger values, the oscillations begin to blend into one another creating a single tone, a tone not related to the note set by the center frequency of the Bandsaw's bandpass filter.  The third note frequency parameter of each selected note frequency allows for fine grain control.
 
 Fine grain controls: All of the water controls specified with the characters '(fg)' allow for fine grain control using K1+E3
+
 ### Generating new L-system axioms and rulesets
+
 #### Advanced sequencing
 
 ## Requirements
