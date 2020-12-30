@@ -102,7 +102,6 @@ e3: inc/decr angle
 k2/k3: prev/next generation  
 k1 + k3: reset plants  
 ```
-Plant interface format: plant \[instruction number] \[current generation/max generations] a\[degree angle (degree radians)]
 
 #### Modify 
 ![](images/modify_wide.png)
@@ -114,7 +113,6 @@ e3: change letter
 k2/k3: -/+ letter  
 k1 + k3: reset plants  
 ```
-Modify interface format: modify \[current sentence]
 
 #### Observe 
 ![](images/observe_wide.png)
@@ -137,7 +135,6 @@ e3: change control value
 k2/k3: -/+ control point  
 k1 + k3: reset plants  
 ```
-Plow interface format:  plow \[control name]\[control value]
 
 The Plow screen provides controls for two envelopes, one for each Plant sequence. An extension of Mark Eats' [envgraph class](https://github.com/monome/norns/blob/main/lua/lib/envgraph.lua), the envelopes controlled on this screen are applied to the Bandsaw engine when the envelopes'  respective Plant sequence triggers a note to play.
 
