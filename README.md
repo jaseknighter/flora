@@ -15,7 +15,7 @@ l-systems sequencer and bandpass filtered sawtooth engine for monome norns
         * [Changes in pitch](#changes-in-pitch)
     + [Bandsaw](#bandsaw)
   * [Requirements](#requirements)
-  * [Instructions for Norns](#instructions-for-norns)
+  * [Norns UI](#norns-ui)
     + [Pages](#pages)
       - [Plant](#plant)
       - [Modify](#modify)
@@ -91,8 +91,7 @@ If a change in angle results in a pitch that is greater than the number of notes
 ### Bandsaw
 ## Requirements
 
-## Instructions for Norns
-Basic instructions
+## Norns UI
 ### Pages
 #### Plant
 #### Modify
