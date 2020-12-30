@@ -5,6 +5,8 @@
 
 l-systems sequencer and bandpass filtered sawtooth engine for monome norns
 
+<insert link to youtube and lines>
+
 - [Flora - beta](#flora---beta)
   * [Overview](#overview)
     + [L-systems and their sequencing](#l-systems-and-their-sequencing)
