@@ -95,10 +95,10 @@ The SuperCollider documentation for its [BandPassFilter (BPF)](https://doc.sccod
 
 > **WARNING: due to the nature of its implementation frequency values close to 0 may cause glitches and/or extremely loud audio artifacts!**  
 
-For safety purposes, note frequency is limited to 0.2 to prevent loud noises in both the Bandsaw engine and the lua code for norns.
+For safety purposes, the minimum note frequency value is set to 0.2 to prevent loud noises. This safety measure is implemented in both the Bandsaw engine and the lua code for norns. 
 
 **Note #2**  
-The Bandsaw engine becomes loudly percussive as the values for rqmin and rqmax are increased above five. Please take care not to hurt your ears, especially when using headphones.
+The Bandsaw engine becomes loudly percussive as the values for rqmin and rqmax increase. Please take care not to hurt your ears, especially when using headphones.
 
 ![](images/three_more_plants_inv.png)
 
