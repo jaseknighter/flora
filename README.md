@@ -194,7 +194,7 @@ instruction
 | start_from              | the starting x, y screen coordinate (format: `vector:new(<x>,<y>)`                          |
 | ruleset                 | table to hold the ruleset(s)                                                                |
 | ruleset[<index>]        | the l-system ruleset(s) (format: `rule:new('<character>',"<character(s)")`                  |
-| axiom                   | the starting sentence (format: `<character(s)>`                                             |
+| axiom                   | the starting sentence (format: `"<character(s)>"`                                           |
 | max_generations         | the maximum number of generations                                                           |
 | length                  | the starting length (in pixels) of the segments drawn by the turtle                         |
 | angle                   | the default turtle rotation angle (in degrees)                                              |
