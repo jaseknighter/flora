@@ -186,8 +186,7 @@ The water interface provides control for the output parameters:
 Fine grain controls: All of the water controls in the above list with the characters '(fg)' attached to the control names allow for fine grain control using K1+E3
 
 ### Generating new L-system axioms and rulesets
-There are seven required variables/tables for each l-system instruction set:
-instruction
+Instructions are curently held in `lib/gardens/garden_default.lua` There are seven required variables/tables for each l-system instruction set:
 
 | Variable                | Description                                                                                 | 
 | ----------------------- | ------------------------------------------------------------------------------------------- |  
