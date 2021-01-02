@@ -27,7 +27,7 @@ TODO: insert link to youtube and lines
     + [Generating new L-system axioms and rulesets](#generating-new-l-system-axioms-and-rulesets)
       - [Advanced sequencing](#advanced-sequencing)
   * [Requirements](#requirements)
-  * [Roadmap and feedback](#roadmap-and-feedback)
+  * [Roadmap](#roadmap)
   * [Credits](#credits)
   * [References](#references)
 
@@ -66,16 +66,16 @@ The above axiom and rulesets will result in the following sentences when run 5 t
 
 ##### The Flora alphabet
 
-| Character | Turtle Behavior | Sound Behavior  |
-| ---------- | --------------- | --------------- |
-| F   | Move the turtle forward and draw a line and a circle    | Play current note |
-| G   | Move the turtle forward and draw a line | Resting note (silence)    |
-| \[   | Save the current position    | Save the current note     |
-| ]   | Restore the last saved position    | Restore the last saved note   |
-| +   | Rotate the turtle counterclockwise by the current angle    | Increase the active note's pitch (see Changes in pitch below) |
-| -   | Rotate the turtle clockwise by the current angle     | Decrease the active note's pitch (see *Changes in pitch below*) |
-| \|   | Rotate the turtle 180 degrees   | No sound behavior    |
-| other | Other characters used in axioms and rulesets are ignored by the turtle | No sound behavior |
+| Character | Turtle Behavior                                          | Sound Behavior                                                  |
+| ---------- | ------------------------------------------------------- | --------------------------------------------------------------- |
+| F          | Move the turtle forward and draw a line and a circle    | Play current note                                               |
+| G          | Move the turtle forward and draw a line                 | Resting note (silence)                                          |
+| \[         | Save the current position                               | Save the current note                                           |
+| ]          | Restore the last saved position                         | Restore the last saved note                                     |
+| +          | Rotate the turtle counterclockwise by the current angle | Increase the active note's pitch (see Changes in pitch below)   |
+| -          | Rotate the turtle clockwise by the current angle        | Decrease the active note's pitch (see *Changes in pitch below*) |
+| \|         | Rotate the turtle 180 degrees                           | No sound behavior                                               |
+| other      | Other characters are ignored by the turtle              | No sound behavior                                               |
 
 ##### Changes in pitch
 Flora leverages L-systems to algorithmically generate music, taking the angles written into L-system sentences as indicators of an increase or decrease in pitch. The amount of change in pitch is set by the angle measured in radians multiplied by the current pitch. Currently, the changes in pitch are quantized, so if an angle multiplied by the current pitch is not greater than a whole number, the pitch stays the same. 
@@ -186,12 +186,39 @@ The water interface provides control for the output parameters:
 Fine grain controls: All of the water controls in the above list with the characters '(fg)' attached to the control names allow for fine grain control using K1+E3
 
 ### Generating new L-system axioms and rulesets
+There are seven required variables/tables for each l-system instruction set:
+instruction
+
+| Variable                | Description                                                                                 | 
+| ----------------------- | ------------------------------------------------------------------------------------------- |  
+| start_from              | the starting x, y screen coordinate (format: `vector:new(<x>,<y>)`                          |
+| ruleset                 | table to hold the ruleset(s)                                                                |
+| ruleset[<index>]        | the l-system ruleset(s) (format: `rule:new('<character>',"<character(s)")`                  |
+| axiom                   | the starting sentence (format: `<character(s)>`                                             |
+| max_generations         | the maximum number of generations                                                           |
+| length                  | the starting length (in pixels) of the segments drawn by the turtle                         |
+| angle                   | the default turtle rotation angle (in degrees)                                              |
+| initial_turtle_rotation | initial turtle rotation angle (in degrees) before executed prior to evaluating the ruleset  |
+| starting_generation     | the initial generation to display                                                           |
+
+Example instruction set :
+```
+instruction.start_from = vector:new(screen_size.x/2-10, screen_size.y - 10)
+instruction.ruleset = {}
+instruction.ruleset[1] = rule:new('F',"F++F++F|F-F++F")
+instruction.axiom = "F++F++F++F++F++F"
+instruction.max_generations = 2
+instruction.length = screen_size.y/8
+instruction.angle = 36
+instruction.initial_turtle_rotation = 0
+instruction.starting_generation = 1
+```
 
 #### Advanced sequencing
 
 ## Requirements
 
-## Roadmap and feedback
+## Roadmap
 
 ## Credits
 Flora's L-system code is a Lua-translation of the code presented in Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/)
