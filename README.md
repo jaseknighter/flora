@@ -215,6 +215,9 @@ instruction.starting_generation = 1
 ```
 
 #### Advanced sequencing
+*Multiple rulesets*
+
+*Evolving rulesets*
 
 ## Requirements
 
