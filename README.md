@@ -238,7 +238,7 @@ instruction.initial_turtle_rotation = 90
 source: http://algorithmicbotany.org/papers/abop/abop-ch1.pdf (Figure 1.24(d)
 
 #### Community gardening
-A community garden is under development for sharing rulesets developed by members of the [lines](https://llllllll.co/) community. 
+A community garden is under development to share rulesets written by members of the [lines](https://llllllll.co/) community. 
 
 Steps to locally enable and work in the community garden:
 * Open the file [lib/gardens/garden_community.lua] in [Maiden](https://monome.org/docs/norns/maiden/)
