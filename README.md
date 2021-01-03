@@ -28,7 +28,7 @@ TODO: insert link to youtube and lines
       - [Advanced sequencing](#advanced-sequencing)
       - [Community Gardening](#community-gardening)
   * [Requirements](#requirements)
-  * [Roadmap](#roadmap)
+  * [Preliminary Roadmap](#preliminary-roadmap)
   * [Credits](#credits)
   * [References](#references)
 
@@ -240,27 +240,38 @@ source: http://algorithmicbotany.org/papers/abop/abop-ch1.pdf (Figure 1.24(d)
 #### Community gardening
 A community garden is under development. 
 
-Steps to enable the community garden locally:
-* Open the file [lib/gardens/garden_community.lua]
+Steps to locally enable and work in the community garden:
+* Open the file [lib/gardens/garden_community.lua] in [Maiden](https://monome.org/docs/norns/maiden/)
 * Add a ruleset to the file
-* Set the number_of_instructions variable to the number of instructions in the file
+* Set the `number_of_instructions` variable equal to the number of instructions in the file
 * Test the ruleset
-* To make the community garden rulesets load by default, set the `default_to_community_garden` variable to true
+
+To make the community garden rulesets load by default locally, set the `default_to_community_garden` variable to true in the `gardens_community.lua` file.
 
 To share your ruleset(s) with the community, submit a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) or contact me ([@jaseknighter](https://llllllll.co/u/jaseknighter/summary))on the lines forum.
 
 ## Requirements
+* Norns
 
-## Roadmap
+## Preliminary Roadmap 
+* Enable community gardening
+* Improve the quality and portability of the code
+* Make additional Bandsaw variables available for Crow, Just Friends, and Midi outputs 
+* Create parameters for envelope settings
+* Add modulation and probability controls
+* Increase and decrease the brightness of the circles that appear when each note plays according to the level of the note's graph/envelope
 
 ## Credits
 Flora's L-system code is a based on the code in Chapeter 8.6 of Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/)
 
 *Bandsaw*, the bandpass-filtered sawtooth engine is based on SuperCollider code for a marimba demonstrated by Eli Fieldsteel in his [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag)
 
-Additional credits: 
+The lines community, in particular: Brian Crabtree (@tehn), Dan Derks(@dan_derks), Daniel Shiffman (@shiffman), Eli Fieldsteel, Mark Wheeler (@markwheeler), Tom Armitage (@infovore), Tyler Etters (@tyleretters)
 
 ## References
+* Daniel Shiffman, [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/)
+* Eli Fieldsteel, [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag)
+* Prusinkiewicz, Przemysław, and Aristid Lindenmayer. The Algorithmic Beauty of Plants. New York: Springer-Verlag, 1990.
 
 ![](images/yet_three_more_plants_inv.png)
 
