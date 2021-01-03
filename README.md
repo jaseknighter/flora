@@ -247,7 +247,7 @@ Steps to enable the community garden locally:
 * Test the ruleset
 * To make the community garden rulesets load by default, set the `default_to_community_garden` variable to true
 
-To share your ruleset(s) with the community, submit a [pull request] (https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) or contact me ([@jaseknighter](https://llllllll.co/u/okyeron/summary))on the lines forum.
+To share your ruleset(s) with the community, submit a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) or contact me ([@jaseknighter](https://llllllll.co/u/okyeron/summary))on the lines forum.
 
 ## Requirements
 
