@@ -26,6 +26,7 @@ TODO: insert link to youtube and lines
       - [Water](#water)
     + [Generating new L-system axioms and rulesets](#generating-new-l-system-axioms-and-rulesets)
       - [Advanced sequencing](#advanced-sequencing)
+      - [Community Gardening](#community-gardening)
   * [Requirements](#requirements)
   * [Roadmap](#roadmap)
   * [Credits](#credits)
@@ -189,7 +190,7 @@ The water interface provides control for the output parameters:
 Fine grain controls: All of the water controls in the above list with the characters '(fg)' attached to the control names allow for fine grain control using K1+E3
 
 ### Generating new L-system axioms and rulesets
-Instructions are curently held in `lib/gardens/garden_default.lua` There are seven required variables/tables for each l-system instruction set:
+L-system instructions are curently held in `lib/gardens/garden_default.lua` and `lib/gardens/garden_community.lua`.  There are seven required variables/tables for each l-system instruction set:
 
 | Variable                | Description                                                                                 | 
 | ----------------------- | ------------------------------------------------------------------------------------------- |  
@@ -218,8 +219,35 @@ instruction.starting_generation = 1
 
 #### Advanced sequencing
 *Multiple rulesets*
+Multiple rulesets can easily be added to the `instruction.ruleset` table.
 
-*Evolving rulesets*
+Example instruction set with multiple rulesets:
+
+```
+instruction.start_from = vector:new(screen_size.x/2, screen_size.y )
+instruction.ruleset = {}
+instruction.ruleset[1] = rule:new('F',"G[+F]G[-F]+F")
+instruction.ruleset[2] = rule:new('G',"GG");
+instruction.axiom = "F"
+instruction.max_generations = 3
+instruction.length = 7
+instruction.angle = 30
+instruction.starting_generation = 2
+instruction.initial_turtle_rotation = 90
+```
+source: http://algorithmicbotany.org/papers/abop/abop-ch1.pdf (Figure 1.24(d)
+
+#### Community gardening
+A community garden is under development. 
+
+Steps to enable the community garden locally:
+* Open the file [lib/gardens/garden_community.lua]
+* Add a ruleset to the file
+* Set the number_of_instructions variable to the number of instructions in the file
+* Test the ruleset
+* To make the community garden rulesets load by default, set the `default_to_community_garden` variable to true
+
+To share your ruleset(s) with the community, submit a [pull request] (https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) or contact me ([@jaseknighter](https://llllllll.co/u/okyeron/summary))on the lines forum.
 
 ## Requirements
 
