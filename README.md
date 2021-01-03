@@ -18,7 +18,7 @@ TODO: insert link to youtube and lines
     + [Bandsaw](#bandsaw)  
         - [IMPORTANT SAFETY NOTES](#important-safety-notes)
   * [Norns UI](#norns-ui)
-    + [Pages](#pages)
+    + [Screens](#screens)
       - [Plant](#plant)
       - [Modify](#modify)
       - [Observe](#observe)
