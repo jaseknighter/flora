@@ -116,7 +116,7 @@ The first three screens (or "pages") of the Flora program (Plant, Modify, and Ob
 ![](images/plant_wide_inv.png)
 ```
 e1: next page  
-k1 + e1: switch active plant  
+k1 + e1: select active plant  
 e3: inc/decr angle  
 k2/k3: prev/next generation  
 k1 + k3: reset plants to original forms and restart their sequences
@@ -126,7 +126,7 @@ k1 + k3: reset plants to original forms and restart their sequences
 ![](images/modify_wide_inv.png)
 ```
 e1: next/prev page  
-k1 + e1: switch active plant  
+k1 + e1: select active plant  
 e2: go to next/prev letter  
 e3: change letter  
 k2/k3: -/+ letter  
@@ -137,7 +137,7 @@ k1 + k3: reset plants to original forms and restart their sequences
 ![](images/observe_wide_inv.png)
 ```
 e1: next/prev page  
-k1 + e1: switch active plant  
+k1 + e1: select active plant  
 e2: move up/down  
 e3: move left/right  
 k2/k3: zoom out/in  
@@ -148,7 +148,7 @@ k1 + k3: reset plants to original forms and restart their sequences
 ![](images/plow_wide_inv.png)
 ```
 e1: next/prev page 
-k1 + e1: switch active plant  
+k1 + e1: select active plant  
 e2: change control  
 e3: change control value  
 k2/k3: -/+ control point  
@@ -226,10 +226,11 @@ instruction.starting_generation = 1
 ## Roadmap
 
 ## Credits
-Flora's L-system code is a Lua-translation of the code presented in Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/)
+Flora's L-system code is a based on the code in Chapeter 8.6 of Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/)
 
-*Bandsaw*, the bandpass-filtered sawtooth engine is based on Eli Fieldsteel's marimba presented in his [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag)
+*Bandsaw*, the bandpass-filtered sawtooth engine is based on SuperCollider code for a marimba demonstrated by Eli Fieldsteel in his [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag)
 
+Additional credits: 
 
 ## References
 
