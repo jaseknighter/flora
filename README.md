@@ -264,7 +264,7 @@ To share your ruleset(s) with the community, submit a [pull request](https://doc
 ## Credits
 * Flora's L-system code is a based on the code in Chapeter 8.6 of Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/)
 * *Bandsaw*, the bandpass-filtered sawtooth engine is based on SuperCollider code for a marimba demonstrated by Eli Fieldsteel in his [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag)
-* The lines community, in particular: Brian Crabtree (@tehn), Dan Derks(@dan_derks), Daniel Shiffman (@shiffman), Eli Fieldsteel, Mark Wheeler (@markwheeler), Tom Armitage (@infovore), Tyler Etters (@tyleretters)
+* The lines community, in particular: Brian Crabtree (@tehn), Dan Derks (@dan_derks), Mark Wheeler (@markwheeler), Tom Armitage (@infovore), Tyler Etters (@tyleretters)
 
 ## References
 * Daniel Shiffman, [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/)
