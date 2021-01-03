@@ -248,7 +248,7 @@ Steps to locally enable and work in the community garden:
 
 To make the community garden rulesets load by default locally, set the `default_to_community_garden` variable to true in the `gardens_community.lua` file.
 
-To share your ruleset(s) with the community, submit a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) or contact me ([@jaseknighter](https://llllllll.co/u/jaseknighter/summary))on the lines forum.
+To share your ruleset(s) with the community, submit a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) or contact me ([@jaseknighter](https://llllllll.co/u/jaseknighter/summary)) on the lines forum.
 
 ## Requirements
 * Norns
