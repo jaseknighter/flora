@@ -149,7 +149,7 @@ k1 + k3: reset plants to original forms and restart their sequences
 ```
 e1: next/prev page 
 k1 + e1: select active plant  
-e2: change control  
+e2: select control  
 e3: change control value  
 k2/k3: -/+ control point  
 ```
@@ -174,7 +174,7 @@ Fine grain controls: All of the envelope controls allow for fine grain control u
 ![](images/water_wide_inv.png)
 ```
 e1: prev page  
-e2: change control  
+e2: select control  
 e3: change control value  
 ```
 The water interface provides control for the output parameters:  
