@@ -4,4 +4,4 @@
 .gitignore export-ignore
 
 # images
-images/
+images/ export-ignore
