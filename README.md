@@ -240,15 +240,15 @@ source: http://algorithmicbotany.org/papers/abop/abop-ch1.pdf (Figure 1.24(d)
 #### Community gardening
 A community garden is under development to share rulesets written by members of the [lines](https://llllllll.co/) community. 
 
-Steps to locally enable and work in the community garden:
-* Open the file 'lib/gardens/garden_community.lua' in [Maiden](https://monome.org/docs/norns/maiden/)
-* Add a ruleset to the file
-* Set the `number_of_instructions` variable equal to the number of instructions in the 'garden_community.lua' file
-* Reload the Flora program in Maiden
-* Enable the community garden rulesets in one of two ways:
-  1 Before reloading the Flora program, set the `default_to_community_garden` variable to true in the `gardens_community.lua` file (makes the community garden rulesets load by default locally).
-  2 After reloading the Flora program, goto the `PARAMETERS->EDIT` menu and set the `garden selector` parameter to `community` (this parameter will appear as the last in the list).
-* Test the ruleset
+Steps to locally enable and work in the community garden:  
+* Open the file 'lib/gardens/garden_community.lua' in [Maiden](https://monome.org/docs/norns/maiden/).  
+* Add a ruleset to the file.  
+* Set the `number_of_instructions` variable equal to the number of instructions in the 'garden_community.lua' file.  
+* Reload the Flora program in Maiden.  
+* Enable the community garden rulesets in one of two ways:  
+  1 Before reloading the Flora program, set the `default_to_community_garden` variable to true in the `gardens_community.lua` file (makes the community garden rulesets load by default locally).  
+  2 After reloading the Flora program, goto the `PARAMETERS->EDIT` menu and set the `garden selector` parameter to `community` (this parameter will appear as the last in the list).  
+* Test the ruleset.  
 
 
 
