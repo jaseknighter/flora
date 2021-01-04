@@ -13,7 +13,7 @@
 --  globals (global variables, constants, and functions)
 --  encoders_and_keys
 --  parameters
---  flora_pages (code for pages and ui)
+--  flora_pages (code to decide which screen and top navigation to display)
 --  plant (l-system code run on pages 1-3. also contains includes for sounds)
 --  envelope (envelope code run on page 4)
 --  water (engine and output parameter code run on page 5)
@@ -111,13 +111,13 @@ end
 --------------------------
 function set_redraw_timer()
   redrawtimer = metro.init(function() 
-    if menu_status == false then
+    if menu_status == false and initializing == false then
       if screen_dirty then
-        redraw()
+        flora_pages.draw_pages()
         screen_dirty = false
       elseif pages.index < 4 then
         local notes_only = true
-        redraw(notes_only)
+        flora_pages.draw_pages(notes_only)
       end
     end
     
@@ -132,11 +132,6 @@ function set_redraw_timer()
   redrawtimer:start()
 end
 
-function redraw(notes_only)
-  if (initializing == false) then 
-    flora_pages.draw_pages(notes_only)
-  end
-end
 
 function cleanup ()
   all_notes_off()
