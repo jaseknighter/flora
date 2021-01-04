@@ -179,13 +179,13 @@ e2: select control
 e3: change control value  
 ```
 The water interface provides control for the output parameters:  
-* (all outputs) amp (fg): the overall amplitude of the outputs  
-* (all outputs) p1 note dur: The length of each note for the first plant  
-* (all outputs) p2 note dur: The length of each note for the second plant  
-* (all outputs) note scalar (fg): This value is multiplied by the current angle of the plant, which is then added to the current note. This sets the next note to be played.
-* (Bandsaw only) cf scalars: 1-4 CF (Center Frequency) Scalars are applied to the center frequency of the Bandsaw engine's bandpass filter to set the octave of the notes played by each plant. If more than one CF Scalar is activate, the active scalars are randomly selected each time a note is played.  
-* (Bandsaw only) rq min/rq max (fg): These two parameters set the range of the reciprocal of the bandpass filter's [Quality](https://www.circuitstoday.com/band-pass-filters) values.  
-* (Bandsaw only) note frequencies (fg): this sets the frequency of the Bandsaw's oscillations. Values less than ~20 will sound like individual tones. With larger values, the oscillations begin to blend into one another creating a single tone, a tone not related to the note set by the center frequency of the Bandsaw's bandpass filter.  The third note frequency parameter of each selected note frequency allows for fine grain control. The fourth note frequency parameter, tempo scalar offset, is shared between all frequencies (i.e. each frequency does not have its own unique tempo scalar offset). This provides a macro control over all note frequencies.
+- (all outputs) amp (fg): the overall amplitude of the outputs  
+- (all outputs) p1 note dur: The length of each note for the first plant  
+- (all outputs) p2 note dur: The length of each note for the second plant  
+- (all outputs) note scalar (fg): This value is multiplied by the current angle of the plant, which is then added to the current note. This sets the next note to be played.
+- (Bandsaw only) cf scalars: 1-4 CF (Center Frequency) Scalars are applied to the center frequency of the Bandsaw engine's bandpass filter to set the octave of the notes played by each plant. If more than one CF Scalar is activate, the active scalars are randomly selected each time a note is played.  
+- (Bandsaw only) rq min/rq max (fg): These two parameters set the range of the reciprocal of the bandpass filter's [Quality](https://www.circuitstoday.com/band-pass-filters) values.  
+- (Bandsaw only) note frequencies (fg): this sets the frequency of the Bandsaw's oscillations. Values less than ~20 will sound like individual tones. With larger values, the oscillations begin to blend into one another creating a single tone, a tone not related to the note set by the center frequency of the Bandsaw's bandpass filter.  The third note frequency parameter of each selected note frequency allows for fine grain control. The fourth note frequency parameter, tempo scalar offset, is shared between all frequencies (i.e. each frequency does not have its own unique tempo scalar offset). This provides a macro control over all note frequencies.
 
 Fine grain controls: All of the water controls in the above list with the characters '(fg)' attached to the control names allow for fine grain control using K1+E3
 
@@ -241,14 +241,14 @@ source: http://algorithmicbotany.org/papers/abop/abop-ch1.pdf (Figure 1.24(d)
 A community garden is under development to share rulesets written by members of the [lines](https://llllllll.co/) community. 
 
 Steps to locally enable and work in the community garden:  
-* Open the file 'lib/gardens/garden_community.lua' in [Maiden](https://monome.org/docs/norns/maiden/).  
-* Add a ruleset to the file.  
-* Set the `number_of_instructions` variable equal to the number of instructions in the 'garden_community.lua' file.  
-* Reload the Flora program in Maiden.  
-* Enable the community garden rulesets in one of two ways:  
+- Open the file 'lib/gardens/garden_community.lua' in [Maiden](https://monome.org/docs/norns/maiden/).  
+- Add a ruleset to the file.  
+- Set the `number_of_instructions` variable equal to the number of instructions in the 'garden_community.lua' file.  
+- Reload the Flora program in Maiden.  
+- Enable the community garden rulesets in one of two ways:  
   1 Before reloading the Flora program, set the `default_to_community_garden` variable to true in the `gardens_community.lua` file (makes the community garden rulesets load by default locally).  
   2 After reloading the Flora program, goto the `PARAMETERS->EDIT` menu and set the `garden selector` parameter to `community` (this parameter will appear as the last in the list).  
-* Test the ruleset.  
+- Test the ruleset.  
 
 
 
@@ -258,12 +258,12 @@ To share your ruleset(s) with the community, submit a [pull request](https://doc
 * Norns
 
 ## Preliminary Roadmap 
-* Enable community gardening
-* Improve the quality and portability of the code
-* Make additional Bandsaw variables available for Crow, Just Friends, and Midi outputs 
-* Create parameters for envelope settings
-* Add modulation and probability controls
-* Increase and decrease the brightness of the circles that appear when each note plays according to the level of the note's graph/envelope
+- Enable community gardening
+- Improve the quality and portability of the code
+- Make additional Bandsaw variables available for Crow, Just Friends, and Midi outputs 
+- Create parameters for envelope settings
+- Add modulation and probability controls
+- Increase and decrease the brightness of the circles that appear when each note plays according to the level of the note's graph/envelope
 
 ## Credits
 * Flora's L-system code is a based on the code in Chapeter 8.6 of Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/)
