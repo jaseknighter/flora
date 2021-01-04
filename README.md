@@ -269,13 +269,17 @@ To share your ruleset(s) with the community, submit a [pull request](https://doc
 - Increase and decrease the brightness of the circles that appear when each note plays according to the level of the note's graph/envelope
 
 ## Credits
-* Flora's L-system code is based on the code in Chapeter 8.6 of Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/)
-* *Bandsaw*, the bandpass-filtered sawtooth engine is based on SuperCollider code for a marimba demonstrated by Eli Fieldsteel in his [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag)
-* The lines community, and the following members in particular: Brian Crabtree (@tehn), Dan Derks (@dan_derks), Mark Wheeler (@markwheeler), Tom Armitage (@infovore), and Tyler Etters (@tyleretters)
+* Flora's L-system code is based on the code in Chapeter 8.6 of Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/).
+* Many of the specific L-system algorithms are based on code from Paul Bourke's [L-System User Notes](http://paulbourke.net/fractals/lsys/).
+* *Bandsaw*, the bandpass-filtered sawtooth engine is based on SuperCollider code for a marimba presented by Eli Fieldsteel in his [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag).
+* The code for this project was deeply inspired by the following members of the lines community: Brian Crabtree (@tehn), Dan Derks (@dan_derks), Mark Wheeler (@markwheeler), Tom Armitage (@infovore), and Tyler Etters (@tyleretters).
 
 ## References
-* Daniel Shiffman, [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/)
-* Eli Fieldsteel, [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag)
-* Prusinkiewicz, Przemysław, and Aristid Lindenmayer. [The Algorithmic Beauty of Plants](http://algorithmicbotany.org/papers/abop/abop.pdf). New York: Springer-Verlag, 1990.
+* Biological Modeling and Visualization research group, University of Calgary. [papers](http://algorithmicbotany.org/papers/).
+* Bourke, Paul. [L-System User Notes](http://paulbourke.net/fractals/lsys/)
+* Fieldsteel, Eli. [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag).
+* Prusinkiewicz, Przemysław, and Aristid Lindenmayer. [The Algorithmic Beauty of Plants](http://algorithmicbotany.org/papers/abop/abop.pdf).
+* Santell, Jordan , [L-Systems](https://jsantell.com/l-systems/)
+* Shiffman, Daniel. [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/).
 
 ![](images/yet_three_more_plants_inv.png)
