@@ -255,12 +255,15 @@ Steps to locally enable and work in the community garden:
 To share your ruleset(s) with the community, submit a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) or contact me ([@jaseknighter](https://llllllll.co/u/jaseknighter/summary)) on the lines forum.
 
 ## Requirements
-* Norns
+* Norns (required)
+* Crow (optional)
+* Just Friends (optional)
 
 ## Preliminary Roadmap 
 - Enable community gardening
 - Improve the quality and portability of the code
 - Make additional Bandsaw variables available for Crow, Just Friends, and Midi outputs 
+- Add microtonal scales
 - Create parameters for envelope settings
 - Add modulation and probability controls
 - Increase and decrease the brightness of the circles that appear when each note plays according to the level of the note's graph/envelope
