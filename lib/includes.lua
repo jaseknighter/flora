@@ -18,7 +18,7 @@ instructions = include "flora/lib/instructions"
 
 -- required for flora.lua
 encoders_and_keys = include "flora/lib/encoders_and_keys"
-flora_pages = include("flora/lib/pages")
+flora_pages = include("flora/lib/flora_pages")
 plant = include("flora/lib/plant")
 envelope = include "flora/lib/envelope"
 water = include "flora/lib/water"

@@ -11,12 +11,12 @@
 
 -- includes: 
 --  globals (global variables, constants, and functions)
+--  encoders_and_keys
+--  parameters
+--  flora_pages (code for pages and ui)
 --  plant (l-system code run on pages 1-3. also contains includes for sounds)
 --  envelope (envelope code run on page 4)
 --  water (engine and output parameter code run on page 5)
---  pages (code for pages and ui)
---  encoders_and_keys
---  parameters
 --
 -- todo list: 
 --  improve the quality and portability of the code
@@ -33,6 +33,9 @@
 --      'setup' vs 'init' vs 'new' 
   --    inconsistent use of ALL CAPS for naming constant values
 --      use of colon vs dot function syntax
+--  enable control over ruleset variables (axiom and ruleset especially)
+--  add keyboard control for updating sentences/rulesets
+--  explore support for more than two plants at a time
 --  investigate (seemingly non-consequential) error message at startup related to midi maps 
 --    for controls not yet created (e.g. for note frequencies > 1):
 --      lua: /home/we/norns/lua/core/paramset.lua:301: attempt to index a nil value (local 'param')
@@ -104,24 +107,24 @@ function key(n,z)
 end
 
 --------------------------
--- redraw and cleanup 
+-- redraw 
 --------------------------
-function set_redraw_timer(fr)
+function set_redraw_timer()
   redrawtimer = metro.init(function() 
-    if pages.index < 5 and screen_dirty then
-      redraw()
-      screen_dirty = false
-    elseif pages.index < 5 then
-      local notes_only = true
-      redraw(notes_only)
-    elseif menu_status == false then
-      water.display()
-      redraw()
+    if menu_status == false then
+      if screen_dirty then
+        redraw()
+        screen_dirty = false
+      elseif pages.index < 4 then
+        local notes_only = true
+        redraw(notes_only)
+      end
     end
-
+    
     local status = norns.menu.status()
     if menu_status == true and status == false then
       menu_status = false
+      screen_dirty = true
     elseif menu_status == false and status == true then
       menu_status = true
     end
@@ -131,7 +134,7 @@ end
 
 function redraw(notes_only)
   if (initializing == false) then 
-    flora_pages.run_page_code(notes_only)
+    flora_pages.draw_pages(notes_only)
   end
 end
 
