@@ -235,7 +235,7 @@ instruction.angle = 30
 instruction.starting_generation = 2
 instruction.initial_turtle_rotation = 90
 ```
-source: http://algorithmicbotany.org/papers/abop/abop-ch1.pdf (Figure 1.24(d)
+source: http://algorithmicbotany.org/papers/abop/abop-ch1.pdf (Figure 1.24(d))
 
 #### Community gardening
 A community garden is under development to share rulesets written by members of the [lines](https://llllllll.co/) community. 
@@ -279,10 +279,3 @@ To share your ruleset(s) with the community, submit a [pull request](https://doc
 * Prusinkiewicz, Przemysław, and Aristid Lindenmayer. [The Algorithmic Beauty of Plants](http://algorithmicbotany.org/papers/abop/abop.pdf). New York: Springer-Verlag, 1990.
 
 ![](images/yet_three_more_plants_inv.png)
-
-
-
-
-
-
-
