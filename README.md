@@ -16,7 +16,7 @@ TODO: insert link to youtube and lines
         * [The Flora alphabet](#the-flora-alphabet)
         * [Changes in pitch](#changes-in-pitch)
     + [Bandsaw](#bandsaw)  
-        - [IMPORTANT SAFETY NOTES](#important-safety-notes)
+        - [SAFETY NOTES](#safety-notes)
   * [Norns UI](#norns-ui)
     + [Screens](#screens)
       - [Plant](#plant)
@@ -84,21 +84,21 @@ Flora leverages L-systems to algorithmically generate music, taking the angles w
 If a change in angle results in a pitch that is greater than the number of notes in the active scale, the active note becomes the root (lowest) note of the active scale. Conversely, if a change in angle results in a pitch that is less than the root note of the active scale, the active note becomes the last (highest) note in the active scale.
 
 ### Bandsaw
-If the *output* parameter is set in norns to include *audio*, notes will be played using *Bandsaw*, a bandpass filtered sawtooth wave, based on the marimba instrument demonstrated by Eli Fieldsteel in his [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag). 
+If the *output* parameter is set in norns to include *audio*, notes will be played using *Bandsaw*, a bandpass filtered sawtooth wave. This engine is based on the marimba instrument demonstrated by Eli Fieldsteel in video, [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag). 
 
-Unlike a 'typical' oscillator, where the frequency of the oscillator is perceived as the note being played, the note's typically heard when the Bandsaw is played are determined by the center frequency of the bandpass filter, not the sawtooth oscillators frequency.
+Unlike a 'typical' oscillator, where the frequency of the oscillator is perceived as the note being played, the notes typically heard when the Bandsaw engine is played are determined by the center frequency of its bandpass filter, not the frequency of its sawtooth oscillator.
 
 The parameters of this instrument may be set in the PARAMETERS->EDIT menu or on the *water* page of the Flora program (see *water* below for more details)
 
-#### IMPORTANT SAFETY NOTES
-**Note #1**   
+#### SAFETY NOTES
+**Safety Note #1**   
 The SuperCollider documentation for its [BandPassFilter (BPF)](https://doc.sccode.org/Classes/BPF.html) contains the following warning:  
 
 > **WARNING: due to the nature of its implementation frequency values close to 0 may cause glitches and/or extremely loud audio artifacts!**  
 
 For safety purposes, the minimum note frequency value is set to 0.2 to prevent loud noises. This safety measure is implemented in both the Bandsaw engine and the lua code for norns. 
 
-**Note #2**  
+**Safety Note #2**  
 The Bandsaw engine becomes loudly percussive as the values for rqmin and rqmax increase. Please take care not to hurt your ears, especially when using headphones.
 
 ![](images/three_more_plants_inv.png)
@@ -241,12 +241,16 @@ source: http://algorithmicbotany.org/papers/abop/abop-ch1.pdf (Figure 1.24(d)
 A community garden is under development to share rulesets written by members of the [lines](https://llllllll.co/) community. 
 
 Steps to locally enable and work in the community garden:
-* Open the file [lib/gardens/garden_community.lua] in [Maiden](https://monome.org/docs/norns/maiden/)
+* Open the file 'lib/gardens/garden_community.lua' in [Maiden](https://monome.org/docs/norns/maiden/)
 * Add a ruleset to the file
-* Set the `number_of_instructions` variable equal to the number of instructions in the file
+* Set the `number_of_instructions` variable equal to the number of instructions in the 'garden_community.lua' file
+* Reload the Flora program in Maiden
+* Enable the community garden rulesets in one of two ways:
+  1 Before reloading the Flora program, set the `default_to_community_garden` variable to true in the `gardens_community.lua` file (makes the community garden rulesets load by default locally).
+  2 After reloading the Flora program, goto the `PARAMETERS->EDIT` menu and set the `garden selector` parameter to `community` (this parameter will appear as the last in the list).
 * Test the ruleset
 
-To make the community garden rulesets load by default locally, set the `default_to_community_garden` variable to true in the `gardens_community.lua` file.
+
 
 To share your ruleset(s) with the community, submit a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) or contact me ([@jaseknighter](https://llllllll.co/u/jaseknighter/summary)) on the lines forum.
 
@@ -264,7 +268,7 @@ To share your ruleset(s) with the community, submit a [pull request](https://doc
 ## Credits
 * Flora's L-system code is a based on the code in Chapeter 8.6 of Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/)
 * *Bandsaw*, the bandpass-filtered sawtooth engine is based on SuperCollider code for a marimba demonstrated by Eli Fieldsteel in his [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag)
-* The lines community, in particular: Brian Crabtree (@tehn), Dan Derks (@dan_derks), Mark Wheeler (@markwheeler), Tom Armitage (@infovore), Tyler Etters (@tyleretters)
+* The lines community, and the following members in particular: Brian Crabtree (@tehn), Dan Derks (@dan_derks), Mark Wheeler (@markwheeler), Tom Armitage (@infovore), and Tyler Etters (@tyleretters)
 
 ## References
 * Daniel Shiffman, [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/)
