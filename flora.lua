@@ -66,6 +66,13 @@ function init()
 
   pages = UI.Pages.new(0, 5)
   
+  
+  if default_to_community_garden then
+    l_system_instructions = l_system_instructions_community
+  else
+    l_system_instructions = l_system_instructions_default
+  end
+
   for i=1,num_plants,1
   do
     envelopes[i] = envelope:new(i, num_plants)
@@ -111,7 +118,8 @@ end
 --------------------------
 function set_redraw_timer()
   redrawtimer = metro.init(function() 
-    if menu_status == false and initializing == false then
+    local status = norns.menu.status()
+    if status == false and menu_status == false and initializing == false then
       if screen_dirty then
         flora_pages.draw_pages()
         screen_dirty = false
@@ -121,7 +129,6 @@ function set_redraw_timer()
       end
     end
     
-    local status = norns.menu.status()
     if menu_status == true and status == false then
       menu_status = false
       screen_dirty = true

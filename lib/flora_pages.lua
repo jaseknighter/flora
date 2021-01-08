@@ -12,7 +12,7 @@ function check_plant_position()
     local turtle_positions = plants[i].get_turtle_positions()
     local left_edge = 40 + ((screen_size.x/#plants) * (i-1))
     local right_edge = (screen_size.x / (#plants/i)) - 20
-    local top_edge = 15
+    local top_edge = 20
     local bottom_edge = screen_size.y - 5
     local center_point_x = (right_edge - left_edge)/2
     local center_point_y = (bottom_edge - top_edge)/2
@@ -52,10 +52,6 @@ function check_plant_position()
           screen_dirty = true
           plants[i].set_node_length(0.9)
         end
-        -- if plant_width < screen_size.x/10 or plant_height < screen_size.y/11 then
-        --   screen_dirty = true
-        --   plants[i].set_node_length(1.1)
-        -- end
         if (plant_width < screen_size.x/#plants-25 and plant_height < screen_size.y-45) then
           screen_dirty = true
           plants[i].set_node_length(1.1)

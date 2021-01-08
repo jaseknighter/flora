@@ -47,10 +47,6 @@ local sentence_from_table = function(t)
   return new_sentence
 end
 
-local get_instructionset = function()
-  return l_system_instructions_default
-end
-
 local plant = {}
 plant.__index = plant
 
@@ -77,7 +73,6 @@ function plant:new(p_id, starting_instruction)
 
   p.current_instruction = starting_instruction
   
-  p.lsi = get_instructionset()
   p.changing_instructions = false
   p.current_sentence_id = 0
   p.initializing = true
@@ -199,29 +194,7 @@ function plant:new(p_id, starting_instruction)
   end
   
   p.get_instructions = function(instruction_number)
-    if p.id == 1 and default_to_community_garden and 
-      l_system_instructions_community.get_num_instructions() < 1 
-    then
-      print("WARNING: set number_of_instructions > 0 in garden_community.lua to enable community gardens by default")
-    end
-
-    local community_gardens_exist = l_system_instructions_community.get_num_instructions() > 0
-    if community_gardens_exist then
-      local selected_garden = params:get("garden_selector")
-      local l_system_instructions
-      if default_to_community_garden and 
-        l_system_instructions_community.get_num_instructions() > 1 then
-        l_system_instructions = l_system_instructions_community
-      elseif selected_garden ~= nil then
-        l_system_instructions = selected_garden == 1 and l_system_instructions_default or l_system_instructions_community
-      else 
-        l_system_instructions = l_system_instructions_default
-      end
-      return l_system_instructions.get_instruction(instruction_number)
-    else
-      local l_system_instructions = l_system_instructions_default
-      return l_system_instructions.get_instruction(instruction_number)
-    end
+    return l_system_instructions.get_instruction(instruction_number)
   end 
   
   p.run_plant_code = function()
@@ -311,10 +284,13 @@ function plant:new(p_id, starting_instruction)
     p.set_instructions = function(rotate_by, increment_generation_by)
       local increment_generation_by = increment_generation_by and increment_generation_by or 0
       p.sentence_cursor_index = 1
-      local num_instructions = p.lsi.get_num_instructions()
+      local num_instructions = l_system_instructions.get_num_instructions()
       local next_instruction = p.current_instruction + rotate_by
       local next_generation = p.current_generation + increment_generation_by
-      if (next_generation > 0 and next_generation <= p.max_generations and next_instruction > 0 and next_instruction <= num_instructions) then
+      if (next_generation > 0 and 
+          next_generation <= p.max_generations and 
+          next_instruction > 0 and 
+          next_instruction <= num_instructions) then
         if (p.initializing == false and p.changing_instructions == false) then
           p.changing_instructions = true
           local target_generation = increment_generation_by ~= 0 and p.current_generation + increment_generation_by or 0

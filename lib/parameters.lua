@@ -415,31 +415,12 @@ flora_params.add_params = function(plants)
   --   end
   -- )
     
-  --set the reverb input engine to 0
+  --set the reverb input engine to -10db
   params:set(13, -10)
   params:bang()
   reset_note_frequencies()
   
-  if l_system_instructions_community.get_num_instructions() > 0 then
-    params:add_separator()
-  
-    params:add{type = "option", id = "garden_selector", name = "garden selector",
-      options = {"default","community"},
-      action = function(value)
-        if value == 1 then
-          l_system_instructions= l_system_instructions_default
-        else
-          l_system_instructions = l_system_instructions_community
-        end
-        for i=1,num_plants,1
-          do
-            plants[i].reset_instructions()
-          end
-        end
-    }
-  end    
-    
-    
+
 --[[
   params:add{
     type = "control", 

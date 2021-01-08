@@ -2,16 +2,14 @@
 
 ------------------------------
 -- notes:
--- see documentation on github (https://github.com/jaseknighter/flora) for instructions on updating or creating new instruction sets
--- make sure number_of_instructions to equal the number of instructions listed 
---  in the l_system_instructions.get_num_instructions() function
--- screen_size.x = 63.5
--- screen_size.y = 32
+-- see documentation on github for instructions on updating existing instructions and creating new ones:
+--  https://github.com/jaseknighter/flora/blob/main/README.md
+-- make sure the number_of_instructions variable is equal to the number of instructions listed 
+--  in the l_system_instructions.get_instruction function
 ------------------------------
 
-local number_of_instructions = 10
-
 local l_system_instructions = {}
+local number_of_instructions = 10
 
 function l_system_instructions.get_num_instructions()
   return number_of_instructions
@@ -116,13 +114,13 @@ function l_system_instructions.get_instruction(instruction_id)
     instruction.initial_turtle_rotation = 90
   elseif (instruction_id == 10) then
     -- from: http://algorithmicbotany.org/papers/abop/abop-ch1.pdf (Figure 1.24(d)
-    instruction.start_from = vector:new(screen_size.x/2, screen_size.y )
+    instruction.start_from = vector:new(screen_size.x/2+5, screen_size.y+12)
     instruction.ruleset = {}
     instruction.ruleset[1] = rule:new('F',"G[+F]G[-F]+F")
     instruction.ruleset[2] = rule:new('G',"GG");
     instruction.axiom = "F"
     instruction.max_generations = 3
-    instruction.length = 1
+    instruction.length = 20
     instruction.angle = 20
     instruction.starting_generation = 1
     instruction.initial_turtle_rotation = 90

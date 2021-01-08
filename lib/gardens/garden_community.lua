@@ -2,11 +2,11 @@
 
 ------------------------------
 -- notes:
--- see documentation on github (https://github.com/jaseknighter/flora) for instructions on updating or creating new instruction sets
--- make sure number_of_instructions to equal the number of instructions listed 
---  in the l_system_instructions.get_num_instructions() function
--- screen_size.x = 63.5
--- screen_size.y = 32
+-- set default_to_community_garden = true in order to display the community garden
+-- see documentation on github for instructions on updating existing instructions and creating new ones:
+--  https://github.com/jaseknighter/flora/blob/main/README.md
+-- make sure the number_of_instructions variable is equal to the number of instructions listed 
+--  in the l_system_instructions.get_instruction function
 ------------------------------
 
 default_to_community_garden = false
@@ -23,7 +23,7 @@ function l_system_instructions.get_instruction(instruction_id)
   if (instruction_id == 1) then
     -- TEMPLATE
     -- author: <author>
-    instruction.start_from = vector:new(screen_size.x/2 + 18, screen_size.y/2 + 20) --"center"
+    instruction.start_from = vector:new(81.5, 52)
     instruction.ruleset = {}
     instruction.ruleset[1] = rule:new('X',"+YF-XFX-FY+")
     instruction.ruleset[2] = rule:new('Y',"-XF+YFY+FX-")
@@ -32,17 +32,19 @@ function l_system_instructions.get_instruction(instruction_id)
     instruction.length = 20
     instruction.angle = 90 
     instruction.initial_turtle_rotation = 90
+    instruction.starting_generation = 1
   elseif (instruction_id == 2) then
     -- TEMPLATE
     -- author: <author>
-    instruction.start_from = vector:new(screen_size.x/2 + 18, screen_size.y/2 + 20) --"center"
+    instruction.start_from = vector:new(48.5, 59)
     instruction.ruleset = {}
-    instruction.ruleset[1] = rule:new('X',"+YF-XFX-FY+")
-    instruction.ruleset[2] = rule:new('Y',"-XF+YFY+FX-")
-    instruction.axiom = "X"
-    instruction.max_generations = 3
-    instruction.length = 20
-    instruction.angle = 90 
+    instruction.ruleset[1] = rule:new('F',"F--F--F--G")
+    instruction.ruleset[2] = rule:new('G',"GG");
+    instruction.axiom = "F--F--F"
+    instruction.max_generations = 2
+    instruction.length = screen_size.y/2
+    instruction.angle = math.deg(math.pi/3)
+    instruction.starting_generation = 1
     instruction.initial_turtle_rotation = 90
   end
   return instruction
