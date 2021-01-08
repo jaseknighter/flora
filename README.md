@@ -191,7 +191,7 @@ The water interface provides control for the output parameters:
 
 Fine grain controls: All of the water controls in the above list with the characters '(fg)' attached to the control names allow for fine grain control using K1+E3
 
-*Note*: Tempo scalar offset, which provides macro control over all active note frequencies, is not yet available from the Water UI screen. It can be adjusted from PARAMETERS->EDIT. 
+*Note*: Tempo scalar offset, which provides macro control over all active note frequencies, is not yet available from the Water UI screen. It can be adjusted from PARAMETERS->EDIT. The default value (1.5) can also be changed in `in lib/globals.lua` by updating the variable `tempo_scalar_offset_default`.
 
 ### Generating new L-system axioms and rulesets
 L-system instructions are curently held in `lib/gardens/garden_default.lua` and `lib/gardens/garden_community.lua`.  There are seven required variables/tables for each l-system instruction set:
