@@ -113,7 +113,9 @@ For many parameters, fine-grained adjustments can be made by pressing K1 along w
 
 ### Screens
 
-The first three screens (or "pages") of the Flora program (Plant, Modify, and Observe) display two L-system plants, used by the program to sequence notes. The fourth screen (Plow) displays two envelopes. The fifth screen (Water) displays controls for the Bandsaw engine and other outputs (i.e. Midi, [Just Friends](https://www.whimsicalraps.com/products/just-friends?variant=5586981781533), and [Crow](https://monome.org/docs/crow/)).
+The first three screens (or "pages") of the Flora program (Plant, Modify, and Observe) display two L-system plants, used by the program to sequence notes. The fourth screen (Plow) displays two envelopes. The fifth screen (Water) displays controls for the Bandsaw engine and other outputs (i.e. Midi, [Just Friends](https://www.whimsicalraps.com/products/just-friends?variant=5586981781533), and [
+
+](https://monome.org/docs/crow/)).
 
 #### Plant 
 ![](images/plant_wide_inv.png)
@@ -258,6 +260,8 @@ To share your ruleset(s) with the community, submit a [pull request](https://doc
 * Norns (required)
 * Crow (optional)
 * Just Friends (optional)
+* Midi (optional)
+* Computer to create/update rulesets using Maiden (optional)
 
 ## Preliminary Roadmap 
 - Enable community gardening
