@@ -1,5 +1,6 @@
 
-![](images/three_plants_inv.png)
+Demonstration [video](https://vimeo.com/496481575)
+Follow the discussion on lines: <insert link>
 
 # Flora - beta
 
