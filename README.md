@@ -268,10 +268,10 @@ To share your ruleset(s) with the community, submit a [pull request](https://doc
 - Increase and decrease the brightness of the circles that appear when each note plays according to the level of the note's graph/envelope
 
 ## Credits
-* Flora's L-system code is based on the code in Chapeter 8.6 of Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/).
+* Flora's L-system code is based on the code in Chapter 8.6 of Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/).
 * Many of the specific L-system algorithms are based on code from Paul Bourke's [L-System User Notes](http://paulbourke.net/fractals/lsys/).
 * *Bandsaw*, the bandpass-filtered sawtooth engine is based on SuperCollider code for a marimba presented by Eli Fieldsteel in his [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag).
-* The code for this project was deeply inspired by the following members of the lines community: Brian Crabtree (@tehn), Dan Derks (@dan_derks), Mark Wheeler (@markwheeler), Tom Armitage (@infovore), and Tyler Etters (@tyleretters).
+* The code for this project was also deeply inspired by the following members of the lines community: Brian Crabtree (@tehn), Dan Derks (@dan_derks), Mark Wheeler (@markwheeler), Tom Armitage (@infovore), and Tyler Etters (@tyleretters).
 
 ## References
 * Biological Modeling and Visualization research group, University of Calgary. [papers](http://algorithmicbotany.org/papers/).
