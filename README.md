@@ -248,7 +248,7 @@ Steps to locally enable and work in the community garden:
 - Open the file `lib/gardens/garden_community.lua` in [Maiden](https://monome.org/docs/norns/maiden/).  
 - Add a new ruleset to the file.  
 - Set the `number_of_instructions` variable equal to the number of instructions in the `lib/gardens/garden_community.lua` file.  
-- Set the `default_to_community_garden` variable to true in the `lib/gardens/gardens_community.lua` file (the makes the community garden rulesets load by default locally).  
+- Set the `default_to_community_garden` variable to `true` in the `lib/gardens/gardens_community.lua` file (the makes the community garden rulesets load by default locally).  
 - Reload the Flora program in Maiden.  
 - Test the ruleset.  
 
