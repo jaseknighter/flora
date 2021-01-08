@@ -1,12 +1,10 @@
-
-Demonstration [video](https://vimeo.com/496481575)  
-Follow the discussion on lines: <insert link>
-
 # Flora - beta
 
 An L-systems sequencer and bandpass filtered sawtooth engine for monome norns
 
-TODO: insert link to youtube and lines
+
+Demonstration [video](https://vimeo.com/496481575)  
+Follow the discussion on lines: <insert link>
 
 - [Flora - beta](#flora---beta)
   * [Overview](#overview)
