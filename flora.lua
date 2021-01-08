@@ -1,11 +1,8 @@
 ---flora - beta
--- making sounds with l-systems
---
--- v0.1 @jaseknighter
--- llllllll.co/t/<insert reference id>
+-- v0.0.1 @jaseknighter
+-- lines: llllllll.co/t/<insert reference id>
 --
 -- k1+k2: show/hide instructions
-
 ------------------------------
 -- includes (found in includes.lua), notes and todo list:
 

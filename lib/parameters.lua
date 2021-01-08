@@ -62,7 +62,7 @@ specs.TEMPO_SCALAR_OFFSET = cs.def{
                       max=tempo_scalar_offset_max,
                       warp='lin',
                       step=0.1,
-                      default=1.5,
+                      default=tempo_scalar_offset_default,
                       -- quantum=1,
                       wrap=false,
                     }

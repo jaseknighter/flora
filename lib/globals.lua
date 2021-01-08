@@ -62,6 +62,7 @@ note_frequencies_offset_min = -0.99
 note_frequencies_offset_max = 0.99
 tempo_scalar_offset_min = 0.1
 tempo_scalar_offset_max = 2
+tempo_scalar_offset_default = 1.5
 
 num_cf_scalars_max = 4
 num_cf_scalars_default = 1
