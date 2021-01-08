@@ -55,7 +55,7 @@ Take the following:
 * Ruleset 1: b->a 
 * Ruleset 2: a->ab 
 
-The above axiom and rulesets will result in the following sentences when run 5 times, starting with the axiom 'b' as Generation 0. Ruleset 1 states that each time the character 'b' is encountered, it is replaced with 'a.' Ruleset 2 states that each time the character 'a' is encountered, it replaced with 'ab.'
+The above axiom and rulesets will result in the following sentences when run six times, starting with the axiom `b` as Generation 0. Ruleset 1 states that each time the character `b` is encountered, it is replaced with `a`. Ruleset 2 states that each time the character `a` is encountered, it replaced with `ab`.
 
 * Generation 0: b 
 * Generation 1: a 
@@ -75,13 +75,13 @@ The above axiom and rulesets will result in the following sentences when run 5 t
 | G          | Move the turtle forward and draw a line                 | Resting note (silence)                                          |
 | \[         | Save the current position                               | Save the current note                                           |
 | ]          | Restore the last saved position                         | Restore the last saved note                                     |
-| +          | Rotate the turtle counterclockwise by the current angle | Increase the active note's pitch (see Changes in pitch below)   |
-| -          | Rotate the turtle clockwise by the current angle        | Decrease the active note's pitch (see *Changes in pitch below*) |
+| +          | Rotate the turtle counterclockwise by the current angle | Increase the active note's pitch (see *Changes in pitch* below)   |
+| -          | Rotate the turtle clockwise by the current angle        | Decrease the active note's pitch (see *Changes in pitch* below) |
 | \|         | Rotate the turtle 180 degrees                           | No sound behavior                                               |
 | other      | Other characters are ignored by the turtle              | No sound behavior                                               |
 
 ##### Changes in pitch
-Flora leverages L-systems to algorithmically generate music, taking the angles written into L-system sentences as indicators of an increase or decrease in pitch. The amount of change in pitch is set by the angle measured in radians multiplied by the current pitch. Currently, the changes in pitch are quantized, so if an angle multiplied by the current pitch is not greater than a whole number, the pitch stays the same. 
+Flora leverages L-systems to algorithmically generate music, in particular, by taking the angles written into the L-system sentences as indicators of an increase or decrease in pitch. The amount of change in pitch is set by the angle measured in radians multiplied by the current pitch. The changes in pitch are quantized, so if an angle multiplied by the current pitch is not greater than a whole number, the pitch stays the same. 
 
 If a change in angle results in a pitch that is greater than the number of notes in the active scale, the active note becomes the root (lowest) note of the active scale. Conversely, if a change in angle results in a pitch that is less than the root note of the active scale, the active note becomes the last (highest) note in the active scale.
 
