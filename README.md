@@ -191,7 +191,7 @@ The water interface provides control for the output parameters:
 
 Fine grain controls: All of the water controls in the above list with the characters '(fg)' attached to the control names allow for fine grain control using K1+E3
 
-*Note*: Tempo scalar offset, which provides macro control over all active note frequencies, is not yet available from the Water UI screen. It can be adjusted from PARAMETERS->EDIT. The default value (1.5) can also be changed in `in lib/globals.lua` by updating the variable `tempo_scalar_offset_default`.
+*Note*: Tempo scalar offset, which provides macro control over all active note frequencies, is not yet available from the Water UI screen. It can be adjusted from PARAMETERS->EDIT. The default value (1.5) can also be changed by updating the variable `tempo_scalar_offset_default` in the `lib/globals.lua` file.
 
 ### Generating new L-system axioms and rulesets
 L-system instructions are curently held in `lib/gardens/garden_default.lua` and `lib/gardens/garden_community.lua`.  There are seven required variables/tables for each l-system instruction set:
@@ -245,18 +245,14 @@ source: http://algorithmicbotany.org/papers/abop/abop-ch1.pdf (Figure 1.24(d))
 A community garden is under development to share rulesets written by members of the [lines](https://llllllll.co/) community. 
 
 Steps to locally enable and work in the community garden:  
-- Open the file 'lib/gardens/garden_community.lua' in [Maiden](https://monome.org/docs/norns/maiden/).  
-- Add a ruleset to the file.  
-- Set the `number_of_instructions` variable equal to the number of instructions in the 'garden_community.lua' file.  
+- Open the file `lib/gardens/garden_community.lua` in [Maiden](https://monome.org/docs/norns/maiden/).  
+- Add a new ruleset to the file.  
+- Set the `number_of_instructions` variable equal to the number of instructions in the `lib/gardens/garden_community.lua` file.  
+- Set the `default_to_community_garden` variable to true in the `lib/gardens/gardens_community.lua` file (the makes the community garden rulesets load by default locally).  
 - Reload the Flora program in Maiden.  
-- Enable the community garden rulesets in one of two ways:  
-  1 Before reloading the Flora program, set the `default_to_community_garden` variable to true in the `gardens_community.lua` file (makes the community garden rulesets load by default locally).  
-  2 After reloading the Flora program, goto the `PARAMETERS->EDIT` menu and set the `garden selector` parameter to `community` (this parameter will appear as the last in the list).  
 - Test the ruleset.  
 
-
-
-To share your ruleset(s) with the community, submit a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) or contact me ([@jaseknighter](https://llllllll.co/u/jaseknighter/summary)) on the lines forum.
+To share your ruleset(s) with the community, submit a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) for the `lib/gardens/garden_community.lua` file or contact me ([@jaseknighter](https://llllllll.co/u/jaseknighter/summary)) on the lines forum for assistance.
 
 ## Requirements
 * Norns (required)
