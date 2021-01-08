@@ -275,11 +275,11 @@ To share your ruleset(s) with the community, submit a [pull request](https://doc
 * The code for this project was also deeply inspired by the following members of the lines community: Brian Crabtree (@tehn), Dan Derks (@dan_derks), Mark Wheeler (@markwheeler), Tom Armitage (@infovore), and Tyler Etters (@tyleretters).
 
 ## References
-* Biological Modeling and Visualization research group, University of Calgary. [papers](http://algorithmicbotany.org/papers/).
-* Bourke, Paul. [L-System User Notes](http://paulbourke.net/fractals/lsys/)
+* Biological Modeling and Visualization research group, University of Calgary. [Papers](http://algorithmicbotany.org/papers/).
+* Bourke, Paul. [L-System User Notes](http://paulbourke.net/fractals/lsys/).
 * Fieldsteel, Eli. [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag).
 * Prusinkiewicz, Przemysław, and Aristid Lindenmayer. [The Algorithmic Beauty of Plants](http://algorithmicbotany.org/papers/abop/abop.pdf).
-* Santell, Jordan , [L-Systems](https://jsantell.com/l-systems/)
+* Santell, Jordan , [L-Systems](https://jsantell.com/l-systems/).
 * Shiffman, Daniel. [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/).
 
 ![](images/yet_three_more_plants_inv.png)
