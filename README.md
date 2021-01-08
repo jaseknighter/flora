@@ -86,7 +86,7 @@ Flora leverages L-systems to algorithmically generate music, in particular, by t
 If a change in angle results in a pitch that is greater than the number of notes in the active scale, the active note becomes the root (lowest) note of the active scale. Conversely, if a change in angle results in a pitch that is less than the root note of the active scale, the active note becomes the last (highest) note in the active scale.
 
 ### Bandsaw
-If the *output* parameter is set in norns to include *audio*, notes will be played using *Bandsaw*, a bandpass filtered sawtooth wave. This engine is based on the marimba instrument demonstrated by Eli Fieldsteel in video, [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag). 
+If the *output* parameter is set in norns to include *audio*, notes will be played using the *Bandsaw* engine, built around a bandpass filtered sawtooth wave generator. This engine is based on the marimba instrument demonstrated by Eli Fieldsteel in video, [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag). 
 
 Unlike a 'typical' oscillator, where the frequency of the oscillator is perceived as the note being played, the notes typically heard when the Bandsaw engine is played are determined by the center frequency of its bandpass filter, not the frequency of its sawtooth oscillator.
 
