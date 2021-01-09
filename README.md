@@ -107,7 +107,7 @@ The Bandsaw engine becomes loudly percussive as the values for `rqmin` and `rqma
 
 ## Norns UI
 
-Flora's interface consists of five screens (or "pages"). Navigation between screens occurs using Encoder 1 (E1). While the controls for each screen vary, basic instructions for each screen can always be accessed using the key combination: Key 1 (K1) + Key 2 (K2). The instructions may also be found in the 'flora_instructions.lua' file contained in the /lib directory.
+Flora's interface consists of five screens (or "pages"). Navigation between screens occurs using Encoder 1 (E1). While the controls for each screen vary, basic instructions for each screen can always be accessed using the key combination: Key 1 (K1) + Key 2 (K2). The instructions may also be found in the lib/instructions.lua file.
 
 For many parameters, fine-grained adjustments can be made by pressing K1 along with the encoder (see below for details.) 
 
@@ -191,10 +191,10 @@ The water interface provides control for the output parameters:
 
 Fine grain controls: All of the controls in the above list with the characters '(fg)' attached to the control names allow for fine grain control using K1+E3.
 
-*Note*: Tempo scalar offset is a parameter that provides macro control over all active note frequencies. It is not yet available from the Water UI screen but can be adjusted from PARAMETERS->EDIT. The Tempo Scalar Offset’s default value of 1.5 can also be changed by updating the variable `tempo_scalar_offset_default` in the `lib/globals.lua` file.
+*Note*: Tempo scalar offset is a parameter that provides macro control over all active note frequencies. It is not yet available from the Water UI screen but can be adjusted from PARAMETERS->EDIT. The Tempo Scalar Offset’s default value of 1.5 can also be changed by updating the variable `tempo_scalar_offset_default` in the lib/globals.lua file.
 
 ### Generating new L-system axioms and rulesets
-L-system instructions are found in `lib/gardens/garden_default.lua` and `lib/gardens/garden_community.lua`.  There are eight required variables/tables for each L-system instruction set:
+L-system instructions are found in the files lib/gardens/garden_default.lua and lib/gardens/garden_community.lua.  There are eight required variables/tables for each L-system instruction set:
 
 | Variable                | Description                                                                                 | 
 | ----------------------- | ------------------------------------------------------------------------------------------- |  
@@ -244,14 +244,14 @@ source: http://algorithmicbotany.org/papers/abop/abop-ch1.pdf (Figure 1.24(d))
 A community garden is under development to share rulesets written by members of the [lines](https://llllllll.co/) community. 
 
 Steps to locally enable and work in the community garden:  
-- Open the `lib/gardens/garden_community.lua` file  in [Maiden](https://monome.org/docs/norns/maiden/).  
+- Open the lib/gardens/garden_community.lua file  in [Maiden](https://monome.org/docs/norns/maiden/).  
 - Add a new ruleset to the file.  
-- Set the `number_of_instructions` variable equal to the number of instructions in the `lib/gardens/garden_community.lua` file.  
-- Set the `default_to_community_garden` variable to `true` in the `lib/gardens/gardens_community.lua` file.   
+- Set the `number_of_instructions` variable equal to the number of instructions in the lib/gardens/garden_community.lua file.  
+- Set the `default_to_community_garden` variable to `true` in the lib/gardens/gardens_community.lua file.   
 - Reload the Flora program in Maiden.
 - Test the ruleset.  
 
-To share any ruleset(s) you have written, submit a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) for the `lib/gardens/garden_community.lua` file or contact me ([@jaseknighter](https://llllllll.co/u/jaseknighter/summary)) on the lines forum for assistance.
+To share any ruleset(s) you have written, submit a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) for the lib/gardens/garden_community.lua file or contact me ([@jaseknighter](https://llllllll.co/u/jaseknighter/summary)) on the lines forum for assistance.
 
 ## Requirements
 * Norns (required)
