@@ -98,50 +98,48 @@ The SuperCollider documentation for its [BandPassFilter (BPF)](https://doc.sccod
 
 > **WARNING: due to the nature of its implementation frequency values close to 0 may cause glitches and/or extremely loud audio artifacts!**  
 
-For safety purposes, the minimum note frequency value is set to 0.2 to prevent loud noises. This safety measure is implemented in both the Bandsaw engine and the lua code for norns. 
+For safety purposes, the minimum note frequency value is set to 0.2 to prevent loud noises. This safety measure is implemented in both the Bandsaw engine and the Lua code for norns. 
 
 **Safety Note #2**  
-The Bandsaw engine becomes loudly percussive as the values for rqmin and rqmax increase. Please take care not to hurt your ears, especially when using headphones.
+The Bandsaw engine becomes loudly percussive as the values for `rqmin` and `rqmax` increase. Please take care not to hurt your ears, especially when using headphones.
 
 ![](images/three_more_plants_inv.png)
 
 ## Norns UI
 
-Flora's interface consists of five pages (or screens). Navigation between pages occurs using Encoder 1 (E1). While the controls for each screen vary, basic instructions for each screen can always be accessed using the key combination: Key 1 (K1) + Key 2 (K2). The instructions may also be found in the 'flora_instructions.lua' file contained in the /lib directory.
+Flora's interface consists of five screens (or "pages"). Navigation between screens occurs using Encoder 1 (E1). While the controls for each screen vary, basic instructions for each screen can always be accessed using the key combination: Key 1 (K1) + Key 2 (K2). The instructions may also be found in the 'flora_instructions.lua' file contained in the /lib directory.
 
-For many parameters, fine-grained adjustments can be made by pressing K1 along with the encoder (specifics are detailed below.) 
+For many parameters, fine-grained adjustments can be made by pressing K1 along with the encoder (see below for details.) 
 
 ### Screens
 
-The first three screens (or "pages") of the Flora program (Plant, Modify, and Observe) display two L-system plants, used by the program to sequence notes. The fourth screen (Plow) displays two envelopes. The fifth screen (Water) displays controls for the Bandsaw engine and other outputs (i.e. Midi, [Just Friends](https://www.whimsicalraps.com/products/just-friends?variant=5586981781533), and [
-
-](https://monome.org/docs/crow/)).
+The first three screens of the Flora program (Plant, Modify, and Observe) display two L-system rulesets, used by the program to sequence notes. The fourth screen (Plow) displays two envelopes. The fifth screen (Water) displays controls for the Bandsaw engine and other outputs (i.e. Midi, [Just Friends](https://www.whimsicalraps.com/products/just-friends?variant=5586981781533), and [Crow](https://monome.org/docs/crow/)).
 
 #### Plant 
 ![](images/plant_wide_inv.png)
 ```
 e1: next page  
 k1 + e1: select active plant  
-e3: inc/decr angle  
-k2/k3: prev/next generation  
+e3: increase/decrease angle  
+k2/k3: previous/next generation  
 k1 + k3: reset plants to original forms and restart their sequences
 ```
 
 #### Modify 
 ![](images/modify_wide_inv.png)
 ```
-e1: next/prev page  
+e1: next/previous page  
 k1 + e1: select active plant  
-e2: go to next/prev letter  
+e2: go to next/previous letter  
 e3: change letter  
-k2/k3: -/+ letter  
+k2/k3: delete/add letter  
 k1 + k3: reset plants to original forms and restart their sequences
 ```
 
 #### Observe 
 ![](images/observe_wide_inv.png)
 ```
-e1: next/prev page  
+e1: next/previous page  
 k1 + e1: select active plant  
 e2: move up/down  
 e3: move left/right  
@@ -152,62 +150,61 @@ k1 + k3: reset plants to original forms and restart their sequences
 #### Plow 
 ![](images/plow_wide_inv.png)
 ```
-e1: next/prev page 
+e1: next/previous page 
 k1 + e1: select active plant  
-e2: select control  
-e3: change control value  
-k2/k3: -/+ control point  
+e2: select envelope control  
+e3: change envelope control value  
+k2/k3: delete/add envelope control point  
 ```
 
-The Plow screen provides controls for two envelopes, one for each Plant sequence. An extension of Mark Eats' [envgraph class](https://github.com/monome/norns/blob/main/lua/lib/envgraph.lua), the envelopes controlled on this screen are applied to the Bandsaw engine when the envelopes'  respective Plant sequence triggers a note to play.
+The Plow screen provides controls for two envelopes, one for each L-system ruleset sequence. An extension of Mark Eats' [envgraph class](https://github.com/monome/norns/blob/main/lua/lib/envgraph.lua), the envelopes controlled on this screen are applied to the Bandsaw engine when the envelopes'  respective L-system ruleset sequence triggers a note to play.
 
-Unlike typical envelopes (AR, AD, ADSR, etc.), the Envelope class developed for this program  allows for a variable number of control points or 'nodes.' The program allows for anywhere from 3-20 nodes per envelope.
+Unlike typical envelopes (AR, AD, ADSR, etc.), the envelope class developed for this program allows for a variable number of control points or 'nodes.' The program allows for anywhere from 3-20 nodes per envelope.
 
 There are 5 types of controls for each of the two envelopes: 
 
 env level: the maximum amplitude of the envelope  
 env length: the length of the envelope  
 node time: when the node is processed by the envelope  
-node level: the level of the envelope at the node time  
-node angle: the shape of the ramp from the prior node to the current node  
+node level: the amplitude of the envelope at the node time  
+node angle: the shape of the ramp from the prior node time to the current node time
 
-With a few exceptions, the last of the three types (node time, node level, and node angle) are adjustable for each of envelopes nodes.
+With a few exceptions, the last of the three control types (node time, node level, and node angle) are adjustable for each of envelopes nodes.
 
-Fine grain controls: All of the envelope controls allow for fine grain control using K1+E3
+Fine grain controls: All of the envelope controls allow for fine grain control using K1+E3.
 
 #### Water 
 ![](images/water_wide_inv.png)
 ```
-e1: prev page  
+e1: previous page  
 e2: select control  
 e3: change control value  
 ```
 The water interface provides control for the output parameters:  
-- (all outputs) amp (fg): the overall amplitude of the outputs  
-- (all outputs) p1 note dur: The length of each note for the first plant  
-- (all outputs) p2 note dur: The length of each note for the second plant  
-- (all outputs) note scalar (fg): This value is multiplied by the current angle of the plant, which is then added to the current note. This sets the next note to be played.
-- (Bandsaw only) cf scalars: 1-4 CF (Center Frequency) Scalars are applied to the center frequency of the Bandsaw engine's bandpass filter to set the octave of the notes played by each plant. If more than one CF Scalar is activate, the active scalars are randomly selected each time a note is played.  
-- (Bandsaw only) rq min/rq max (fg): These two parameters set the range of the reciprocal of the bandpass filter's [Quality](https://www.circuitstoday.com/band-pass-filters) values.  
-- (Bandsaw only) note frequencies (fg): this sets the frequency of the Bandsaw's oscillations. Values less than ~20 will sound like individual tones. With larger values, the oscillations begin to blend into one another creating a single tone, a tone not related to the note set by the center frequency of the Bandsaw's bandpass filter.  The third note frequency parameter of each selected note frequency allows for fine grain control. 
+- (all output types) amp (fg): the overall amplitude of the outputs  
+- (all output typess) p1 note dur: The length of each note for the first plant  
+- (all output typess) p2 note dur: The length of each note for the second plant  
+- (all output typess) note scalar (fg): This value is multiplied by the current angle of the plant, which is then added to the current note. This sets the next note to be played.
+- (Bandsaw only) cf scalars: 1-4 center frequency scalars are applied to the center frequency of the Bandsaw engine's bandpass filter to set the octave of the notes played by each plant. If more than one center frequency  is activate, the active scalars are randomly selected by the Bandsaw engine each time a note is played.  
+- (Bandsaw only) rqmin/rqmax (fg): These two parameters set the range of the reciprocal of the bandpass filter's [Quality](https://www.circuitstoday.com/band-pass-filters) values.  
+- (Bandsaw only) note frequencies (fg): this sets the frequency of the Bandsaw's oscillations. Values of less than ~20 will sound like individual tones. With larger values, the oscillations begin to blend into one another creating a single tone that is not related to the note set by the center frequency of the Bandsaw's bandpass filter.  The third note frequency parameter of each selected note frequency allows for fine grain control. 
 
-Fine grain controls: All of the water controls in the above list with the characters '(fg)' attached to the control names allow for fine grain control using K1+E3
+Fine grain controls: All of the controls in the above list with the characters '(fg)' attached to the control names allow for fine grain control using K1+E3.
 
-*Note*: Tempo scalar offset, which provides macro control over all active note frequencies, is not yet available from the Water UI screen. It can be adjusted from PARAMETERS->EDIT. The default value (1.5) can also be changed by updating the variable `tempo_scalar_offset_default` in the `lib/globals.lua` file.
+*Note*: Tempo scalar offset is a parameter that provides macro control over all active note frequencies. It is not yet available from the Water UI screen but can be adjusted from PARAMETERS->EDIT. The Tempo Scalar Offset’s default value of 1.5 can also be changed by updating the variable `tempo_scalar_offset_default` in the `lib/globals.lua` file.
 
 ### Generating new L-system axioms and rulesets
-L-system instructions are curently held in `lib/gardens/garden_default.lua` and `lib/gardens/garden_community.lua`.  There are seven required variables/tables for each l-system instruction set:
+L-system instructions are found in `lib/gardens/garden_default.lua` and `lib/gardens/garden_community.lua`.  There are eight required variables/tables for each L-system instruction set:
 
 | Variable                | Description                                                                                 | 
 | ----------------------- | ------------------------------------------------------------------------------------------- |  
-| start_from              | the starting x, y screen coordinate (format: `vector:new(<x>,<y>)`                          |
-| ruleset                 | table to hold the ruleset(s)                                                                |
+| start_from              | the starting x/y screen coordinate (format: `vector:new(<x>,<y>)`                          |
 | ruleset[<index>]        | the l-system ruleset(s) (format: `rule:new('<character>',"<character(s)")`                  |
 | axiom                   | the starting sentence (format: `"<character(s)>"`                                           |
 | max_generations         | the maximum number of generations                                                           |
 | length                  | the starting length (in pixels) of the segments drawn by the turtle                         |
 | angle                   | the default turtle rotation angle (in degrees)                                              |
-| initial_turtle_rotation | initial turtle rotation angle (in degrees) before executed prior to evaluating the ruleset  |
+| initial_turtle_rotation | initial turtle rotation angle (in degrees) applied to the turtle prior to evaluating the ruleset  |
 | starting_generation     | the initial generation to display                                                           |
 
 Example instruction set :
@@ -247,14 +244,14 @@ source: http://algorithmicbotany.org/papers/abop/abop-ch1.pdf (Figure 1.24(d))
 A community garden is under development to share rulesets written by members of the [lines](https://llllllll.co/) community. 
 
 Steps to locally enable and work in the community garden:  
-- Open the file `lib/gardens/garden_community.lua` in [Maiden](https://monome.org/docs/norns/maiden/).  
+- Open the `lib/gardens/garden_community.lua` file  in [Maiden](https://monome.org/docs/norns/maiden/).  
 - Add a new ruleset to the file.  
 - Set the `number_of_instructions` variable equal to the number of instructions in the `lib/gardens/garden_community.lua` file.  
-- Set the `default_to_community_garden` variable to `true` in the `lib/gardens/gardens_community.lua` file (the makes the community garden rulesets load by default locally).  
-- Reload the Flora program in Maiden.  
+- Set the `default_to_community_garden` variable to `true` in the `lib/gardens/gardens_community.lua` file.   
+- Reload the Flora program in Maiden.
 - Test the ruleset.  
 
-To share your ruleset(s) with the community, submit a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) for the `lib/gardens/garden_community.lua` file or contact me ([@jaseknighter](https://llllllll.co/u/jaseknighter/summary)) on the lines forum for assistance.
+To share any ruleset(s) you have written, submit a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) for the `lib/gardens/garden_community.lua` file or contact me ([@jaseknighter](https://llllllll.co/u/jaseknighter/summary)) on the lines forum for assistance.
 
 ## Requirements
 * Norns (required)
@@ -264,13 +261,14 @@ To share your ruleset(s) with the community, submit a [pull request](https://doc
 * Computer to create/update rulesets using Maiden (optional)
 
 ## Preliminary Roadmap 
-- Enable community gardening
 - Improve the quality and portability of the code
-- Make additional Bandsaw variables available for Crow, Just Friends, and Midi outputs 
+- Improve the documentation
+- Further develop the outputs for Crow, Just Friends, and Midi
 - Add microtonal scales
-- Create parameters for envelope settings
+- Create parameters for envelope settings so they can be saved
 - Add modulation and probability controls
-- Increase and decrease the brightness of the circles that appear when each note plays according to the level of the note's graph/envelope
+- Increase and decrease the brightness of the circles that appear when each note plays according to the level of the note's envelope
+- Add the tempo scalar offset parameter to the Water UI screen
 
 ## Credits
 * Flora's L-system code is based on the code in Chapter 8.6 of Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/).
