@@ -19,11 +19,10 @@
 //////////////////////////////////////
 
 Engine_BandSaw : CroneEngine {
-	classvar maxNumVoices = 10;
-	var voiceGroup;
-	var voiceList;
-	var lastFreq = 0;
-
+  classvar maxNumVoices = 10;
+  var voiceGroup;
+  var voiceList;
+  var lastFreq = 0;
   var amp=1;
   var gain=1;
   var pan = 0;
