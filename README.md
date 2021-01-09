@@ -5,7 +5,7 @@
 An L-systems sequencer and bandpass-filtered sawtooth engine for monome norns
 
 
-Demonstration video: https://vimeo.com/496481575
+Demonstration video: https://vimeo.com/496481575  
 Follow the discussion on lines: <insert link>
 
 ## Documentation
