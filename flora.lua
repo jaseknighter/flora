@@ -1,5 +1,5 @@
 ---flora - beta
--- v0.0.1-beta @jaseknighter
+-- v0.0.2-beta @jaseknighter
 -- lines: llllllll.co/t/<insert reference id>
 --
 -- k1+k2: show/hide instructions
