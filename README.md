@@ -120,6 +120,7 @@ The first three screens of the Flora program (Plant, Modify, and Observe) displa
 ```
 e1: next page  
 k1 + e1: select active plant  
+k1 + e2: replace active plant  
 e3: increase/decrease angle  
 k2/k3: previous/next generation  
 k1 + k3: reset plants to original forms and restart their sequences
