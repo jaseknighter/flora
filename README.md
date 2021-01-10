@@ -281,7 +281,7 @@ To share any ruleset(s) you have written, submit a [pull request](https://docs.g
 * Biological Modeling and Visualization research group, University of Calgary. [Papers](http://algorithmicbotany.org/papers/).
 * Bourke, Paul. [L-System User Notes](http://paulbourke.net/fractals/lsys/).
 * Fieldsteel, Eli. [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag).
-* Manousakis, Stelios. [MUSICAL L-SYSTEMS](http://modularbrains.net/portfolio/musical-l-systems/)
+* Manousakis, Stelios. [MUSICAL L-SYSTEMS](http://modularbrains.net/portfolio/musical-l-systems/).
 * Prusinkiewicz, Przemysław, and Aristid Lindenmayer. [The Algorithmic Beauty of Plants](http://algorithmicbotany.org/papers/abop/abop.pdf).
 * Santell, Jordan. [L-Systems](https://jsantell.com/l-systems/).
 * Shiffman, Daniel. [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/).
