@@ -35,7 +35,13 @@ function flora_sounds:new(parent)
   end
 
   fs.midi_note_off = function(delay, note_num, channel)
-    clock.sync(delay)  
+    local note_off_delay
+    if parent.id == 1 then
+      note_off_delay = midi_out_envelope_override1 or delay
+    elseif parent.id == 2 then
+      note_off_delay = midi_out_envelope_override2 or delay
+    end
+    clock.sync(note_off_delay)  
     midi_out_device:note_off(note_num, nil, channel)
 
   end

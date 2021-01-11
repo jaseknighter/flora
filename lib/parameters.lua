@@ -155,7 +155,7 @@ flora_params.add_params = function(plants)
   
   params:add{
     type = "number", id = "midi_out_channel1", name = "plant 1:midi out channel",
-    min = 1, max = 16, default = 1,
+    min = 1, max = 16, default = midi_out_channel1,
     action = function(value)
       -- all_notes_off()
       midi_out_channel1 = value
@@ -163,11 +163,12 @@ flora_params.add_params = function(plants)
   }
     
   params:add{type = "number", id = "midi_out_channel2", name = "plant 2:midi out channel",
-    min = 1, max = 16, default = 1,
+    min = 1, max = 16, default = midi_out_channel2,
     action = function(value)
       -- all_notes_off()
       midi_out_channel2 = value
-    end}
+    end
+  }
   
   params:add_separator()
 

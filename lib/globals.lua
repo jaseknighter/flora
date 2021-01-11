@@ -34,6 +34,8 @@ end
 
 midi_out_channel1 = 1
 midi_out_channel2 = 2
+midi_out_envelope_override1 = nil
+midi_out_envelope_override2 = nil
 
 -------------------------------------------
 -- global variables
