@@ -22,8 +22,8 @@ function flora_sounds:new(parent)
   all_notes_off = function()
     if (params:get("output") == 2 or params:get("output") == 3) then
       for _, a in pairs(fs.active_notes) do
-        midi_out_device:note_off(a, nil, 1)
-        midi_out_device:note_off(a, nil, 2)
+        midi_out_device:note_off(a, nil, midi_out_channel1)
+        midi_out_device:note_off(a, nil, midi_out_channel2)
       end
     end
     fs.active_notes = {}
