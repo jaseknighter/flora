@@ -268,6 +268,7 @@ To share any ruleset(s) you have written, submit a [pull request](https://docs.g
 - Add microtonal scales
 - Create parameters for envelope settings so they can be saved
 - Add modulation and probability controls
+- Add a randomize function
 - Increase and decrease the brightness of the circles that appear when each note plays according to the level of the note's envelope
 - Add the tempo scalar offset parameter to the Water UI screen
 
