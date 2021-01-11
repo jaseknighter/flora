@@ -158,7 +158,7 @@ flora_params.add_params = function(plants)
     min = 1, max = 16, default = 1,
     action = function(value)
       -- all_notes_off()
-      midi_out_channel = value
+      midi_out_channel1 = value
     end
   }
     
@@ -166,7 +166,7 @@ flora_params.add_params = function(plants)
     min = 1, max = 16, default = 1,
     action = function(value)
       -- all_notes_off()
-      midi_out_channel = value
+      midi_out_channel2 = value
     end}
   
   params:add_separator()
