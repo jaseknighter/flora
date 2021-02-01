@@ -4,61 +4,45 @@
 -- todo: figure out if rqmin & rqmax named correctly
 ------------------------------
 
+local plant_sounds = {}
+plant_sounds.__index = plant_sounds
 
-local midi_out_device = midi.connect(1)
-midi_out_device.event = function() end
-
-
-local flora_sounds = {}
-flora_sounds.__index = flora_sounds
-
-function flora_sounds:new(parent)
-  local fs = {}
-  fs.index = 1
-  setmetatable(fs, sounds)
+function plant_sounds:new(parent)
+  local ps = {}
+  ps.index = 1
+  setmetatable(ps, sounds)
   
-  fs.active_notes = {}
+  ps.active_notes = {}
+
+  local externals1 = plant_sounds_externals:new(ps.active_notes)
+  local externals2 = plant_sounds_externals:new(ps.active_notes)
 
   all_notes_off = function()
     if (params:get("output") == 2 or params:get("output") == 3) then
-      for _, a in pairs(fs.active_notes) do
+      for _, a in pairs(ps.active_notes) do
         midi_out_device:note_off(a, nil, midi_out_channel1)
         midi_out_device:note_off(a, nil, midi_out_channel2)
       end
     end
-    fs.active_notes = {}
+    ps.active_notes = {}
   end
 
-  fs.note_on = function(note_to_play, freq)
+  ps.engine_note_on = function(note_to_play, freq, random_note_frequency)
     envelopes[parent.id].update_envelope()
-    engine.note_on(note_to_play, freq)
+    engine.note_on(note_to_play, freq, random_note_frequency)
   end
-
-  fs.midi_note_off = function(delay, note_num, channel)
-    local note_off_delay
-    if parent.id == 1 then
-      note_off_delay = midi_out_envelope_override1 or delay
-    elseif parent.id == 2 then
-      note_off_delay = midi_out_envelope_override2 or delay
-    end
-    clock.sync(note_off_delay)  
-    midi_out_device:note_off(note_num, nil, channel)
-
-  end
-  
-  fs.play = function(node_obj)
+    
+  ps.play = function(node_obj)
     if (node_obj.s_id == parent.current_sentence_id) then
       if (node_obj.note) then
         clock.sync(node_obj.duration)
         parent.show_note = true
       end
-
       -- clock.sync(node_obj.duration)
       if (node_obj.s_id == parent.current_sentence_id) then
         if (#node_obj.s == node_obj.i) then
           parent.current_sentence_id = parent.current_sentence_id + 1
         end
-
 
         local note_index = node_obj.i
         local turtle_position = parent.turtle.get_position(note_index)
@@ -67,106 +51,106 @@ function flora_sounds:new(parent)
         end
         
         if (node_obj.note and parent.initializing == false) then
-          local note_to_play = node_obj.note > 0 and node_obj.note or #notes
-          local note_to_play = note_to_play <= #notes and note_to_play or 1
-          local note_to_play = notes[note_to_play]
+          
+          -- set a random scalar for the note about to play
+          local num_active_cf_scalars = params:get("num_active_cf_scalars")
+          local random_cf_scalars_index = params:get(cf_scalars[math.random(num_active_cf_scalars)])
+          local cf_scalar = cf_scalars_map[random_cf_scalars_index]
+
+          -- set a random note_frequency for the note about to play
+          local num_note_freq_index = math.random(#tempo_offset_note_frequencies)
+          local random_note_frequency = tempo_offset_note_frequencies[num_note_freq_index]
+          
+          local note_to_play = node_obj.note
+          note_to_play = node_obj.note > 0 and node_obj.note or #notes
+          note_to_play = note_to_play <= #notes and note_to_play or 1
+          note_to_play = notes[note_to_play]
+
           local freq = MusicUtil.note_num_to_freq(note_to_play)
+          freq = freq * cf_scalar
+          note_to_play = MusicUtil.freq_to_note_num(freq)
           local output_param = params:get("output")
           if output_param == 1 or output_param == 3 or output_param == 4 then
-            fs.note_on(note_to_play, freq)
+            ps.engine_note_on(note_to_play, freq, random_note_frequency)
           end
-    
-          -- MIDI out
-          fs.midi_out_channel = parent.id == 1 and midi_out_channel1 or midi_out_channel2
-          if output_param == 2 or output_param == 3 then
-            midi_out_device:note_on(note_to_play, 96, fs.midi_out_channel)
-            table.insert(fs.active_notes, note_to_play)
-
-            -- Note off timeout
-            local note_duration_param = parent.id == 1 and "plant_1_note_duration" or "plant_2_note_duration"
-            local envelope_length = envelopes[parent.id].get_env_time()
-            clock.run(fs.midi_note_off, envelope_length, note_to_play, fs.midi_out_channel)
-          end
-
-          if output_param == 4 then
-            crow.output[1].volts = (note_to_play-60)/12
-            crow.output[2].execute()
-          end
-          if output_param == 4 or output_param == 5 then
-            crow.ii.jf.play_note((note_to_play-60)/12,5)
-          end
-          -- clock.sync(node_obj.duration)
+          local midi_out_channel = parent.id == 1 and midi_out_channel1 or midi_out_channel2
+          if parent.id == 1 then 
+            externals1.note_on(parent.id, note_to_play, freq, random_note_frequency)
+          else
+            externals2.note_on(parent.id, note_to_play, freq, random_note_frequency)
+          end 
         elseif (node_obj.rest and parent.initializing == false) then
           clock.sync(node_obj.duration)
+          -- clock.sleep(node_obj.duration)
         end
 
         if node_obj.restart then
           node_obj.play_fn()
         elseif (node_obj.s_id == parent.current_sentence_id) then
-            node_obj.play_fn(node_obj.i, fs.note, node_obj.s_id)
+            node_obj.play_fn(node_obj.i, ps.note, node_obj.s_id)
         end
       end
     end
   end
 
-  fs.set_note_scalar = function(x)
+  ps.set_note_scalar = function(x)
     note_scalar = x
   end
   
-  fs.set_note_duration = function(duration)
-    fs.note_duration = duration
+  ps.set_note_duration = function(duration)
+    ps.note_duration = duration
   end
 
-  fs.get_note_duration = function()
-    return fs.note_duration
+  ps.get_note_duration = function()
+    return ps.note_duration
   end
 
   
-  fs.set_note = function(last_index, last_note, last_s_id)
+  ps.set_note = function(last_index, last_note, last_s_id)
     local s = parent.lsys.get_sentence()
-    fs.note = last_note and last_note or #notes/2
+    ps.note = last_note and last_note or #notes/2
     local s_id = last_s_id and last_s_id or parent.current_sentence_id
     if (parent.changing_instructions == false and s_id == parent.current_sentence_id) then
       i = last_index and last_index + 1 or 1
       local l = string.sub(s, i, i)
       local node_obj = {}
       node_obj.s_id = parent.current_sentence_id
-      node_obj.duration = fs.get_note_duration()
+      node_obj.duration = ps.get_note_duration()
       if i == #s then
         node_obj.restart = true
         node_obj.s = s
         node_obj.i = i
-        node_obj.play_fn = fs.set_note
+        node_obj.play_fn = ps.set_note
       else
         node_obj.restart = false
         node_obj.s = s
         node_obj.i = i
-        node_obj.play_fn = fs.set_note
+        node_obj.play_fn = ps.set_note
       end  
       if l == "F" then
-        node_obj.note = fs.note
+        node_obj.note = ps.note
       elseif l == "G" then
         node_obj.rest = 1
       elseif l == "[" then
         parent.sound_matrix.push_matrix(note)
       elseif l == "]" then
-        fs.note = parent.sound_matrix.pop_matrix()
-      elseif (l == "+" and fs.note) then
-        local new_note = fs.note + math.ceil(note_scalar * parent.turtle.theta) <= #notes and fs.note + math.ceil(note_scalar * parent.turtle.theta) or 1
-        fs.note = new_note
-      elseif (l == "-" and fs.note) then
-        local new_note = fs.note + math.ceil(note_scalar * -parent.turtle.theta) > 1 and fs.note + math.ceil(note_scalar * -parent.turtle.theta)  or #notes
-        fs.note = new_note
+        ps.note = parent.sound_matrix.pop_matrix()
+      elseif (l == "+" and ps.note) then
+        local new_note = ps.note + math.ceil(note_scalar * parent.turtle.theta) <= #notes and ps.note + math.ceil(note_scalar * parent.turtle.theta) or 1
+        ps.note = new_note
+      elseif (l == "-" and ps.note) then
+        local new_note = ps.note + math.ceil(note_scalar * -parent.turtle.theta) > 1 and ps.note + math.ceil(note_scalar * -parent.turtle.theta)  or #notes
+        ps.note = new_note
       end
-      clock.run(fs.play,node_obj)
+      clock.run(ps.play,node_obj)
     else 
       parent.changing_instructions = false
       parent.current_sentence_id = parent.current_sentence_id + 1
-      fs.set_note()
+      ps.set_note()
     end
   end
   
-  return fs
+  return ps
 end
 
-return flora_sounds
+return plant_sounds

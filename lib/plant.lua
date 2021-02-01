@@ -83,12 +83,21 @@ function plant:new(p_id, starting_instruction)
   p.sentence_cursor_index = 1
   p.selected_letter = nil
 
+  p.get_sentence = function()
+    local sentence = p.lsys.get_sentence()
+    params:set(45,sentence)
+    params:hide("sentence")
+
+    return sentence
+  end
+  
   p.set_current_page = function(idx)
     p.index = idx  
   end
   
   p.set_active = function(active)
     p.active = active == true and true or false
+    set_midi_channels()
   end
   
   p.get_active = function()
@@ -142,26 +151,26 @@ function plant:new(p_id, starting_instruction)
     table.insert(sentence_table, p.sentence_cursor_index, new_letter)
     local new_sentence = sentence_from_table(sentence_table)
     p.lsys.set_sentence(new_sentence)
-    p.sentence = p.lsys.get_sentence()
+    p.sentence = p.get_sentence()
     p.turtle.set_todo(p.sentence)
   end
   
   p.add_letter = function(idx)
-    local sentence_table = table_from_sentence(p.lsys.get_sentence())
+    local sentence_table = table_from_sentence(p.get_sentence())
     table.insert(sentence_table,p.sentence_cursor_index, alphabet[1])
     local new_sentence = sentence_from_table(sentence_table)
     p.lsys.set_sentence(new_sentence)
-    p.sentence = p.lsys.get_sentence()
+    p.sentence = p.get_sentence()
     p.turtle.set_todo(p.sentence)
     p.changing_instructions = true
   end
 
   p.remove_letter = function()
-    local sentence_table = table_from_sentence(p.lsys.get_sentence())
+    local sentence_table = table_from_sentence(p.get_sentence())
     table.remove(sentence_table,p.sentence_cursor_index)
     local new_sentence = sentence_from_table(sentence_table)
     p.lsys.set_sentence(new_sentence)
-    p.sentence = p.lsys.get_sentence()
+    p.sentence = p.get_sentence()
     p.turtle.set_todo(p.sentence)
     p.changing_instructions = true
   end
@@ -230,7 +239,7 @@ function plant:new(p_id, starting_instruction)
       target_generation = target_generation and target_generation or p.instr.starting_generation
 
       p.lsys = l_system:new(axiom,ruleset)
-      p.sentence = p.lsys.get_sentence()
+      p.sentence = p.get_sentence()
       p.turtle = turtle_class:new(
         p.sentence, 
         p.length or 35, 
@@ -256,10 +265,10 @@ function plant:new(p_id, starting_instruction)
       
       if (p.current_generation >= 0 and p.current_generation < p.max_generations) then
         p.turtle.push()
-        local previous_sentence = p.lsys.get_sentence()
+        local previous_sentence = p.get_sentence()
         p.turtle.set_previous_todo(previous_sentence)
         p.lsys.generate(direction)
-        local new_sentence = p.lsys.get_sentence()
+        local new_sentence = p.get_sentence()
         p.turtle.set_todo(new_sentence)
         p.turtle.pop()
         p.current_generation = p.current_generation + direction
@@ -322,7 +331,7 @@ function plant:new(p_id, starting_instruction)
     p.clip_offset = 0
 
     p.get_instructions_to_display = function(clip_length)
-      p.sentence = p.lsys.get_sentence()
+      p.sentence = p.get_sentence()
       local letters_left_of_cursor = string_cut(p.sentence, 1, p.sentence_cursor_index-1)
       p.selected_letter = string_cut(p.sentence, p.sentence_cursor_index, p.sentence_cursor_index)
       local letter_location = {}
@@ -342,7 +351,7 @@ function plant:new(p_id, starting_instruction)
     end
 
     p.redraw_fn = function ()
-      local time1 = os.clock() * 1000
+      -- local time1 = os.clock() * 1000
       if (restart_rendering) then 
         p.turtle.rotate(0, true)
         p.turtle.translate(p.start_from.x + p.offset.x, p.start_from.y + p.offset.y)

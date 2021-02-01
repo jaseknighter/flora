@@ -9,7 +9,7 @@
 ------------------------------
 
 local l_system_instructions = {}
-local number_of_instructions = 10
+local number_of_instructions = 11
 
 function l_system_instructions.get_num_instructions()
   return number_of_instructions
@@ -124,6 +124,21 @@ function l_system_instructions.get_instruction(instruction_id)
     instruction.angle = 20
     instruction.starting_generation = 1
     instruction.initial_turtle_rotation = 90
+  elseif (instruction_id == 11) then
+    -- from: https://thebrickinthesky.wordpress.com/2013/03/17/l-systems-and-penrose-p3-in-inkscape/
+    instruction.start_from = vector:new(screen_size.x/2, screen_size.y/2)
+    instruction.ruleset = {}
+    instruction.ruleset[1] = rule:new('M',"OA++pA----FA[-OA----MA]++")
+    instruction.ruleset[2] = rule:new('F',"+OA--PA[---MA--FA]+")
+    instruction.ruleset[3] = rule:new('O',"-MA++FA[+++OA++PA]-")
+    instruction.ruleset[4] = rule:new('P',"--OA++++MA[+PA++++FA]--FA")
+    instruction.ruleset[5] = rule:new('A',"")
+    instruction.axiom = "[F]++[F]++[F]++[F]++[F]"
+    instruction.max_generations = 10
+    instruction.length = 15
+    instruction.angle = 36
+    instruction.starting_generation = 1
+    instruction.initial_turtle_rotation = 0
   end
   return instruction
 end

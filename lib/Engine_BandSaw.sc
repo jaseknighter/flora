@@ -7,12 +7,9 @@
 //////////////////////////////////////
 // notes and todo list:
 //    notes: 
-//      for the values received by set_cfScalars in flora.lua,
-//        rather than passing the "actual" value in the cf_scalars array,
-//        the position in the array is being sent. 
 //      note frequency is limited to 0.2 to prevent loud noises 
 //        see https://doc.sccode.org/Classes/BPF.html for details
-
+//
 //    todo list: 
 //      figure out why rqmin can be set higher than rqmax and still work
 //      remove unused variables/functions e.g. for gain, pan, etc.
@@ -22,12 +19,11 @@ Engine_BandSaw : CroneEngine {
   classvar maxNumVoices = 10;
   var voiceGroup;
   var voiceList;
-  var lastFreq = 0;
   var amp=1;
   var gain=1;
   var pan = 0;
   var maxsegments = 20;
-  var levels, times, curves;
+  var env_levels, env_times, env_curves;
   var detune=0.2;
   var cfhzmin=0.1;
   var cfhzmax=0.3;
@@ -35,10 +31,7 @@ Engine_BandSaw : CroneEngine {
   var rqmax=0.008;
   var lsf=200;
   var ldb=0;
-  var frequencies;
-  var numFrequencies = 6;
-  var cfScalars;
-  var numCFScalars;
+  var frequency = 1;
   var bandsaw;
   
   *new { arg context, doneCallback;
@@ -51,14 +44,15 @@ Engine_BandSaw : CroneEngine {
     voiceList = List.new();
     
     // default set of sawtoothwave frequencies
-    frequencies = [1/8,1/4,1/2,2/3,1,4/3,2,5/2,3,4];
+    //frequencies = [1/8,1/4,1/2,2/3,1,4/3,2,5/2,3,4];
 
     //bandpass filtered sawtooth wave
     bandsaw = SynthDef(\BandSaw, {
       arg c1=1, c2=(-1),
       freq=1/2, 
       detune=0.2, pan=0, cfhzmin=0.1,cfhzmax=0.3,
-      cfmin=500, cfmax=2000, rqmin=0.005, rqmax=0.008,
+      cf=500, rqmin=0.005, rqmax=0.008,
+//    cfmin=500, cfmax=2000, rqmin=0.005, rqmax=0.008,
       lsf=200, ldb=0, amp=1, out=0;
   		
       var sig, env, envctl;
@@ -66,23 +60,15 @@ Engine_BandSaw : CroneEngine {
       env = Env.newClear(20);
       envctl = \env.kr(env.asArray);
       
-      sig = Saw.ar(freq * {LFNoise1.kr(0.5,detune).midiratio}!2);
+      //sig = Saw.ar(freq * {LFNoise1.kr(0.5,detune).midiratio}!2);
+      sig = Saw.ar(freq);
+      
       sig = BPF.ar(
         sig,
-        cfmin,
+        cf,
         {LFNoise1.kr(0.1).exprange(rqmin,rqmax)}!2
       );
       
-      /*
-      sig = BPF.ar(
-        sig,
-        {LFNoise1.kr(
-          LFNoise1.kr(4).exprange(cfhzmin,cfhzmax)
-        ).exprange(cfmin,cfmax)}!2,
-        {LFNoise1.kr(0.1).exprange(rqmin,rqmax)}!2
-      );
-      */
-  		
       //Low Shelf Filter
       sig = BLowShelf.ar(sig, lsf, 0.5, ldb);
       sig = Balance2.ar(sig[0], sig[1], pan);
@@ -90,7 +76,10 @@ Engine_BandSaw : CroneEngine {
       Out.ar(out, sig);
     }).add;
       
-
+    ////////////////////////
+    // moved code into lua
+    ///////////////////////
+    /*
     this.addCommand("set_numCFScalars", "f", { arg msg;
       numCFScalars = msg[1];
     });
@@ -117,27 +106,34 @@ Engine_BandSaw : CroneEngine {
         frequencies.insert(i,val);
       }); 
     });
-
-    this.addCommand(\note_on, "ff", { arg msg;
+    */
+    
+    this.addCommand("set_frequency", "f", { arg msg;
+      frequency = msg[1];
+    });
+    
+    
+    this.addCommand(\note_on, "fff", { arg msg;
       var voiceToRemove, newVoice;
-      var freqStream = Prand(frequencies,1).asStream.next;
+      //var freqStream = Prand(frequencies,1).asStream.next;
       var id = msg[1];
-      var val = msg[2];
-      var cfval = val;
+      var cfval = msg[2];
+      var frequency = msg[3];
+      //var cfval = val;
       var c1=1, c2=(-1);
-      var cfScalarStream = Prand(cfScalars,1).asStream.next;
+      //var cfScalarStream = Prand(cfScalars,1).asStream.next;
       var env = Array.new(~numSegs-1);
 
-      if (freqStream < 0.2) {
-        freqStream = 0.2;
+      if (frequency < 0.2) {
+        frequency = 0.2;
         ("frequency too low!!!!").postln;
       };
         
       for (0, ~numSegs-1, { arg i;
         var xycSegment = Array.new(3);
-        xycSegment.insert(0, times[i]);
-        xycSegment.insert(1, levels[i]);
-        xycSegment.insert(2, curves[i]);
+        xycSegment.insert(0, env_times[i]);
+        xycSegment.insert(1, env_levels[i]);
+        xycSegment.insert(2, env_curves[i]);
         env.insert(i,xycSegment);
       });
 
@@ -145,9 +141,9 @@ Engine_BandSaw : CroneEngine {
       voiceToRemove = voiceList.detect{arg item; item.id == id};
       if(voiceToRemove.isNil && (voiceList.size >= maxNumVoices), {
         voiceToRemove = voiceList.detect{arg v; v.gate == 0};
-  	if(voiceToRemove.isNil, {
-  	  voiceToRemove = voiceList.last;
-  	});
+      	if(voiceToRemove.isNil, {
+      	  voiceToRemove = voiceList.last;
+      	});
       });
       
       if(voiceToRemove.notNil, {
@@ -160,56 +156,62 @@ Engine_BandSaw : CroneEngine {
 
       // Add new voice 
       context.server.makeBundle(nil, {
-      newVoice = (id: id, theSynth: Synth("BandSaw",
-        [
-          \amp, amp,
-          \env, env,
-          \freq, freqStream,
-          \detune, Pwhite(0,0.1).asStream.next,
-          \cfhzmin, cfhzmin,
-          \cfhzmax, cfhzmax,
-          \rqmin, rqmin, //0.005, //0.0001, 
-          \rqmax, rqmax, //0.008, //1, 
-          \cfmin, cfval * cfScalarStream, 
+        newVoice = (id: id, theSynth: Synth("BandSaw",
+          [
+            \amp, amp,
+            \env, env,
+            //\freq, freqStream,
+            \freq, frequency,
+            \detune, Pwhite(0,0.1).asStream.next,
+            \cfhzmin, cfhzmin,
+            \cfhzmax, cfhzmax,
+            \rqmin, rqmin, //0.005, //0.0001, 
+            \rqmax, rqmax, //0.008, //1, 
+            \cf, cfval,
+//          \cfmin, cfval * cfScalarStream, 
+//
 //          \cfmax, cfval * cfScalarStream,
 //          \cfmax, cfval * cfScalarStream * Pwhite(1.008,1.025).asStream.next,
-          \lsf, lsf,
-          \ldb, ldb
-        ], 
-	target: voiceGroup).onFree({ 
-          voiceList.remove(newVoice); 
-        }));
+            \lsf, lsf,
+            \ldb, ldb
+          ], 
+  	      
+  	      target: voiceGroup).onFree({ 
+            voiceList.remove(newVoice); 
+          })
+        );
         
         voiceList.addFirst(newVoice);
-        lastFreq = freqStream;
       });
     });
+		
+		
 		
     this.addCommand("set_numSegs", "f", { arg msg;
     	~numSegs = msg[1];
     });
     
-    this.addCommand("set_levels", "ffffffffffffffffffff", { arg msg;
-      levels = Array.new(~numSegs);
+    this.addCommand("set_env_levels", "ffffffffffffffffffff", { arg msg;
+      env_levels = Array.new(~numSegs);
       for (0, ~numSegs-1, { arg i;
         var val = msg[i+1];
-        levels.insert(i,val);
+        env_levels.insert(i,val);
       }); 
     });
     
-    this.addCommand("set_times", "ffffffffffffffffffff", { arg msg;
-      times = Array.new(~numSegs);
+    this.addCommand("set_env_times", "ffffffffffffffffffff", { arg msg;
+      env_times = Array.new(~numSegs);
       for (0, ~numSegs-1, { arg i; 
         var val = msg[i+1];
-        times.insert(i,val);
+        env_times.insert(i,val);
       }); 
     });
     
-    this.addCommand("set_curves", "ffffffffffffffffffff", { arg msg;
-      curves = Array.new(~numSegs);
+    this.addCommand("set_env_curves", "ffffffffffffffffffff", { arg msg;
+      env_curves = Array.new(~numSegs);
       for (0, ~numSegs-1, { arg i;
         var val = msg[i+1];
-        curves.insert(i,val);
+        env_curves.insert(i,val);
       }); 
     });
 
@@ -252,11 +254,6 @@ Engine_BandSaw : CroneEngine {
 
   free {
     voiceGroup.free;
-	  
-    //("free").postln;
-    //lfos.free;
-    //synthVoice.free;
-    //reverb.free;
-    //replyFunc.free;
+	  //replyFunc.free;
   }
 }

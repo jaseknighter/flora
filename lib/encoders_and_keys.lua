@@ -1,15 +1,15 @@
 -- encoders and keys
 
-local set_dirty = function()
-  clock.sleep(0.1)
-  if (pages.index == 4) then
-    screen.clear()
-  end
+-- local set_dirty = function()
+--   clock.sleep(0.1)
+--   if (pages.index == 4) then
+--     screen.clear()
+--   end
 
-  screen_dirty = true
-  clock.sleep(0.5)
-  screen_dirty = true
-end
+--   screen_dirty = true
+--   clock.sleep(0.5)
+--   screen_dirty = true
+-- end
 
 local enc = function (n, delta)
   -- set variables needed by each page/example
@@ -27,6 +27,8 @@ local enc = function (n, delta)
             plants[i].set_current_page(next_page)
           end
           page_scroll(page_increment)
+          set_midi_channels()
+
           -- if (pages.index == 5) then
             -- screen.clear()
             -- water.display()
@@ -38,14 +40,7 @@ local enc = function (n, delta)
       end
       if (alt_key_active == true) then
         if delta == 1 or delta == -1 then
-          active_plant = active_plant == 1 and 2 or 1
-          local inactive_plant = active_plant == 1 and 2 or 1
-          plant1_screen_level = active_plant == 1 and 3 or 1
-          plant2_screen_level = active_plant == 2 and 3 or 1
-          plants[active_plant].set_active(true)
-          plants[inactive_plant].set_active(false)
-          envelopes[active_plant].set_active(true)
-          envelopes[inactive_plant].set_active(false)
+          switch_active_plant()
         end
       end
     elseif n == 2 then 
@@ -102,7 +97,7 @@ local key = function (n,z)
       elseif pages.index == 4 then
         clock.run(set_dirty)
         envelopes[active_plant].key(n, delta)
-        clock.run(update_engine, envelopes[active_plant].graph_nodes)
+        clock.run(envelopes[active_plant].update_engine, envelopes[active_plant].graph_nodes)
       elseif pages.index == 5 then
         water.key(n, delta, alt_key_active)
       end
@@ -116,7 +111,7 @@ local key = function (n,z)
       elseif pages.index == 4 then
         clock.run(set_dirty)
         envelopes[active_plant].key(n, delta, alt_key_active)
-        clock.run(update_engine, envelopes[active_plant].graph_nodes)
+        clock.run(envelopes[active_plant].update_engine, envelopes[active_plant].graph_nodes)
       elseif pages.index == 5 then
         water.key(n, delta, alt_key_active)
       end

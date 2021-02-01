@@ -1,5 +1,5 @@
 ---flora - beta
--- v0.0.3-beta @jaseknighter
+-- v0.1.0-beta @jaseknighter
 -- lines: llllllll.co/t/flora-beta/40261
 --
 -- k1+k2: show/hide instructions
@@ -18,8 +18,8 @@
 --
 -- todo list: 
 --  improve the quality and portability of the code
---  create parameters for envelope settings
---  make additional Bandsaw variables available to crow, jf, and midi output (e.g., note frequency)
+--  (done) create parameters for envelope settings
+--  (done) make additional Bandsaw variables available to crow, jf, and midi output (e.g., note frequency)
 --  add modulation and probability controls
 --  increase and decrease the brightness of the circles that appear when each note plays
 --    according to the level of the note's graph/envelope
@@ -64,6 +64,13 @@ function init()
 
   pages = UI.Pages.new(0, 5)
   
+  -- look for a 16n device
+  for i=16, 1, -1
+  do
+    if midi.devices[i] then
+      if midi.devices[i].name == "16n" then device_16n = midi.devices[i] end
+    end
+  end
   
   if default_to_community_garden then
     l_system_instructions = l_system_instructions_community
@@ -96,6 +103,20 @@ function init()
   water.init()
   set_redraw_timer(SCREEN_FRAMERATE)
   page_scroll(1)
+  -- polls.init()
+  for i=1,#midi.vports,1 
+  do
+    if midi.vports[i].device and midi.vports[i].device.name == "16n" then
+      print("found 16n")
+      device_16n = midi.vports[i].device
+    end
+  end
+  
+  clock.run(init_done)
+end
+
+function init_done()
+  clock.sleep(0.5)
   initializing = false
 end
 
