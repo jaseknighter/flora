@@ -264,7 +264,7 @@ To share any ruleset(s) you have written, submit a [pull request](https://docs.g
 ## Preliminary Roadmap 
 - Improve the quality and portability of the code
 - Improve the documentation
-- Further develop the outputs for Crow, Just Friends, and Midi
+- (added to v0.1.0-beta) Further develop the outputs for Crow, Just Friends, and Midi
 - Add microtonal scales
 - Create parameters for envelope settings so they can be saved
 - Add modulation and probability controls
