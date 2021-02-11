@@ -43,6 +43,8 @@ instructions.display = function ()
     screen.text("e3: change control value")
     screen.move(5, 52)
     screen.text("k2/k3: -/+ control point")
+    screen.move(5, 60)
+    screen.text("k1 + k3: show mod controls")
   elseif (pages.index == 5) then
     screen.text("e2: select control")
     screen.move(5, 36)

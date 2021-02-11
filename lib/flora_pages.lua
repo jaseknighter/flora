@@ -89,7 +89,7 @@ local draw_plants = function()
 end
 
 local draw_notes_on_plants = function()
-  local max_env_level = envelopes[1].get_env_max_level()
+  local max_env_level = envelopes[1].get_env_level()
   local env_level1 = envelopes[1].get_env_level()
   local note_brightness1 = util.linlin (0, max_env_level, 10, 15, env_level1)
   note_brightness1 = math.floor(note_brightness1)
@@ -187,28 +187,35 @@ local draw_top_nav = function()
     end
   elseif pages.index == 4 then
     local graph_active_node = envelopes[active_plant].active_node
-    local graph_node_text = ''
+    local env_nav_text = ''
+    
     if graph_active_node == -1 then 
       local env_level_text = envelopes[active_plant].get_env_level() 
       local mult = 10^2
       env_level_text = math.floor(env_level_text * mult + 0.5) / mult
-      graph_node_text = 'env level ' .. env_level_text
+      env_nav_text = 'env level ' .. env_level_text
     elseif graph_active_node == 0 then 
-      graph_node_text = 'env length ' .. envelopes[active_plant].get_env_time() .. 's'
+      env_nav_text = 'env length ' .. envelopes[active_plant].get_env_time() .. 's'
     else
-      graph_node_text =  'node ' .. graph_active_node .. ': '
+      env_nav_text =  'node ' .. graph_active_node .. ': '
       if envelopes[active_plant].active_node_param == 1 then
-        graph_node_text = graph_node_text.. ' time ' .. envelopes[active_plant].graph_nodes[graph_active_node].time .. 's'
+        env_nav_text = env_nav_text.. ' time ' .. envelopes[active_plant].graph_nodes[graph_active_node].time .. 's'
       elseif envelopes[active_plant].active_node_param == 2 then
         local level = envelopes[active_plant].graph_nodes[graph_active_node].level 
-        graph_node_text = graph_node_text.. ' level ' .. level
+        env_nav_text = env_nav_text.. ' level ' .. level
       elseif envelopes[active_plant].active_node_param == 3 then
         local curve = envelopes[active_plant].graph_nodes[graph_active_node].curve .. '°'
-        graph_node_text = graph_node_text.. ' curve ' .. curve
+        env_nav_text = env_nav_text.. ' curve ' .. curve
       end
     end 
-    graph_node_text = show_instructions == true and "instructions" or graph_node_text
-    screen.text("plow " .. graph_node_text)
+    
+    if show_instructions == true then
+      env_nav_text = "instructions" 
+    elseif show_env_mod_params then
+      env_nav_text = envelopes[active_plant].get_control_label()
+    end
+
+    screen.text("plow " .. env_nav_text)
   elseif pages.index == 5 then
     if show_instructions == true then
       screen.text("water instructions")

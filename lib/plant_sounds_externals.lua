@@ -23,7 +23,7 @@ function plant_sounds_externals:new(active_notes)
     local envelope_length = envelopes[plant_id].get_env_time()
 
     -- MIDI out
-    if output_param == 2 or output_param == 3 then
+    if output_param == 2 or output_param == 3 or output_param == 4 then
       midi_out_device:note_on(note_to_play, 96, midi_out_channel)
       table.insert(active_notes, note_to_play)
     

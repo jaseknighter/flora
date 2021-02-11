@@ -9,7 +9,7 @@
 ------------------------------
 
 local l_system_instructions = {}
-local number_of_instructions = 11
+local number_of_instructions = 10
 
 function l_system_instructions.get_num_instructions()
   return number_of_instructions

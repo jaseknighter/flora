@@ -115,9 +115,9 @@ flora_params.specs = specs
 
 flora_params.add_params = function(plants)
   
-  params:add{
-    type = "text", id = "sentence", name = "sentence"
-  }
+  -- params:add{
+  --   type = "text", id = "sentence", name = "sentence"
+  -- }
   
   params:add{type = "number", id = "page_turner", name = "page turner",
   min = 1, max = 5, default = 1, 
@@ -136,8 +136,8 @@ flora_params.add_params = function(plants)
     end
   end}
 
-  params:hide("page_turner")
-  params:hide("active_plant_switcher")
+  -- params:hide("page_turner")
+  -- params:hide("active_plant_switcher")
 
 --------------------------------
 -- 
@@ -167,10 +167,13 @@ flora_params.add_params = function(plants)
     default = OUTPUT_DEFAULT,
     action = function(value)
       -- all_notes_off()
-      if value == 4 then crow.output[2].action = "{to(5,0),to(0,0.25)}"
-      elseif value == 5 then
+      if value == 4 or value == 5 then 
+        crow.output[2].action = "{to(5,0),to(0,0.25)}"
         crow.ii.pullup(true)
         crow.ii.jf.mode(1)
+      -- elseif value == 5 then
+      --   crow.ii.pullup(true)
+      --   crow.ii.jf.mode(1)
       end
     end}
     
@@ -203,10 +206,54 @@ flora_params.add_params = function(plants)
   
   
   --------------------------------
+  -- plant parameters
+  --------------------------------
+  params:add_separator("plant")
+
+  params:add{
+    type = "number", id = "plant1_instructions", name = "plant 1: instructions", min=1, max=l_system_instructions.get_num_instructions(),
+    action = function(value)
+      if initializing == false then
+        -- l_system_instructions.get_num_instructions()
+        plants[1].set_instructions(value - plants[1].current_instruction)
+      end
+    end
+  }
+  
+  params:add{
+    type = "number", id = "plant2_instructions", name = "plant 2: instructions", min=1, max=l_system_instructions.get_num_instructions(),
+    action = function(value)
+      if initializing == false then
+        -- l_system_instructions.get_num_instructions()
+        plants[2].set_instructions(value - plants[2].current_instruction)
+      end
+    end
+  }
+  params:add{
+    type = "number", id = "plant1_angle", min=-90, max=90, default=plants[1].get_angle(), name = "plant 1: angle",
+    action = function(value)
+      if initializing == false then
+        plants[1].set_angle(value-plants[1].get_angle())
+      end
+    end
+  }
+
+  params:add{
+    type = "number", id = "plant2_angle", min=-90, max=90, default=plants[2].get_angle(), name = "plant 2: angle",
+    action = function(value)
+      if initializing == false then
+        plants[2].set_angle(value-plants[2].get_angle())
+      end
+    end
+  }
+
+
+  --------------------------------
   -- plow (envelope) parameters
   --------------------------------
+  params:add_separator("plow")
   
-    params:add{
+  params:add{
     type = "number", id = "plow1_cc_channel", name = "plow 1:midi cc channel",
     min = 1, max = 16, default = plow1_cc_channel,
     action = function(value)
@@ -215,7 +262,7 @@ flora_params.add_params = function(plants)
     end
   }
 
-    params:add{
+  params:add{
     type = "number", id = "plow2_cc_channel", name = "plow 2:midi cc channel",
     min = 1, max = 16, default = plow2_cc_channel,
     action = function(value)
@@ -224,10 +271,6 @@ flora_params.add_params = function(plants)
     end
   }
   
-  specs.MAX_PLOW_LEVEL = cs.new(0,MAX_AMPLITUDE,'lin',0,4,'')
-  specs.MAX_PLOW_TIME = cs.new(0,MAX_ENV_LENGTH,'lin',0,2,'')
-  
-  params:add_separator("plow")
   
   get_node_time = function(env_id, node_id)
     local node_time = envelopes[env_id].get_envelope_arrays().times[node_id]
@@ -242,102 +285,108 @@ flora_params.add_params = function(plants)
     return envelopes[env_id].get_envelope_arrays().curves[node_id]
   end
 
-  params:add_number("num_plow1_controls", "num_plow1_controls", 3, MAX_ENVELOPE_NODES, 5)
-  params:hide("num_plow1_controls")
-
-  params:add_number("num_plow2_controls", "num_plow2_controls", 3, MAX_ENVELOPE_NODES, 5)
-  params:hide("num_plow2_controls")
-
-  
-  local reset_plow_controls = function(plow_id)
-    print("reset")
-    clock.sleep(0.5)
-    -- set the values of the individual envelope nodes 
-    local env = plow_id == 1 and envelopes[1].graph_nodes or envelopes[2].graph_nodes
-    local num_plow1_controls = #env
-    local num_plow2_controls = #env
-    local num_plow_controls = plow_id == 1 and num_plow1_controls or num_plow2_controls
-    local plow_times = plow_id == 1 and plow1_times or plow2_times
-    for i=MAX_ENVELOPE_NODES, 1, -1
+  -- reset_plow_control_params = function(plow_id, x)
+  reset_plow_control_params = function(plow_id, delay)
+    -- print("reset", plow_id)
+    -- if delay == true then clock.sleep(0.1) end
+    local env_nodes = envelopes[plow_id].graph_nodes
+    -- local plow_times = plow_id == 1 and plow1_times or plow2_times
+    for i=1,MAX_ENVELOPE_NODES,1
     do
-
       local param_id_name, param_name, get_control_value_fn, min_val, max_val
 
       -- update time
       param_id_name = "plow".. plow_id.."_time" .. i
       param_name = "plow".. plow_id.."-control" .. i .. "-time"
       get_control_value_fn = get_node_time
-      local control_value = get_control_value_fn(1,i) or 1
+      local control_value = get_control_value_fn(plow_id,i) or 1
       local param = params:lookup_param(param_id_name)
-      local prev_val = (env[i-1] and env[i-1].time) or 0
-      local next_val = env[i+1] and env[i+1].time or envelopes[plow_id].env_time_max
+      local prev_val = (env_nodes[i-1] and env_nodes[i-1].time) or 0
+      local next_val = env_nodes[i+1] and env_nodes[i+1].time or envelopes[plow_id].env_time_max
       local controlspec = cs.new(prev_val,next_val,'lin',0,control_value,'')
-      if env[i] then
+      if env_nodes[i] then
         param.controlspec = controlspec
+        if env_nodes[i].time ~= params:get(param.id)  then 
+          params:set(param.id, control_value) 
+        end
       end
 
-      -- update level
+      -- update level 
       param_id_name = "plow".. plow_id.."_level" .. i
       param_name = "plow".. plow_id.."-control" .. i .. "-level"
       get_control_value_fn = get_node_level
-      local control_value = get_control_value_fn(1,i) or 1
+      local control_value = get_control_value_fn(plow_id,i) or 1
       local param = params:lookup_param(param_id_name)
       local max_val = envelopes[plow_id].env_level_max
       local controlspec = cs.new(0,max_val,'lin',0,control_value,'')
-      if env[i] then
+      if env_nodes[i] then
         param.controlspec = controlspec
+        if (i == 1 or i == #envelopes[plow_id].graph_nodes) and param:get() ~= 0 then
+          -- print(i,#envelopes[plow_id].graph_nodes)
+          params:set(param.id, 0) 
+        elseif env_nodes[i].level ~= params:get(param.id)  then
+          params:set(param.id, control_value) 
+        end
+      end
+      
+      -- update curve 
+      param_id_name = "plow".. plow_id.."_curve" .. i
+      param_name = "plow".. plow_id.."-control" .. i .. "-curve"
+      get_control_value_fn = get_node_curve
+      local control_value = get_control_value_fn(plow_id,i) or 1
+      local param = params:lookup_param(param_id_name)
+      if env_nodes[i] then
+        if env_nodes[i].curve ~= params:get(param.id)  then
+          params:set(param.id, control_value) 
+        end
       end
     end
+
+    local time_param = params:lookup_param("time_modulation"..plow_id)
+    time_param.max = params:get("plow"..plow_id.."_max_time") * 0.1
+    local level_param = params:lookup_param("level_modulation"..plow_id)
+    level_param.max = params:get("plow"..plow_id.."_max_level") * 0.1
+
+    update_plow_controls(plow_id, x)
   end  
 
-  local update_plow_controls = function (x, plow_id)
+  update_plow_controls = function (plow_id, x)
     local num_plow_controls = plow_id == 1 and envelopes[1].get_envelope_arrays().segments or envelopes[2].get_envelope_arrays().segments
-    if plow_id == 1 then
-      for i=1,MAX_ENVELOPE_NODES,1
-      do
-        if i <= num_plow_controls then
-          params:show(plow1_times[i])
-          if i > 1 then
-            if i~=num_plow_controls then 
-              params:show(plow1_levels[i]) 
-            else 
-              params:hide(plow2_levels[i]) 
-            end
-            params:show(plow1_curves[i])
-          end 
-        else
-          params:hide(plow1_times[i])
-          params:hide(plow1_levels[i])
-          params:hide(plow1_curves[i])
-        end
-      end
-    else
-      for i=1,MAX_ENVELOPE_NODES,-1
-      do
-        if i <= num_plow_controls then
-          params:show(plow2_times[i])
-          if i > 1 then
-            if i~=num_plow_controls then 
-              params:show(plow2_levels[i]) 
-            else 
-            end
-            params:show(plow2_curves[i])
-          end 
-        else
-          params:hide(plow2_times[i])
-          params:hide(plow2_levels[i])
-          params:hide(plow2_curves[i])
-        end
+    local plow_times = plow_id == 1 and plow1_times or plow2_times
+    local plow_levels = plow_id == 1 and plow1_levels or plow2_levels
+    local plow_curves = plow_id == 1 and plow1_curves or plow2_curves
+    for i=1,MAX_ENVELOPE_NODES,1
+    do
+      if i <= num_plow_controls then
+        params:show(plow1_times[i])
+        if i > 1 then
+          if i~=num_plow_controls then 
+            params:show(plow_levels[i]) 
+          else 
+            params:hide(plow_levels[i]) 
+          end
+          params:show(plow_curves[i])
+        end 
+      else
+        params:hide(plow_times[i])
+        params:hide(plow_levels[i])
+        params:hide(plow_curves[i])
       end
     end
-    -- clock.run(set_dirty)
   end
+
+  params:add_number("num_plow1_controls", "num_plow1_controls", 3, MAX_ENVELOPE_NODES, 5)
+  -- params:hide("num_plow1_controls")
+
+  params:add_number("num_plow2_controls", "num_plow2_controls", 3, MAX_ENVELOPE_NODES, 5)
+  -- params:hide("num_plow2_controls")
+  
   
   params:set_action("num_plow1_controls", 
     function(x)
       if initializing == false then
-        update_plow_controls(x,1)
-        clock.run(reset_plow_controls,1)
+        -- print("num_plow1_controls",x)
+        add_remove_nodes(1, x)
       end
     end
   )
@@ -345,40 +394,48 @@ flora_params.add_params = function(plants)
   params:set_action("num_plow2_controls", 
     function(x)
       if initializing == false then
-        update_plow_controls(x,2)
-        clock.run(reset_plow_controls,2)
+        add_remove_nodes(2, x)
       end
     end
   )
-  
+
+  add_remove_nodes = function(plow_id, num_nodes)
+    if num_nodes < envelopes[plow_id].get_num_nodes() then
+      local num_controls_to_remove = #envelopes[plow_id].graph_nodes - num_nodes
+      for i=1,num_controls_to_remove,1
+      do
+        if envelopes[plow_id].active_node < 2 or envelopes[plow_id].active_node >= #envelopes[plow_id].graph_nodes then 
+          envelopes[plow_id].set_active_node(2)
+        end
+        envelopes[plow_id].remove_node()
+        reset_plow_control_params(plow_id)
+      end
+    else
+      local num_controls_to_add = num_nodes - #envelopes[plow_id].graph_nodes
+      for i=1,num_controls_to_add,1
+      do
+        if envelopes[plow_id].active_node < 1 or envelopes[plow_id].active_node >= #envelopes[plow_id].graph_nodes then 
+          envelopes[plow_id].set_active_node(1)
+        end
+        envelopes[plow_id].add_node()
+        reset_plow_control_params(plow_id)
+      end
+    end
+    
+    local num_plow_controls = plow_id == 1 and "num_plow1_controls" or "num_plow2_controls"
+    local num_env_nodes = #envelopes[plow_id].graph_nodes
+    -- print("params set",num_plow_controls,num_env_nodes)
+    params:set(num_plow_controls,num_env_nodes)
+
+    -- reset_plow_control_params(plow_id)
+    -- clock.run(reset_plow_control_params,plow_id, true)
+  end
+
+  specs.PLOW_LEVEL = cs.new(0.0,MAX_AMPLITUDE,'lin',0,4,'')
+  specs.PLOW_TIME = cs.new(0.0,MAX_ENV_LENGTH,'lin',0,2,'')
+
   local init_plow_controls = function(plow_id)
     
-    -- set the envelope's overall max time
-    params:add{
-      type="control",
-      id = plow_id == 1 and "plow1_max_time" or "plow2_max_time",
-      controlspec=specs.MAX_PLOW_TIME,
-      action=function(x) 
-        if initializing == false then
-          envelopes[plow_id].set_env_time(x) 
-          clock.run(reset_plow_controls,plow_id)
-        end
-      end
-    }
-
-    -- set the envelope's overall max level
-    params:add{
-      type="control",
-      id = plow_id == 1 and "plow1_max_level" or "plow2_max_level",
-      controlspec=specs.MAX_PLOW_LEVEL,
-      action=function(x) 
-        if initializing == false then
-          envelopes[plow_id].set_env_max_level(x) 
-          clock.run(reset_plow_controls,plow_id)
-        end
-      end
-    }
-  
     -- set the values of the individual envelope nodes 
     local env = plow_id == 1 and envelopes[1].graph_nodes or envelopes[2].graph_nodes
     local num_plow1_controls = envelopes[1].get_envelope_arrays().segments
@@ -388,6 +445,38 @@ flora_params.add_params = function(plants)
     local plow_levels = plow_id == 1 and plow1_levels or plow2_levels
     local plow_curves = plow_id == 1 and plow1_curves or plow2_curves
     
+    
+    -- set the envelope's overall max level
+    params:add{
+      type="control",
+      id = plow_id == 1 and "plow1_max_level" or "plow2_max_level",
+      name = plow_id == 1 and "plow 1 max level" or "plow 2 max level",
+      controlspec=specs.PLOW_LEVEL,
+      action=function(x) 
+        -- if initializing == false and x ~= envelopes[plow_id].get_env_level() then 
+        if initializing == false then 
+          envelopes[plow_id].set_env_level(x) 
+          -- if initializing == false then clock.run(reset_plow_control_params,plow_id,true) end
+          -- if initializing == false then reset_plow_control_params(plow_id) end
+        end
+      end
+    }
+  
+    -- set the envelope's overall max time
+    params:add{
+      type="control",
+      id = plow_id == 1 and "plow1_max_time" or "plow2_max_time",
+      name = plow_id == 1 and "plow 1 max time" or "plow 2 max time",
+      controlspec=specs.PLOW_TIME,
+      action=function(x) 
+        if initializing == false then 
+          envelopes[plow_id].set_env_time(x) 
+          -- if initializing == false then clock.run(reset_plow_control_params,plow_id,true) end
+          -- if initializing == false then reset_plow_control_params(plow_id) end
+        end
+      end
+    }  
+    -- for i=MAX_ENVELOPE_NODES, 1, -1
     for i=1, MAX_ENVELOPE_NODES, 1
     do
       for j=1, 3, 1
@@ -396,27 +485,26 @@ flora_params.add_params = function(plants)
         if j == 1 then
           plow_control_type = "time"
           param_id_name = "plow".. plow_id.."_time" .. i
-          param_name = "plow".. plow_id.."-control" .. i .. "-time"
+          param_name = "plow ".. plow_id.." control " .. i .. " time"
           get_control_value_fn = get_node_time
           min_val = 0
           max_val = MAX_ENV_LENGTH
         elseif j == 2 then
           plow_control_type = "level"
           param_id_name = "plow".. plow_id.."_level" .. i
-          param_name = "plow".. plow_id.."-control" .. i .. "-level"
+          param_name = "plow ".. plow_id.." control " .. i .. " level"
           get_control_value_fn = get_node_level
-          min_val = 0
+          min_val = 0.0
           max_val = MAX_AMPLITUDE
         else 
           plow_control_type = "curve"
           param_id_name = "plow".. plow_id.."_curve" .. i
-          param_name = "plow".. plow_id.."-control" .. i .. "-curve"
+          param_name = "plow ".. plow_id.." control " .. i .. " curve"
           get_control_value_fn = get_node_curve
           min_val = CURVE_MIN
           max_val = CURVE_MAX
         end        
         
-        local control_value = get_control_value_fn(1,i) or 1
         
         params:add{
           type = "control", 
@@ -424,37 +512,39 @@ flora_params.add_params = function(plants)
           name = param_name,
           controlspec = cs.new(min_val,max_val,'lin',0,control_value,''),
           action=function(x) 
+            local control_value = get_control_value_fn(plow_id,i) or 1
             local param = params:lookup_param(param_id_name)
             local new_val = x
-            
-            if plow_control_type == "time" then
-              local prev_param_id_name = "plow".. plow_id.."_time" .. i-1
-              local prev_val = (env[i-1] and params:get(prev_param_id_name)) or 0
-              local next_param_id_name = "plow".. plow_id.."_time" .. i+1
-              local next_val = env[i+1] and params:get(next_param_id_name) or ENV_TIME_MAX
-              if env[i] then
-                env[i][plow_control_type] = new_val
+            local env_nodes = envelopes[plow_id].graph_nodes
+            if plow_control_type == "time" and initializing == false then
+              local prev_val = (env_nodes[i-1] and env_nodes[i-1][plow_control_type]) or 0
+              local next_val = (env_nodes[i+1] and env_nodes[i+1][plow_control_type]) or envelopes[plow_id].get_env_time()
+              new_val = util.clamp(new_val, prev_val, next_val)
+              if env_nodes[i] and x ~= control_value then
+                env_nodes[i][plow_control_type] = new_val
                 param.controlspec.minval = prev_val
                 param.controlspec.maxval = next_val
               end
-              new_val = util.clamp(new_val, prev_val, next_val)
-              -- new_val = util.clamp(new_val, min_val, max_val)
-              param:set(new_val)
-              
-            else
-              new_val = util.clamp(new_val, min_val, max_val)
-              if env[i] then
-                env[i][plow_control_type] = new_val
+            elseif initializing == false then
+              if plow_control_type == "level" and env_nodes[i] then
+                if (i ~= 1 and i ~= #envelopes[plow_id].graph_nodes) then
+                  env_nodes[i][plow_control_type] = new_val
+                end
+              elseif env_nodes[i] then
+                env_nodes[i][plow_control_type] = new_val
               end
-              param:set(new_val)
             end
-            envelopes[plow_id].graph:edit_graph(env)
-            clock.run(envelopes[plow_id].update_engine, env)
-            -- envelopes[plow_id].update_engine(env)
+            envelopes[plow_id].graph:edit_graph(env_nodes)
+            local num_plow_controls = plow_id == 1 and "num_plow1_controls" or "num_plow2_controls"
+            local num_env_nodes = #envelopes[plow_id].graph_nodes
+            params:set(num_plow_controls,num_env_nodes)
           end
+
         }
       end
     end
+    
+    
     for i=num_plow_controls+1,MAX_ENVELOPE_NODES,1
     do
       params:hide(plow_times[i])
@@ -464,15 +554,64 @@ flora_params.add_params = function(plants)
     params:hide(plow_levels[1])
     params:hide(plow_curves[1])
     params:hide(plow_levels[num_plow_controls])
-      
   end
 
-  params:add_group("plow 1 controls",MAX_ENVELOPE_NODES*3 - 1)
+  params:add_group("plow 1 controls",MAX_ENVELOPE_NODES*3 + 2)
   init_plow_controls(1)
   
-  params:add_group("plow 2 controls",MAX_ENVELOPE_NODES*3 - 1)
+  params:add_group("plow 2 controls",MAX_ENVELOPE_NODES*3 + 2)
   init_plow_controls(2)
 
+    --[[
+      randomize_env_probability: 0-100
+      time_probability (0-100) 
+      level_probability (0-100) 
+      curve_probability (0-100)
+      time_modulation: 0-1
+      level_modulation: 0-1
+      curve_modulation: 0-1
+    ]]
+
+  params:add{type = "option", id = "show_env_mod_params", name = "show env mod params",
+  options = {"off","on"}, default = 1,
+  action = function(x)
+    if x == 1 then show_env_mod_params = false else show_env_mod_params = true end
+  end}
+
+  params:add_group("plow 1 modulation",8)
+
+  params:add_taper("randomize_env_probability1", "1: env mod probability", 0, 100, 100, 0, "%")
+  params:add_taper("time_probability1", "1: time mod probability", 0, 100, 0, 0, "%")
+  params:add_taper("level_probability1", "1: level mod probability", 0, 100, 0, 0, "%")
+  params:add_taper("curve_probability1", "1: curve mod probability", 0, 100, 0, 0, "%")
+  params:add_taper("time_modulation1", "1: time modulation", 0, params:get("plow1_max_time"), 0, 0, "")
+  params:add_taper("level_modulation1", "1: level modulation", 0, params:get("plow1_max_level"), 0, 0, "")
+  params:add_taper("curve_modulation1", "1: curve modulation", 0, 5, 0, 0, "")
+
+  params:add_number("env_nav_active_control1", "1: env mod nav", 1, #env_mod_param_labels)
+  params:set_action("env_nav_active_control1", function(x) 
+    if initializing == false then
+      envelopes[1].set_env_nav_active_control(x-envelopes[1].env_nav_active_control) 
+    end
+  end )
+
+  params:add_group("plow 2 modulation",8)
+  params:add_taper("randomize_env_probability2", "2: env probability", 0, 100, 100, 0, "%")
+  params:add_taper("time_probability2", "2: time probability", 0, 100, 0, 0, "%")
+  params:add_taper("level_probability2", "2: level probability", 0, 100, 0, 0, "%")
+  params:add_taper("curve_probability2", "2: curve probability", 0, 100, 0, 0, "%")
+  params:add_taper("time_modulation2", "2: time modulation", 0, params:get("plow1_max_time") * 0.1, 0, 0, "")
+  params:add_taper("level_modulation2", "2: level modulation", 0, params:get("plow1_max_level"), 0, 0, "")
+  params:add_taper("curve_modulation2", "2: curve modulation", 0, 5, 0, 0, "")
+  
+  params:add_number("env_nav_active_control2", "2: env mod nav", 1, #env_mod_param_labels)
+  params:set_action("env_nav_active_control2", function(x) 
+    if initializing == false then
+      envelopes[2].set_env_nav_active_control(x-envelopes[2].env_nav_active_control) 
+    end  
+  end )
+
+  
   --------------------------------
   -- water parameters
   --------------------------------
@@ -723,12 +862,6 @@ flora_params.add_params = function(plants)
       norns.state.clock.tempo = bpm
       reset_note_frequencies()
     end)
-
-  -- params:set_action("clock_tempo", 
-  --   function()
-  --      reset_note_frequencies()
-  --   end
-  -- )
     
   --set the reverb input engine to -10db
   params:set(13, -10)

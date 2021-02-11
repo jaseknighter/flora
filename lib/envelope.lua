@@ -16,7 +16,7 @@
 --
 --  todo list: 
 --    parameterize envelope settings and move default settings to globals.lua
---    fix confusing variable nomenclature (e.g. y_max vs env_level_max)
+--    fix super confusing variable nomenclature (e.g. y_max vs env_level_max)
 ------------------------------
 
 local updating_envelope = false
@@ -38,6 +38,28 @@ function Envelope:new(id, num_plants, env_nodes)
   setmetatable(e, Envelope)
   e.id = id
   
+  e.default_graph_nodes = {}
+  e.default_graph_nodes[1] = {}
+  e.default_graph_nodes[1].time = 0.00
+  e.default_graph_nodes[1].level = 0.00
+  e.default_graph_nodes[1].curve = 0.00
+  e.default_graph_nodes[2] = {}
+  e.default_graph_nodes[2].time = 0.00
+  e.default_graph_nodes[2].level = 1.0
+  e.default_graph_nodes[2].curve = -10
+  e.default_graph_nodes[3] = {}
+  e.default_graph_nodes[3].time = 0.50
+  e.default_graph_nodes[3].level = 0.50
+  e.default_graph_nodes[3].curve = -10
+  e.default_graph_nodes[4] = {}
+  e.default_graph_nodes[4].time = 1.00
+  e.default_graph_nodes[4].level = 1.5
+  e.default_graph_nodes[4].curve = -10
+  e.default_graph_nodes[5] = {}
+  e.default_graph_nodes[5].time = 1.5
+  e.default_graph_nodes[5].level = 0.00
+  e.default_graph_nodes[5].curve = -10
+  
   -- this is where we will store the graph
   e.graph = {}
   e.graph_params = {}
@@ -56,7 +78,7 @@ function Envelope:new(id, num_plants, env_nodes)
   e.env_level_min = 0.0
   e.env_level_max = AMPLITUDE_DEFAULT
   e.env_time_min = 0.01
-  e.env_time_max = ENV_TIME_MAX
+  e.env_time_max = ENV_LENGTH_DEFAULT
   e.curve_min = CURVE_MIN
   e.curve_max = CURVE_MAX
   
@@ -64,42 +86,127 @@ function Envelope:new(id, num_plants, env_nodes)
   
   e.updating_graph = false
 
-  local default_graph_nodes = {}
-  default_graph_nodes[1] = {}
-  default_graph_nodes[1].time = 0.00
-  default_graph_nodes[1].level = 0.00
-  default_graph_nodes[1].curve = 0.00
-  default_graph_nodes[2] = {}
-  default_graph_nodes[2].time = 0.00
-  default_graph_nodes[2].level = 1.0
-  default_graph_nodes[2].curve = -10
-  default_graph_nodes[3] = {}
-  default_graph_nodes[3].time = 0.50
-  default_graph_nodes[3].level = 0.50
-  default_graph_nodes[3].curve = -10
-  default_graph_nodes[4] = {}
-  default_graph_nodes[4].time = 1.00
-  default_graph_nodes[4].level = 1.5
-  default_graph_nodes[4].curve = -10
-  default_graph_nodes[5] = {}
-  default_graph_nodes[5].time = 1.5
-  default_graph_nodes[5].level = 0.00
-  default_graph_nodes[5].curve = -10
-  
-  e.graph_nodes = env_nodes and env_nodes or default_graph_nodes
+  e.graph_nodes = env_nodes and env_nodes or e.default_graph_nodes
   e.active_node = 0
   e.active_node_param = 1
+  
+  e.env_nav_active_control = 1
   
   e.update_engine = function()
     if (updating_envelope == false) then
       updating_envelope = true
       -- clock.sync(1)
       clock.sync(0.05)
-      envelopes[active_plant].update_envelope()
+      -- envelopes[active_plant].update_envelope()
       updating_envelope = false
     end
   end
 
+  --------------------------
+  -- envelope modulation 
+  --------------------------
+  --note: get_control_label is called by flora_pages.lua
+  e.get_control_label = function()
+    local label = env_mod_param_labels[e.env_nav_active_control] .. " "
+    local ac = e.env_nav_active_control
+    local env_label = params:get(env_mod_param_ids[ac]..e.id)
+    if ac == 1 or ac == 2 or ac == 4 or ac == 6 then
+      label = label .. env_label .. "%"  
+    else 
+      label = label .. env_label
+    end
+    return label
+  end
+  
+  e.set_modulation_probability = function(name, delta)
+    
+    local mod_param_name = name.. e.id
+    local env_probability = params:get(mod_param_name)
+    params:set(mod_param_name,env_probability+delta)
+  end
+  
+  e.set_modulation_value = function(name, delta)
+    local mod_param_name = name.. e.id
+    local modulation_amount = params:get(mod_param_name)
+    local param = params:lookup_param(mod_param_name)
+    local min_val = param.min
+    local max_val = param.max
+    local increment = (max_val - min_val)/100 * delta
+    params:set(mod_param_name,increment+modulation_amount)
+  end
+  
+  e.set_env_nav_active_control = function(delta)
+    e.env_nav_active_control = e.env_nav_active_control + delta
+    e.env_nav_active_control = util.clamp(e.env_nav_active_control,1,#env_mod_param_labels)
+  end
+  
+  e.set_modulation_params = function(delta)
+    local id = env_mod_param_ids[e.env_nav_active_control]
+    local ac = e.env_nav_active_control
+    if ac == 1 or ac == 2 or ac == 4 or ac == 6 then
+      e.set_modulation_probability(id, delta)
+    else 
+      e.set_modulation_value(id, delta)
+    end
+  end
+  
+  e.modulate_env = function()
+  
+    ------------------------------------
+    -- envelope randomization
+    ------------------------------------
+    local time_probability = math.floor(params:get("time_probability"..e.id))
+    local time_modulation_amount = time_probability > math.random()*100 and params:get("time_modulation"..e.id) or 0
+    local level_probability = math.floor(params:get("level_probability"..e.id))
+    local level_modulation_amount = level_probability > math.random()*100 and params:get("level_modulation"..e.id) or 0
+    local curve_probability = math.floor(params:get("curve_probability"..e.id))
+    local curve_modulation_amount = curve_probability > math.random()*100 and params:get("curve_modulation"..e.id) or 0
+    local randomize_env_probability = params:get("randomize_env_probability"..e.id) 
+    local randomize_envelopes = math.random()*100<randomize_env_probability
+    
+    if randomize_envelopes == true then
+      local env_nodes = envelopes[e.id].graph_nodes
+      for i=1,#env_nodes,1
+      do
+        local param_id_name, param_name, get_control_value_fn, min_val, max_val
+  
+        -- update times
+        param_id_name = "plow".. e.id.."_time" .. i
+        param_name = "plow".. e.id.."-control" .. i .. "-time"
+        
+        local current_val = (env_nodes[1] and env_nodes[i].time) or 0
+        local prev_val = (env_nodes[i-1] and env_nodes[i-1].time) or 0
+        local next_val = env_nodes[i+1] and env_nodes[i+1].time or envelopes[e.id].env_time_max
+        local control_range = next_val - prev_val
+        local control_value = control_range*math.random(-1,1) * time_modulation_amount + current_val
+        control_value = util.clamp(control_value,prev_val, next_val)
+        local controlspec = cs.new(prev_val,next_val,'lin',0,control_value,'')
+        if env_nodes[i] then
+          local param = params:lookup_param(param_id_name)
+          param.controlspec = controlspec
+          params:set(param.id, control_value) 
+        end
+  
+        -- update levels
+        if i > 1 and i < #env_nodes then
+          local current_val = (env_nodes[1] and env_nodes[i].level) or 0
+          local new_value = current_val + (level_modulation_amount * math.random(-1,1))
+          new_value = util.clamp(new_value, 0, MAX_AMPLITUDE)
+          params:set("plow".. e.id .. "_level"..i, new_value)
+        end        
+  
+        -- update curves
+        if i > 1 then
+          
+          local new_value = params:get("plow".. e.id .. "_curve"..i) + (curve_modulation_amount* math.random()*math.random(-1,1)*10)
+          new_value = util.clamp(new_value, -10, 10)
+          params:set("plow".. e.id .. "_curve"..i, new_value)
+          -- params:set("plow".. e.id .. "_curve"..i, math.random()*math.random(-10,10))
+        end        
+      end
+    end
+  end
+  
   --------------------------
   -- init
   --------------------------
@@ -109,7 +216,6 @@ function Envelope:new(id, num_plants, env_nodes)
     --    time: accepts e.x_min to e.x_max, defaults to 1.
     --    curve: accepts "lin", "exp" or a number where 0 is linear and positive and negative numbers curve the graph up and down, defaults to -4.
     -- setup starting point at 0, 0 
-
     e.graph = ArbGraph.new_graph(e.x_min, e.env_time_max, e.y_min, e.env_level_max, e.graph_nodes)
     e.cursor_location_x = (e.env_time_max/e.x_max) * e.x_max
     e.cursor_location_y = (e.env_level_max/e.y_max) * e.y_max
@@ -123,15 +229,18 @@ function Envelope:new(id, num_plants, env_nodes)
     e.graph:set_active(false)
     
     -- for some reason this a default env length needs to be set here at the end of init
-    e.set_env_time(ENV_LENGTH_DEFAULT)
+    -- e.set_env_time(ENV_LENGTH_DEFAULT)
   end
   
   e.get_env_time = function()
     return e.env_time_max
   end
+  
+  e.get_num_nodes = function()
+    return #e.graph_nodes
+  end
 
   e.set_env_time = function(env_time_max)
-    -- e.env_time_max = env_time
     local old_time_max = e.env_time_max and e.env_time_max or 0.01 --0.5
     local min_time = alt_key_active and e.env_time_min or 0.01 --0.5
     e.env_time_max = util.clamp(env_time_max, min_time, e.x_max)
@@ -142,26 +251,33 @@ function Envelope:new(id, num_plants, env_nodes)
     end
     e.graph:edit_graph(e.graph_nodes)
     e.graph:set_x_max(e.env_time_max)
+    if initializing == false then 
+      params:set("plow" .. active_plant .. "_max_time", e.env_time_max) 
+    end
+    e.update_envelope()
+  end
+
+  e.get_env_time = function()
+    return e.env_time_max
   end
 
   e.get_env_level = function()
     return e.env_level_max
   end
   
-  e.get_env_max_level = function()
-    return e.x_max
-  end
-
-  e.set_env_max_level = function(new_level)
+  e.set_env_level = function(new_level)
     local old_level_max = e.env_level_max
-    e.env_level_max = new_level
-    for i=1, #e.graph_nodes, 1
-      do
-      local node_level = e.graph_nodes[i].level
-      e.graph_nodes[i].level = node_level * (e.env_level_max / old_level_max)
+    if new_level ~= old_level_max then
+      e.env_level_max = new_level
+      for i=1, #e.graph_nodes, 1
+        do
+        local node_level = e.graph_nodes[i].level
+        e.graph_nodes[i].level = node_level * (e.env_level_max / old_level_max)
+      end
+      e.graph:edit_graph(e.graph_nodes)
+      e.graph:set_y_max(e.env_level_max)  
+      if initializing == false then params:set("plow" .. active_plant .. "_max_level", e.env_level_max) end
     end
-    e.graph:edit_graph(e.graph_nodes)
-    e.graph:set_y_max(e.env_level_max)  
   end
   
   e.set_active = function(is_active)
@@ -184,6 +300,10 @@ function Envelope:new(id, num_plants, env_nodes)
     engine.set_env_levels(table.unpack(env_arrays.levels))
     engine.set_env_times(table.unpack(env_arrays.times))
     engine.set_env_curves(table.unpack(env_arrays.curves))
+    -- clock.run(reset_plow_control_params,e.id)
+    
+    -- reset_plow_control_params(e.id)
+
     clock.run(set_dirty)
 
   end
@@ -220,32 +340,68 @@ function Envelope:new(id, num_plants, env_nodes)
     end
     return env_data
   end
+  
+  e.set_active_node = function(node_num)
+    e.active_node = node_num
+  end
+  
+  e.add_node = function()
+    local new_node = e.active_node + 1
+    table.insert(e.graph_nodes, new_node, {})
+    local new_node_time = (e.graph_nodes[new_node-1].time + e.graph_nodes[new_node+1].time)/2
+    e.graph_nodes[new_node].time = new_node_time
+    local new_node_level = (e.graph_nodes[new_node-1].level + e.graph_nodes[new_node+1].level)/2
+    e.graph_nodes[new_node].level = new_node_level
+    e.graph_nodes[new_node].curve = -4
+    e.graph:add_point(e.graph_nodes[new_node].time, e.graph_nodes[new_node].level, e.graph_nodes[new_node].curve, false, new_node)
+    e.graph:edit_graph(e.graph_nodes)
+  end
+  
+  e.remove_node = function()
+    if (e.active_node > 1 and e.active_node < #e.graph_nodes and #e.graph_nodes > 3) then
+      table.remove(e.graph_nodes, e.active_node)
+      e.graph:remove_point(e.active_node)
+      e.graph:edit_graph(e.graph_nodes)
+      params:set("num_plow" .. e.id .. "_controls",#e.graph_nodes)
+    end
+  end
   --------------------------
   -- encoders and keys
   --------------------------
-  e.enc = function(n, delta, alt_key_active)
+  e.enc = function(n, delta)
     local graph_active_node = e.active_node
     
     -- set variables needed by each page/example
     if n == 1 then
       -- do nothing here
     elseif n == 2 then 
-      local incr = util.clamp(delta, -1, 1)
-      if (e.active_node == 0 
-        or (e.active_node == -1 and incr > 0 )
-        or (e.active_node_param == 1 and incr < 0)
-        or (e.active_node_param == #e.node_params and incr > 0)) then
-        if (e.active_node + incr >= -1  
-          and e.active_node + incr <= #e.graph_nodes) then
-          e.active_node = e.active_node + incr
-          if (e.active_node_param == 1 and e.active_node == 1 and incr < 0) then
-            e.active_node_param = 1
-            e.active_node = 1
-          elseif (e.active_node_param == 1 and incr < 0) then
-            e.active_node_param = #e.node_params
-          elseif (e.active_node_param == #e.node_params and incr > 0) then
-            e.active_node_param = 1
+      if show_env_mod_params then
+        e.set_env_nav_active_control(delta)
+      else
+        local incr = util.clamp(delta, -1, 1)
+        if e.active_node_param == 4 then
+          if e.env_nav_active_control == 1 and delta < 0 then
+            e.active_node_param = 3
           end
+          e.env_nav_active_control = e.env_nav_active_control + delta
+          e.env_nav_active_control = util.clamp(e.env_nav_active_control,1,#env_mod_param_labels)
+        elseif (e.active_node == 0 
+          or (e.active_node == -1 and incr > 0 )
+          or (e.active_node_param == 1 and incr < 0)
+          or (e.active_node_param == #e.node_params and incr > 0)) then
+          
+          if (e.active_node + incr >= -1  
+            and e.active_node + incr <= #e.graph_nodes
+            ) then
+            e.active_node = e.active_node + incr
+            if (e.active_node_param == 1 and e.active_node == 1 and incr < 0) then
+              e.active_node_param = 1
+              e.active_node = 1
+            elseif (e.active_node_param == 1 and incr < 0) then
+              e.active_node_param = #e.node_params
+            elseif (e.active_node_param == #e.node_params and incr > 0) then
+              e.active_node_param = 1
+            end
         end
       elseif (e.active_node_param + incr >= 0 and
         e.active_node_param + incr <= #e.node_params) then
@@ -259,115 +415,99 @@ function Envelope:new(id, num_plants, env_nodes)
           else
             e.active_node_param = e.active_node_param + incr
           end
-      end   
-    elseif n == 3 then 
-      if (e.active_node == -1) then
-        -- change the max level (amplitude) of the envelope and scale node level values accordingly
-        local delta_clamp = util.clamp(delta, -1, 1)
-        delta_clamp = alt_key_active and delta_clamp * 0.1 or delta_clamp
-        local new_env_level_max = util.clamp(e.env_level_max + delta_clamp, 0.01, e.y_max)
-        e.set_env_max_level(new_env_level_max)
-      elseif (e.active_node == 0) then
-        -- change the max length of the envelope and scale node time values accordingly
-        local delta_clamp = util.clamp(delta, -1, 1)
-        delta_clamp = alt_key_active and delta_clamp * 0.01 or delta_clamp
-        e.set_env_time(e.env_time_max + delta_clamp)
-      elseif e.active_node_param == 1 then
-        local delta_clamp = util.clamp(delta, -e.env_time_max, e.env_time_max)
-        local incr = alt_key_active and delta_clamp * 0.01 or delta_clamp * 0.1 
-        local prev_val = (e.graph_nodes[e.active_node-1] and e.graph_nodes[e.active_node-1].time) or 0
-        local new_val = e.graph_nodes[e.active_node].time + incr
-        local next_val = (e.graph_nodes[e.active_node+1] and e.graph_nodes[e.active_node+1].time) or e.env_time_max
-        new_val = util.clamp(new_val, prev_val, next_val)
-        e.graph_nodes[graph_active_node].time = new_val
-        local param_id = id == 1 and plow1_times[graph_active_node] or plow2_times[graph_active_node]
-        params:set(param_id,new_val)
-      elseif e.active_node_param == 2 then
-        if e.active_node ~= 1 and e.active_node ~= #e.graph_nodes then
-          local delta_clamp = util.clamp(delta, -e.env_level_max, e.env_level_max)
-          local incr = alt_key_active and delta_clamp * 0.01 or delta_clamp * 0.1 
-          local new_val = e.graph_nodes[e.active_node].level + incr
-          new_val = util.clamp(new_val, e.env_level_min, e.env_level_max)
-          e.graph_nodes[graph_active_node].level = new_val
-          local param_id = id == 1 and plow1_levels[graph_active_node] or plow2_levels[graph_active_node]
-        end
-      elseif e.active_node_param == 3 then
-        local incr = alt_key_active and util.clamp(delta, -1, 1) * 0.1 or util.clamp(delta, -1, 1) * e.time_incr
-        local new_val = e.graph_nodes[graph_active_node].curve + incr
-        new_val = round_decimals(new_val, 2, "down")
-        new_val = util.clamp(new_val, e.curve_min, e.curve_max)
-        e.graph_nodes[graph_active_node].curve = new_val
-        local param_id = id == 1 and plow1_curves[graph_active_node] or plow2_curves[graph_active_node]
-        params:set(param_id,new_val)
+        end   
       end
-      e.graph:edit_graph(e.graph_nodes)
-      
-      clock.run(e.update_engine, e.graph_nodes)
-    end
-  end
-  
-  e.key = function(n, delta, alt_key_active)
-    local graph_active_node = e.active_node
-    if n == 2 and e.active_node > 1 then
-      --remove a node to the graph
-      if (e.active_node > 1 and e.active_node < #e.graph_nodes and #e.graph_nodes > 3) then
-        table.remove(e.graph_nodes, e.active_node)
-        if id == 1 then
-          params:set("num_plow1_controls",#e.graph_nodes)
-        else
-          params:set("num_plow2_controls",#e.graph_nodes)
+    elseif n == 3 then 
+      if show_env_mod_params then
+        e.set_modulation_params(delta)
+      else
+        if (e.active_node == -1) then
+          -- change the max level (amplitude) of the envelope and scale node level values accordingly
+          local delta_clamp = util.clamp(delta, -1, 1)
+          delta_clamp = alt_key_active and delta_clamp * 0.1 or delta_clamp
+          -- local new_env_level = util.clamp(e.env_level_max + delta_clamp, 0.01, e.y_max)
+          local new_env_level = util.clamp(e.env_level_max + delta_clamp, 0.01, e.y_max)
+          e.set_env_level(new_env_level)
+        elseif (e.active_node == 0) then
+          -- change the max length of the envelope and scale node time values accordingly
+          local delta_clamp = util.clamp(delta, -1, 1)
+          delta_clamp = alt_key_active and delta_clamp * 0.01 or delta_clamp
+          e.set_env_time(e.env_time_max + delta_clamp)
+        elseif e.active_node_param == 1 then
+          local delta_clamp = util.clamp(delta, -e.env_time_max, e.env_time_max)
+          local incr = alt_key_active and delta_clamp * 0.01 or delta_clamp * 0.1 
+          local prev_val = (e.graph_nodes[e.active_node-1] and e.graph_nodes[e.active_node-1].time) or 0
+          local new_val = e.graph_nodes[e.active_node].time + incr
+          local next_val = (e.graph_nodes[e.active_node+1] and e.graph_nodes[e.active_node+1].time) or e.env_time_max
+          new_val = util.clamp(new_val, prev_val, next_val)
+          e.graph_nodes[graph_active_node].time = new_val
+          local param_id = id == 1 and plow1_times[graph_active_node] or plow2_times[graph_active_node]
+          params:set(param_id,new_val)
+        elseif e.active_node_param == 2 then
+          if e.active_node ~= 1 and e.active_node ~= #e.graph_nodes then
+            local delta_clamp = util.clamp(delta, -e.env_level_max, e.env_level_max)
+            local incr = alt_key_active and delta_clamp * 0.01 or delta_clamp * 0.1 
+            local new_val = e.graph_nodes[e.active_node].level + incr
+            new_val = util.clamp(new_val, e.env_level_min, e.env_level_max)
+            e.graph_nodes[graph_active_node].level = new_val
+            local param_id = id == 1 and plow1_levels[graph_active_node] or plow2_levels[graph_active_node]
+            params:set(param_id,new_val)
+          end
+        elseif e.active_node_param == 3 then
+          local incr = alt_key_active and util.clamp(delta, -1, 1) * 0.1 or util.clamp(delta, -1, 1) * e.time_incr
+          local new_val = e.graph_nodes[graph_active_node].curve + incr
+          new_val = round_decimals(new_val, 2, "down")
+          new_val = util.clamp(new_val, e.curve_min, e.curve_max)
+          e.graph_nodes[graph_active_node].curve = new_val
+          local param_id = id == 1 and plow1_curves[graph_active_node] or plow2_curves[graph_active_node]
+          params:set(param_id,new_val)
         end
-
-        e.graph:remove_point(e.active_node)
-        
         e.graph:edit_graph(e.graph_nodes)
+        -- reset_plow_control_params(e.id)
+  
         -- clock.run(e.update_engine, e.graph_nodes)
       end
-    elseif n == 3 and e.active_node >= 1 then
+    end
+  end
+  
+  e.key = function(n, delta)
+    local graph_active_node = e.active_node
+    if n == 2 and e.active_node > 1 then
+      e.remove_node()
+    elseif n == 3 then
       --add a node to the graph
       if (alt_key_active) then
-        -- randomize graph code needs some work
-        --[[
-        local nodes = e.graph_nodes
-        for i=2, #nodes, 1
-        do
-          local time = i > 1
-            and 
-              math.random() * 
-              e.x_max / 
-              (#nodes-2) + 
-              nodes[i-1].time 
-            or 0
-          nodes[i].time = time
-          
-          local level = (i > 1 and i < #nodes) and math.random() or 0
-          nodes[i].level = level
-          nodes[i].curve = math.random()*(e.x_max*2) - e.x_max
-        end
-        e.graph:edit_graph(e.graph_nodes)
-        ]]
-      elseif (e.active_node < #e.graph_nodes and #e.graph_nodes < MAX_ENVELOPE_NODES) then
-        local new_node = e.active_node + 1
-        table.insert(e.graph_nodes, new_node, {})
-        if id == 1 then
-          params:set("num_plow1_controls",#e.graph_nodes)
-        else
-          params:set("num_plow2_controls",#e.graph_nodes)
-        end
-        local new_node_time = (e.graph_nodes[new_node-1].time + e.graph_nodes[new_node+1].time)/2
-        e.graph_nodes[new_node].time = new_node_time
-        e.graph_nodes[new_node].level = 0.5
-        e.graph_nodes[new_node].curve = -4
-        e.graph:add_point(e.graph_nodes[new_node].time, e.graph_nodes[new_node].level, e.graph_nodes[new_node].curve, false, new_node)
+        if show_env_mod_params == true then show_env_mod_params = false else show_env_mod_params = true end
+      elseif (e.active_node >= 1 and e.active_node < #e.graph_nodes and #e.graph_nodes < MAX_ENVELOPE_NODES) then
+        e.add_node()
       end      
-      e.graph:edit_graph(e.graph_nodes)
-
     end
   end
   
   --------------------------
-  -- redraw
+  -- modulation nav and redraw
   --------------------------
+  e.draw_modulation_nav = function()
+    screen.level(10)
+    screen.rect(2,10, screen_size.x-2, 3)
+    screen.fill()
+    screen.level(0)
+    local num_field_menu_areas = #env_mod_param_labels
+    local area_menu_width = (screen_size.x-5)/num_field_menu_areas
+    screen.rect(2+(area_menu_width*(e.env_nav_active_control-1)),10, area_menu_width, 3)
+    screen.fill()
+    screen.level(4)
+    for i=1, num_field_menu_areas+1,1
+    do
+      if i < num_field_menu_areas+1 then
+        screen.rect(2+(area_menu_width*(i-1)),10, 1, 3)
+      else
+        screen.rect(2+(area_menu_width*(i-1))-1,10, 1, 3)
+      end
+    end
+    screen.fill()
+    end
+
   e.redraw = function ()
     if screen_dirty == true then
       e.graph:redraw()
@@ -392,6 +532,7 @@ function Envelope:new(id, num_plants, env_nodes)
         time_bar_percentage,
         level_bar_percentage
       )
+      if show_env_mod_params and active_plant == e.id then e.draw_modulation_nav() end
     end
   end
   return e

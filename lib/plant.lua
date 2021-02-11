@@ -61,7 +61,7 @@ function plant:new(p_id, starting_instruction)
   p.id = p_id and p_id or 1   
   p.note_position = vector:new(-10,-10)
   p.show_note = false
-  
+
   p.offset = vector:new(0,0)
 
   p.turtle = {}
@@ -85,8 +85,8 @@ function plant:new(p_id, starting_instruction)
 
   p.get_sentence = function()
     local sentence = p.lsys.get_sentence()
-    params:set(45,sentence)
-    params:hide("sentence")
+    -- params:set(45,sentence)
+    -- params:hide("sentence")
 
     return sentence
   end
@@ -123,6 +123,13 @@ function plant:new(p_id, starting_instruction)
   p.set_angle = function(angle_delta)
     p.angle = p.angle + angle_delta
     p.turtle.theta = math.rad(p.angle)
+    local p_angle = p.id == 1 and "plant1_angle" or "plant2_angle"
+    params:set(p_angle, p.angle)
+      
+  end
+
+  p.get_angle = function()
+    return p.angle
   end
   
   p.increment_sentence_cursor = function(incr)
@@ -235,6 +242,11 @@ function plant:new(p_id, starting_instruction)
       p.max_generations = p.instr.max_generations
       p.length = p.instr.length
       p.angle = target_generation == nil and p.instr.angle or p.angle
+      
+      local p_angle = p.id == 1 and "plant1_angle" or "plant2_angle"
+      
+      params:set(p_angle, p.angle)
+      
       initial_turtle_rotation = p.instr.initial_turtle_rotation
       target_generation = target_generation and target_generation or p.instr.starting_generation
 
@@ -253,6 +265,11 @@ function plant:new(p_id, starting_instruction)
       
       p.initializing = false
       p.current_instruction = instruction_number
+      
+      local p_instruction = p.id == 1 and "plant1_instructions" or "plant2_instructions"
+
+        params:set(p_instruction, p.current_instruction)
+      
     end    
     
     p.generate = function(dir)
@@ -375,4 +392,3 @@ function plant:new(p_id, starting_instruction)
 end
 
 return plant
-

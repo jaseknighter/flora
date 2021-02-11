@@ -83,4 +83,3 @@ function crop:new(crop_type, origin, size, divisions)
 end
 
 return crop
-

@@ -57,7 +57,7 @@ Engine_BandSaw : CroneEngine {
   		
       var sig, env, envctl;
 
-      env = Env.newClear(20);
+      env = Env.newClear(maxsegments);
       envctl = \env.kr(env.asArray);
       
       //sig = Saw.ar(freq * {LFNoise1.kr(0.5,detune).midiratio}!2);

@@ -63,7 +63,7 @@ menu_status = false
 pages = 0
 flora_params = {}
 options = {}
-options.OUTPUT = {"audio", "midi", "audio + midi", "audio, c ii JF, c out 1+2", "c ii JF"}
+options.OUTPUT = {"audio (a)", "midi (m)", "a + m", "a, m, c ii JF, c out 1+2", "c ii JF"}
 options.SCALARS = {0.5,1,2,4}
 options.NOTE_DURATIONS = {0.125, 0.25,0.5,0.75,1,1.5,2,4,8,16}
 NOTE_DURATION_INDEX_DEFAULT_1 = 5
@@ -116,7 +116,6 @@ note_frequency_denominators = {"nf_denominator1","nf_denominator2","nf_denominat
 note_frequency_offsets = {"nf_offset1","nf_offset2","nf_offset3","nf_offset4","nf_offset5","nf_offset6"}
 
 -- fpr flora.lua
-ENV_MAX_LEVEL_DEFAULT = 4
 alt_key_active = false
 screen_level_graphics = 16
 screen_size = vector:new(127,64)
@@ -166,8 +165,43 @@ set_scale_length = function()
   scale_length = params:get("scale_length")
 end
 
+-- for midi_helper.lua
+midi_out_channel1 = 1
+midi_out_channel2 = 1
+midi_out_envelope_override1 = nil
+midi_out_envelope_override2 = nil
+
+plow1_cc_channel = 1
+plow2_cc_channel = 1
+water_cc_channel = 1
+midi_cc_starting_value = 32
+
+-- for envelope.lua
+show_env_mod_params = false
+env_nav_active_control = 1
+
+env_mod_param_labels = {
+  "set mod prob",
+  "time prob",
+  "time mod amt",
+  "level prob",
+  "level mod amt",
+  "curve prob",
+  "curve mod amt",
+}
+
+env_mod_param_ids = {
+   "randomize_env_probability", 
+   "time_probability", 
+   "time_modulation", 
+   "level_probability", 
+   "level_modulation",
+   "curve_probability",
+   "curve_modulation", 
+}
+
 -- for l_system.lua
-MAX_SENTENCE_LENGTH = 500 --150
+MAX_SENTENCE_LENGTH = 150
 
 -- fpr water.lua
 num_active_cf_scalars = 4
@@ -178,4 +212,3 @@ field_width = (screen_size.x-7)/3
 field_height = (screen_size.y-12)/2 - 6
 fields_origin = vector:new(3,15)
 field_row_spacing = 8
-

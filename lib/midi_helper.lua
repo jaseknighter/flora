@@ -3,16 +3,6 @@
 
 midi_out_device = midi.connect(1)
 
-midi_out_channel1 = 1
-midi_out_channel2 = 2
-midi_out_envelope_override1 = nil
-midi_out_envelope_override2 = nil
-
-plow1_cc_channel = 4
-plow2_cc_channel = 5
-water_cc_channel = 6
-midi_cc_starting_value = 32
-
 set_midi_channels = function()
   if pages.index == 4 then
     if active_plant == 1 then
@@ -179,6 +169,3 @@ midi.event = function(data)
     end
   end
 end
-
-
-

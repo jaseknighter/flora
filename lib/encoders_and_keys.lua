@@ -13,7 +13,7 @@
 
 local enc = function (n, delta)
   -- set variables needed by each page/example
-  if show_instructions == false then
+  if show_instructions == false and initializing == false then
     if n == 1 then
       if (alt_key_active == false) then
         -- scroll pages
@@ -28,11 +28,6 @@ local enc = function (n, delta)
           end
           page_scroll(page_increment)
           set_midi_channels()
-
-          -- if (pages.index == 5) then
-            -- screen.clear()
-            -- water.display()
-          -- end
         end
         if (pages.index == 4) then
           screen.clear()
@@ -47,7 +42,7 @@ local enc = function (n, delta)
       if (pages.index == 1 and alt_key_active) then
         -- change instruction for active plant
         local rotate_by = util.clamp(delta, -1, 1)
-        plants[active_plant].set_instructions(rotate_by)
+        clock.run(plants[active_plant].set_instructions,rotate_by,0,true)
       elseif pages.index == 2 then
         local increment = util.clamp(delta, -1, 1)
         plants[active_plant].increment_sentence_cursor(increment)
@@ -69,7 +64,7 @@ local enc = function (n, delta)
         -- move active plant along the y-axis
         plants[active_plant].set_offset(0,delta)
       elseif pages.index == 4 then
-        envelopes[active_plant].enc(n, delta, alt_key_active)     
+        envelopes[active_plant].enc(n, delta)     
       elseif pages.index == 5 then
         water.enc(n, delta, alt_key_active)  
       end
@@ -91,27 +86,27 @@ local key = function (n,z)
       elseif pages.index == 5 then
         -- water.key(n, delta, alt_key_active)
       end
-    elseif (n == 2 and z == 0 and alt_key_active == false)  then 
-      if pages.index == 2 then
+    elseif (n == 2 and z == 0)  then 
+      if pages.index == 2  and alt_key_active == false then
         plants[active_plant].remove_letter()
       elseif pages.index == 4 then
-        clock.run(set_dirty)
+        -- clock.run(set_dirty)
         envelopes[active_plant].key(n, delta)
-        clock.run(envelopes[active_plant].update_engine, envelopes[active_plant].graph_nodes)
+        -- clock.run(envelopes[active_plant].update_engine, envelopes[active_plant].graph_nodes)
       elseif pages.index == 5 then
         water.key(n, delta, alt_key_active)
       end
-    elseif (n == 3 and z == 0 and alt_key_active == false)  then 
-      if pages.index == 1 then
+    elseif (n == 3 and z == 0)  then 
+      if pages.index == 1  and alt_key_active == false then
         plants[active_plant].set_instructions(0,1)
-      elseif pages.index == 2 then
+      elseif pages.index == 2  and alt_key_active == false then
         plants[active_plant].add_letter()
-      elseif pages.index == 3 then
+      elseif pages.index == 3  and alt_key_active == false then
         plants[active_plant].set_node_length(1.1)
       elseif pages.index == 4 then
-        clock.run(set_dirty)
-        envelopes[active_plant].key(n, delta, alt_key_active)
-        clock.run(envelopes[active_plant].update_engine, envelopes[active_plant].graph_nodes)
+        -- clock.run(set_dirty)
+        envelopes[active_plant].key(n, delta)
+        -- clock.run(envelopes[active_plant].update_engine, envelopes[active_plant].graph_nodes)
       elseif pages.index == 5 then
         water.key(n, delta, alt_key_active)
       end

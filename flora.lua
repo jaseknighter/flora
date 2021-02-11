@@ -1,6 +1,6 @@
 ---flora - beta
 -- v0.1.0-beta @jaseknighter
--- lines: llllllll.co/t/flora-beta/40261
+-- lines: llllllll.co/t/40261
 --
 -- k1+k2: show/hide instructions
 
@@ -82,7 +82,6 @@ function init()
   do
     envelopes[i] = envelope:new(i, num_plants)
     envelopes[i].init(num_plants)
-    envelopes[i].set_env_max_level(ENV_MAX_LEVEL_DEFAULT)
     local active = i == 1 and true or false
     local initial_plant_instruction_num = i == 1 and INITIAL_PLANT_INSTRUCTIONS_1 or INITIAL_PLANT_INSTRUCTIONS_2
     envelopes[i].set_active(active)
@@ -93,6 +92,7 @@ function init()
   end
 
   parameters.add_params(plants)
+  -- env_parameters.add_params()
   build_scale()
 
   for i=1,num_plants,1
@@ -101,7 +101,7 @@ function init()
   end
   
   water.init()
-  set_redraw_timer(SCREEN_FRAMERATE)
+  set_redraw_timer()
   page_scroll(1)
   -- polls.init()
   for i=1,#midi.vports,1 
@@ -111,6 +111,46 @@ function init()
       device_16n = midi.vports[i].device
     end
   end
+  
+  
+  --------------------------
+  -- setup pset sequencer and pset exclusions
+  --------------------------
+  pset_seq.set_pset_path ("flora/")
+  
+  -- plant modulation exclusion group
+  local pset_param_exclusions_plant = {"plant1_instructions","plant2_instructions","plant1_angle","plant2_angle"}
+  
+  -- plow exclusion group
+  local pset_param_exclusions_plow = {"num_plow1_controls","num_plow2_controls","plow1_max_level","plow1_max_time","randomize_env_probability1","time_probability1","level_probability1","curve_probability1","time_modulation1","level_modulation1","curve_modulation1","randomize_env_probability2","time_probability2","level_probability2","curve_probability2","time_modulation2","level_modulation2","curve_modulation2"}
+  
+  for i=1, MAX_ENVELOPE_NODES, 1
+  do
+    table.insert(pset_param_exclusions_plow, "plow1_time" .. i)
+    table.insert(pset_param_exclusions_plow, "plow2_time" .. i)
+    table.insert(pset_param_exclusions_plow, "plow1_level" .. i)
+    table.insert(pset_param_exclusions_plow, "plow2_level" .. i)
+    table.insert(pset_param_exclusions_plow, "plow1_curve" .. i)
+    table.insert(pset_param_exclusions_plow, "plow2_curve" .. i)
+  end
+  
+  -- plow modulation exclusion group
+  local pset_param_exclusions_plow_modulation = {"randomize_env_probability1","time_probability1","level_probability1","curve_probability1","time_modulation1","level_modulation1","curve_modulation1"}
+  
+  -- water exclusion group
+  local pset_param_exclusions_water = {"amp","rqmin","rqmax","note_scalar","num_active_cf_scalars","cfs1","cfs2","cfs3","cfs4","plant_1_note_duration","plant_2_note_duration","num_note_frequencies","tempo_scalar_offset","nf_numerator1","nf_denominator1","nf_offset1","nf_numerator2","nf_denominator2","nf_offset2","nf_numerator3","nf_denominator3","nf_offset3","nf_numerator4","nf_denominator4","nf_offset4","nf_numerator5","nf_denominator5","nf_offset5","nf_numerator6","nf_denominator6","nf_offset6"}
+  
+  -- nav exclusion group
+  local pset_param_exclusions_nav = {"page_turner", "active_plant_switcher"}
+  
+  -- table for exclusion group table names
+  local pset_exclusion_tables = {pset_param_exclusions_plant,pset_param_exclusions_plow,pset_param_exclusions_plow_modulation,pset_param_exclusions_water,pset_param_exclusions_nav}
+  
+  -- table for exclusion group labels 
+  local pset_exclusion_table_labels = {"plant psets","plow psets","plow mod psets","water psets", "nav psets"}
+  
+  -- call pset sequencer to initialize and setup exclusion groups
+  pset_seq.pset_seq_timer_init(pset_exclusion_tables, pset_exclusion_table_labels)
   
   clock.run(init_done)
 end
@@ -123,7 +163,6 @@ end
 --------------------------
 -- encoders and keys
 --------------------------
-
 function enc(n, delta)
   encoders_and_keys.enc(n, delta)
 end
@@ -156,9 +195,11 @@ function set_redraw_timer()
     end
   end, SCREEN_FRAMERATE, -1)
   redrawtimer:start()
+  
 end
 
 
 function cleanup ()
   all_notes_off()
 end
+

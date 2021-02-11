@@ -33,6 +33,9 @@ function plant_sounds:new(parent)
   end
     
   ps.play = function(node_obj)
+    
+    envelopes[parent.id].modulate_env()
+
     if (node_obj.s_id == parent.current_sentence_id) then
       if (node_obj.note) then
         clock.sync(node_obj.duration)
