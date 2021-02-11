@@ -6,7 +6,7 @@ An L-systems sequencer and bandpass-filtered sawtooth engine for monome norns
 
 
 Demonstration video: https://vimeo.com/496481575  
-Follow the discussion on lines: <insert link>
+Follow the discussion on lines: https://llllllll.co/t/40261
 
 ## Documentation
 - [Flora - beta](#flora---beta)
@@ -25,7 +25,9 @@ Follow the discussion on lines: <insert link>
       - [Modify](#modify)
       - [Observe](#observe)
       - [Plow](#plow)
+        * [Plow modulation](#plow-modulation)
       - [Water](#water)
+    + [PSET Sequencer](#pset-sequencer)
     + [Generating new L-system axioms and rulesets](#generating-new-l-system-axioms-and-rulesets)
       - [Advanced sequencing](#advanced-sequencing)
       - [Community Gardening](#community-gardening)
@@ -164,15 +166,35 @@ Unlike typical envelopes (AR, AD, ADSR, etc.), the envelope class developed for 
 
 There are 5 types of controls for each of the two envelopes: 
 
-env level: the maximum amplitude of the envelope  
-env length: the length of the envelope  
-node time: when the node is processed by the envelope  
-node level: the amplitude of the envelope at the node time  
-node angle: the shape of the ramp from the prior node time to the current node time
+`env level`: the maximum amplitude of the envelope  
+`env length`: the length of the envelope  
+`node time`: when the node is processed by the envelope  
+`node level`: the amplitude of the envelope at the node time  
+`node angle`: the shape of the ramp from the prior node time to the current node time
 
 With a few exceptions, the last of the three control types (node time, node level, and node angle) are adjustable for each of envelopes nodes.
 
 Fine grain controls: All of the envelope controls allow for fine grain control using K1+E3.
+
+##### Plow modulation
+```
+k1+k3: show/hide plow modulation menu
+k1+e1: select active plant  
+k2: select control
+k3: change control value
+```
+As of version `0.2.0-beta`, pressing K1+K3 on the plow screen brings up the `plow modulators` menu, which can be navigated using E2 and E3. There are eight parameters for each of the two plants related to modulating envelopes that may be set:  
+  
+`mod prob`: The probability that one of the other modulation parameters will be evaluated. If it is set to 0%, no envelope modulation will occur for the selected plant.  
+`time prob`: The probability that the time value for each of the envelope's nodes will be modulated.  
+`time mod amt`: The amount of modulation that will be applied to the time value of each of the envelope's nodes.  
+`level prob`: The probability that the level value for each of the envelope's nodes will be modulated.  
+`level mod amt`: The amount of modulation that will be applied to the level value of each of the envelope's nodes.  
+`curve prob`: The probability that the curve value for each of the envelope's nodes will be modulated.  
+`curve mod amt`: The amount of modulation that will be applied to the curve value of each of the envelope's nodes.  
+`env mod nav`: Selects which of the above seven parameters are selected on when plow modulation is visible (by pressing K1+K3) on the plow screen. This parameter is useful for controlling the plow ui via midi. 
+
+In addition, the `show env mod params` parameter makes the parameter modulation navigation visible (again, useful for controlling the ui via midi).
 
 #### Water 
 ![](images/water_wide_inv.png)
@@ -193,6 +215,28 @@ The water interface provides control for the output parameters:
 Fine grain controls: All of the controls in the above list with the characters '(fg)' attached to the control names allow for fine grain control using K1+E3.
 
 *Note*: Tempo scalar offset is a parameter that provides macro control over all active note frequencies. It is not yet available from the Water UI screen but can be adjusted from PARAMETERS->EDIT. The Tempo Scalar Offset’s default value of 1.5 can also be changed by updating the variable `tempo_scalar_offset_default` in the lib/globals.lua file.
+
+### PSET Sequencer
+As of version `v0.2.0-beta`, a PSET sequencer has been built into Flora. This feature allows PSETS saved in the PARAMETERS->PSET menu to be sequenced. The sequencer's parameters (accessed from the PARAMETERS->EDIT menu) include:
+
+- `pset seq enabled`: Turns the sequencer on and off. 
+- `pset seq mode`: There are three sequence modes:   
+    - `loop`: Load PSETs in order from first to last. After the last PSET has been loaded, the sequence restarts from the first saved PSET. 
+    - `up/down`: Load PSETs in order from first to last. After the last PSET has been loaded, the loading order is reversed.    
+    - `random`: PSETs are loaded in random order.    
+- `load pset`: Manually load a preset.   
+- `pset seq beats`: Set the number of cycles that run before a PSET is loaded. A cycle is measured by dividing `pset seq beats` by `pset beats per bar` and multiplying that number by the value of `tempo` which is set in PARAMETERS->CLOCK. This parameter ranges from 1-16.  
+- `pset beats per bar`: See `pset seq beats` above. This parameter ranges from 1-4.  
+- `pset exclusions`: This parameter group contains a list parameter sets that can be excluded when presets are saved. By default, there are five PSET exclusion sets:  
+    - `plant psets`: This set includes the plant instruction and plant angle parameters associated with the `plant`, `modify`, and `observe` screens.  
+    - `plow psets`: This set includes the main parameters associated with the `plow` screen.   
+    - `plow mod psets`: This set includes the envelope modulation parameters associated with the `plow` screen that are accessed by pressing K1+K3 from the `plow` screen.   
+    - `water psets`: This set includes the parameters associated with the `water` screen.  
+    - `nav psets`: This set includes two of the parameters associated with general navigation (`page turner` and `active plant switcher`).  
+
+Parameters that are part of an enabled exclusion set will be excluded when a PSET is saved. Accordingly, parameters in an enabled exclusion set won't be overwritten when the sequencer loads a PSET. Please note that for this feature to work, exclusion sets need to be enabled (in the PARAMETERS menu) *before* saving the PSETS. Enabling a PSET exclusion set while the PSET sequencer is playing will have no immediate effect.
+
+Custom exclusion sets can be created by adding, deleting, and modifying the tables defined in the `init` function of the `flora.lua` file.
 
 ### Generating new L-system axioms and rulesets
 L-system instructions are found in the files lib/gardens/garden_default.lua and lib/gardens/garden_community.lua.  There are eight required variables/tables for each L-system instruction set:
@@ -262,15 +306,17 @@ To share any ruleset(s) you have written, submit a [pull request](https://docs.g
 * Computer to create/update rulesets using Maiden (optional)
 
 ## Preliminary Roadmap 
-- Improve the quality and portability of the code
-- Improve the documentation
-- (added to v0.1.0-beta) Further develop the outputs for Crow, Just Friends, and Midi
-- Add microtonal scales
-- Create parameters for envelope settings so they can be saved
-- Add modulation and probability controls
-- Add a randomize function
-- Increase and decrease the brightness of the circles that appear when each note plays according to the level of the note's envelope
-- Add the tempo scalar offset parameter to the Water UI screen
+* Improve the quality and portability of the code.
+* Improve the documentation.
+* (done) Create an option with all the outputs (Audio,  Midi, JF, and crow) 
+* Add support for w/syn.
+* (added) Create a PSET sequencer
+* (done) Make additional Bandsaw engine and envelope variables available for Crow, Just Friends, and Midi outputs.
+* Add microtonal scales.
+* (done) Add a global setting to bypass the midi_note_off delay 
+* (added) Setup parameters for plant and plow (envelope) settings so they can be saved and loaded via PSETs.
+* (added) Add modulation and probability controls for envelopes.
+* Increase and decrease the brightness of the circles that appear when each note plays according to the level of the note's graph/envelope.
 
 ## Credits
 * Flora's L-system code is based on the code in Chapter 8.6 of Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/).
