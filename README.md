@@ -217,7 +217,7 @@ Fine grain controls: All of the controls in the above list with the characters '
 *Note*: Tempo scalar offset is a parameter that provides macro control over all active note frequencies. It is not yet available from the Water UI screen but can be adjusted from PARAMETERS->EDIT. The Tempo Scalar Offset’s default value of 1.5 can also be changed by updating the variable `tempo_scalar_offset_default` in the lib/globals.lua file.
 
 ### PSET Sequencer
-As of version `v0.2.0-beta`, a PSET sequencer has been built into Flora. This feature sequences PSETS saved in the PARAMETERS->PSET menu. The sequencer's parameters (accessed from the PARAMETERS->EDIT menu) include:
+As of version `v0.2.0-beta`, a PSET sequencer has been built into Flora. This feature allows PSETS saved in the PARAMETERS->PSET menu to be sequenced. The sequencer's parameters (accessed from the PARAMETERS->EDIT menu) include:
 
 - `pset seq enabled`: Turns the sequencer on and off. 
 - `pset seq mode`: There are three sequence modes:   
