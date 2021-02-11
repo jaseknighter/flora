@@ -183,7 +183,7 @@ k1+e1: select active plant
 k2: select control
 k3: change control value
 ```
-As of version `0.2.0-beta`, pressing K1+K3 on the `plow screen brings up the `plow modulators` menu, which can be navigated using E2 and E3. There are eight parameters for each of the two plants related to modulating envelopes that may be set:  
+As of version `0.2.0-beta`, pressing K1+K3 on the plow screen brings up the `plow modulators` menu, which can be navigated using E2 and E3. There are eight parameters for each of the two plants related to modulating envelopes that may be set:  
   
 `mod prob`: The probability that one of the other modulation parameters will be evaluated. If it is set to 0%, no envelope modulation will occur for the selected plant.  
 `time prob`: The probability that the time value for each of the envelope's nodes will be modulated.  
