@@ -107,7 +107,7 @@ function init()
   for i=1,#midi.vports,1 
   do
     if midi.vports[i].device and midi.vports[i].device.name == "16n" then
-      print("found 16n")
+      -- print("found 16n")
       device_16n = midi.vports[i].device
     end
   end

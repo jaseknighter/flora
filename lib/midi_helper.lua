@@ -1,9 +1,12 @@
 -- midi helper global variables and functions 
 --  including sysex code for the 16n faderbank
 
+-- todo: create a getter/setter for the device_16n and set_16n_channel_and_cc_values variables
+
 midi_out_device = midi.connect(1)
 
 set_midi_channels = function()
+  -- print("set midi channels")
   if pages.index == 4 then
     if active_plant == 1 then
       if device_16n then set_16n_channel_and_cc_values(plow1_cc_channel) end
@@ -34,15 +37,12 @@ end
 
 --------------------------------
   
--- @param m: a midi device 
--- @param d: a table of systex data, omitting the framing bytes
--- function send_sysex(m, d) 
--- state variables.
-sysexDataFrame = {}
-message_from_16n = false
-receiving_configs_from_16n = false
-cc_vals_16n = {}
-channel_vals_16n = {}
+local sysexDataFrame = {}
+local message_from_16n = false
+local receiving_configs_from_16n = false
+local cc_vals_16n = {}
+local channel_vals_16n = {}
+-- local device_16n
 
 -- note: this function isn't currently required
 local process_16n_data = function(data)
@@ -117,7 +117,7 @@ function send_16n_sysex(m,d)
 end
 
 
-get_16n_data_table = {0x7d,0x00,0x00,0x1F}
+local get_16n_data_table = {0x7d,0x00,0x00,0x1F}
 -- set_16n_data_usb_only = {
 --   0x7D, 0x00, 0x00, 
 --   0x0c, 
@@ -143,17 +143,10 @@ get_16n_data_table = {0x7d,0x00,0x00,0x1F}
 -- midi handler functions
 -------------------------------
 
-
-midi.add = function(device)
-  -- print("add midi device", device.id, device.name)
- if device.name == "16n" then 
-    device_16n = device 
-    -- send_16n_sysex(midi,get_16n_data_table)
-  end
-end
   
-midi_event_index = 0
-midi.event = function(data) 
+local midi_event_index = 0
+midi_event = function(data) 
+  -- print("midi event")
   if message_from_16n and receiving_configs_from_16n then
     -- process_16n_data(data)
   else
@@ -168,4 +161,14 @@ midi.event = function(data)
       -- handle other message types
     end
   end
+end
+
+
+midi.add = function(device)
+  -- print("add midi device", device.id, device.name)
+ if device.name == "16n" then 
+    device_16n = device 
+    -- send_16n_sysex(midi,get_16n_data_table)
+ end
+  device.event = midi_event
 end
