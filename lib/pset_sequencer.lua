@@ -66,7 +66,7 @@ local function set_pset_param_exclusions(pset_exclusion_tables, pset_exclusion_t
   do
     
     if #pset_exclusion_table_labels > 0 then
-        params:add{type = "option", id = pset_exclusion_tables[i], name = "exclude " .. pset_exclusion_table_labels[i],
+        params:add{type = "option", id = "exclude_" .. pset_exclusion_table_labels[i], name = "exclude " .. pset_exclusion_table_labels[i],
         options = {"false", "true"}, default = 1,
           action = function(x) 
             local setting
@@ -85,6 +85,7 @@ end
 local loading_preset = false
 local ticks_per_seq_cycle = clock.get_tempo() * 1/1
 local pset_seq_direction = "up"
+local pset_dir_len
 
 local function set_pset_seq_timer()
   local arg_time = clock.get_tempo()
@@ -133,13 +134,16 @@ local function set_ticks_per_seq_cycle()
 end 
 
 local function set_num_psets()
-  num_psets = 0
   local dir = util.scandir (pset_path)
-  for i=1,#dir,1
-  do
-    if (string.find(dir[i],".pset") ~= nil) then
-      num_psets = num_psets + 1
+  if #dir ~= pset_dir_len then
+    num_psets = 0
+    for i=1,#dir,1
+    do
+      if (string.find(dir[i],".pset") ~= nil) then
+        num_psets = num_psets + 1
+      end
     end
+    pset_dir_len = #dir
   end
 end
 
