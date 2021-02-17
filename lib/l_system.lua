@@ -71,6 +71,7 @@ function l_system:new(axiom, r)
   
   ls.set_sentence = function(s)
     ls.sentence = s
+    return ls.sentence
   end
   
   ls.get_generation = function()

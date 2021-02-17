@@ -115,10 +115,6 @@ flora_params.specs = specs
 
 flora_params.add_params = function(plants)
   
-  -- params:add{
-  --   type = "text", id = "sentence", name = "sentence"
-  -- }
-  
   params:add{type = "number", id = "page_turner", name = "page turner",
   min = 1, max = 5, default = 1, 
   action = function(x) 
@@ -214,39 +210,82 @@ flora_params.add_params = function(plants)
     type = "number", id = "plant1_instructions", name = "plant 1: instructions", min=1, max=l_system_instructions.get_num_instructions(),
     action = function(value)
       if initializing == false then
-        -- l_system_instructions.get_num_instructions()
         plants[1].set_instructions(value - plants[1].current_instruction)
       end
     end
   }
-  
+
   params:add{
     type = "number", id = "plant2_instructions", name = "plant 2: instructions", min=1, max=l_system_instructions.get_num_instructions(),
     action = function(value)
       if initializing == false then
-        -- l_system_instructions.get_num_instructions()
         plants[2].set_instructions(value - plants[2].current_instruction)
       end
     end
   }
   params:add{
-    type = "number", id = "plant1_angle", min=-90, max=90, default=plants[1].get_angle(), name = "plant 1: angle",
+    type = "number", id = "plant1_angle", default=plants[1].get_angle(), name = "plant 1: angle",
     action = function(value)
-      if initializing == false then
+      if initializing == false and value ~= value-plants[1].get_angle() then
         plants[1].set_angle(value-plants[1].get_angle())
       end
     end
   }
 
   params:add{
-    type = "number", id = "plant2_angle", min=-90, max=90, default=plants[2].get_angle(), name = "plant 2: angle",
+    type = "number", id = "plant2_angle", default=plants[2].get_angle(), name = "plant 2: angle",
     action = function(value)
-      if initializing == false then
+      if initializing == false and value ~= value-plants[2].get_angle() then
         plants[2].set_angle(value-plants[2].get_angle())
       end
     end
   }
 
+  params:add{
+    type = "number", id = "plant1_generation", name = "plant 1: generation", min=1, max=1, default=1,
+    action = function(value)
+      if initializing == false and value ~= value-plants[1].current_instruction then
+        clock.run(plants[1].change_instructions,plants[1].current_instruction, value)
+      end
+    end
+  }
+
+  params:add{
+    type = "number", id = "plant2_generation", name = "plant 2: generation", min=1, max=1, default=1,
+    action = function(value)
+      if initializing == false and value ~= value-plants[2].current_instruction then
+        clock.run(plants[2].change_instructions,plants[2].current_instruction, value)
+      end
+    end
+  }
+
+
+  params:add{
+    type = "text", id = "plant1_sentence", name = "plant 1 sentence",
+    action = function(value)
+      if value ~= nil and initializing == false and value ~= plants[1].get_sentence() then
+        -- clock.run(set_sentence_param, 1, value)
+        plants[1].set_sentence(value)
+      end
+    end
+  }
+  params:hide("plant1_sentence")
+  
+  params:add{
+    type = "text", id = "plant2_sentence", name = "plant 2 sentence",
+    action = function(value)
+      if value ~= nil and initializing == false and value ~= plants[2].get_sentence() then
+        -- clock.run(set_sentence_param, 2, value)
+        plants[2].set_sentence(value)
+      end
+    end
+  }
+  params:hide("plant2_sentence")
+
+  -- set_sentence_param = function(plant_id, value)
+  --   clock.sleep(0.2)
+  --   plants[plant_id].set_sentence(value)
+  -- end
 
   --------------------------------
   -- plow (envelope) parameters
@@ -287,7 +326,6 @@ flora_params.add_params = function(plants)
 
   -- reset_plow_control_params = function(plow_id, x)
   reset_plow_control_params = function(plow_id, delay)
-    -- print("reset", plow_id)
     -- if delay == true then clock.sleep(0.1) end
     local env_nodes = envelopes[plow_id].graph_nodes
     -- local plow_times = plow_id == 1 and plow1_times or plow2_times
@@ -322,7 +360,6 @@ flora_params.add_params = function(plants)
       if env_nodes[i] then
         param.controlspec = controlspec
         if (i == 1 or i == #envelopes[plow_id].graph_nodes) and param:get() ~= 0 then
-          -- print(i,#envelopes[plow_id].graph_nodes)
           params:set(param.id, 0) 
         elseif env_nodes[i].level ~= params:get(param.id)  then
           params:set(param.id, control_value) 
@@ -385,7 +422,6 @@ flora_params.add_params = function(plants)
   params:set_action("num_plow1_controls", 
     function(x)
       if initializing == false then
-        -- print("num_plow1_controls",x)
         add_remove_nodes(1, x)
       end
     end
@@ -424,7 +460,6 @@ flora_params.add_params = function(plants)
     
     local num_plow_controls = plow_id == 1 and "num_plow1_controls" or "num_plow2_controls"
     local num_env_nodes = #envelopes[plow_id].graph_nodes
-    -- print("params set",num_plow_controls,num_env_nodes)
     params:set(num_plow_controls,num_env_nodes)
 
     -- reset_plow_control_params(plow_id)

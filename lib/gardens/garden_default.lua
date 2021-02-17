@@ -63,7 +63,7 @@ function l_system_instructions.get_instruction(instruction_id)
   elseif (instruction_id == 5) then
     instruction.start_from = vector:new(screen_size.x/2+15, screen_size.y - 10)
     instruction.ruleset = {}
-    instruction.ruleset[1] = rule:new('F'," FF+F+F+F+FF")
+    instruction.ruleset[1] = rule:new('F',"FF+F+F+F+FF")
     instruction.axiom = "F+F+F+F"
     instruction.max_generations = 2
     instruction.length = screen_size.y/8

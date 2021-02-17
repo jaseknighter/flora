@@ -34,14 +34,17 @@ function plant_sounds:new(parent)
     
   ps.play = function(node_obj)
     
-    envelopes[parent.id].modulate_env()
 
     if (node_obj.s_id == parent.current_sentence_id) then
       if (node_obj.note) then
         clock.sync(node_obj.duration)
         parent.show_note = true
+      else 
+        clock.sync(0)
+        
       end
-      -- clock.sync(node_obj.duration)
+      envelopes[parent.id].modulate_env()
+  
       if (node_obj.s_id == parent.current_sentence_id) then
         if (#node_obj.s == node_obj.i) then
           parent.current_sentence_id = parent.current_sentence_id + 1
@@ -146,6 +149,7 @@ function plant_sounds:new(parent)
         ps.note = new_note
       end
       clock.run(ps.play,node_obj)
+      -- ps.play(node_obj)
     else 
       parent.changing_instructions = false
       parent.current_sentence_id = parent.current_sentence_id + 1

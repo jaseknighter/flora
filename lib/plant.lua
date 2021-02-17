@@ -85,10 +85,14 @@ function plant:new(p_id, starting_instruction)
 
   p.get_sentence = function()
     local sentence = p.lsys.get_sentence()
-    -- params:set(45,sentence)
-    -- params:hide("sentence")
-
     return sentence
+  end
+
+  p.set_sentence = function(new_sentence)
+    local plant_sentence_param = "plant".. p.id .. "_sentence"
+    p.sentence = p.lsys.set_sentence(new_sentence)
+    p.turtle.set_todo(p.sentence)
+    params:set(plant_sentence_param,new_sentence)
   end
   
   p.set_current_page = function(idx)
@@ -157,26 +161,21 @@ function plant:new(p_id, starting_instruction)
     table.remove(sentence_table, p.sentence_cursor_index)
     table.insert(sentence_table, p.sentence_cursor_index, new_letter)
     local new_sentence = sentence_from_table(sentence_table)
-    p.lsys.set_sentence(new_sentence)
-    p.sentence = p.get_sentence()
-    p.turtle.set_todo(p.sentence)
+    p.set_sentence(new_sentence)
   end
   
   p.add_letter = function(idx)
     local sentence_table = table_from_sentence(p.get_sentence())
     table.insert(sentence_table,p.sentence_cursor_index, alphabet[1])
     local new_sentence = sentence_from_table(sentence_table)
-    p.lsys.set_sentence(new_sentence)
-    p.sentence = p.get_sentence()
-    p.turtle.set_todo(p.sentence)
-    p.changing_instructions = true
+    p.set_sentence(new_sentence)
   end
 
   p.remove_letter = function()
     local sentence_table = table_from_sentence(p.get_sentence())
     table.remove(sentence_table,p.sentence_cursor_index)
     local new_sentence = sentence_from_table(sentence_table)
-    p.lsys.set_sentence(new_sentence)
+    p.set_sentence(new_sentence)
     p.sentence = p.get_sentence()
     p.turtle.set_todo(p.sentence)
     p.changing_instructions = true
@@ -252,10 +251,12 @@ function plant:new(p_id, starting_instruction)
 
       p.lsys = l_system:new(axiom,ruleset)
       p.sentence = p.get_sentence()
+
       p.turtle = turtle_class:new(
         p.sentence, 
         p.length or 35, 
         math.rad(p.angle or 0))
+      
       if (target_generation) then
         for i=1, target_generation, 1
           do
@@ -268,7 +269,19 @@ function plant:new(p_id, starting_instruction)
       
       local p_instruction = p.id == 1 and "plant1_instructions" or "plant2_instructions"
 
-        params:set(p_instruction, p.current_instruction)
+      params:set(p_instruction, p.current_instruction)
+      local plant_gen_param = "plant".. p.id .. "_generation"
+      if target_generation then
+        if params:get(plant_gen_param) ~= target_generation then
+          params:set(plant_gen_param, target_generation)
+        end
+        local param = params:lookup_param(plant_gen_param)
+        param.max = p.max_generations
+      end
+      
+      local plant_sentence_param = "plant".. p.id .. "_sentence"
+      params:set(plant_sentence_param,p.get_sentence())
+
       
     end    
     
@@ -302,7 +315,7 @@ function plant:new(p_id, starting_instruction)
       p.sentence_cursor_index = 1
       if (p.initializing == false and p.changing_instructions == false) then
         p.changing_instructions = true
-        clock.run(p.change_instructions, 1)  
+        p.change_instructions(1)  
         p.reset_offset()
       end
     end 
@@ -321,19 +334,19 @@ function plant:new(p_id, starting_instruction)
           p.changing_instructions = true
           local target_generation = increment_generation_by ~= 0 and p.current_generation + increment_generation_by or 0
           target_generation = target_generation > 0 and target_generation or nil
-          clock.run(p.change_instructions, next_instruction, target_generation)  
+          p.change_instructions(next_instruction, target_generation)  
           p.reset_offset()
         end
       end
     end 
     
     p.change_instructions = function(next_instruction, target_generation)
-      clock.sleep(0.1)
+      -- clock.sleep(0.1)
       if (p.initializing == false) then
         p.setup(next_instruction, target_generation)
         p.play_turtle = true
       else
-        clock.run(p.change_instructions, next_instruction)  
+        p.change_instructions(next_instruction)  
       end
     end
     
