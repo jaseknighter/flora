@@ -38,25 +38,27 @@ function plant_sounds_externals:new(active_notes)
         local envelope_data = envelopes[plant_id].get_envelope_arrays()
         local asl_envelope = ""
         for i=2, envelope_data.segments, 1
-          do
+        do
           local to_shape 
           if envelope_data.curves[i] > 0 then to_shape = 'exponential'
           elseif envelope_data.curves[i] < 0 then to_shape = 'logarithmic'
           else to_shape = 'linear'
           end
+          
           local to_string =  "to(" .. 
-                              (envelope_data.levels[i]) .. "," ..
-                              (envelope_data.times[i]-envelope_data.times[i-1]) .. 
-                              "," .. to_shape .. 
-                            "),"
-          asl_envelope = asl_envelope .. to_string
+                             (envelope_data.levels[i]) .. "," ..
+                             (envelope_data.times[i]-envelope_data.times[i-1]) .. 
+                             "," .. to_shape .. 
+                             "),"
+                             asl_envelope = asl_envelope .. to_string
+
           if i == envelope_data.segments then
-            local to_string =  "to(" .. 
+            local to_string = "to(" .. 
                               (envelope_data.levels[i]) .. "," ..
                               (env_length-envelope_data.times[i]) .. 
                               "," .. to_shape .. 
-                            "),"
-            asl_envelope = asl_envelope .. to_string
+                              "),"
+                              asl_envelope = asl_envelope .. to_string
           end
         end
       
