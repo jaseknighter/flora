@@ -8,13 +8,16 @@ function plant_sounds_externals:new(active_notes)
   pse.index = 1
   setmetatable(pse, plant_sounds_externals)
 
-  pse.midi_note_off = function(delay, note_num, channel, plant_id)
+  pse.midi_note_off = function(delay, note_num, channel, plant_id, note_location)
     local note_off_delay
     if plant_id == 1 then
       note_off_delay = midi_out_envelope_override1 or delay
     elseif plant_id == 2 then
       note_off_delay = midi_out_envelope_override2 or delay
     end
+    clock.sleep(note_off_delay)
+    table.remove(active_notes, note_location)
+    midi_out_device:note_off(note_num, nil, channel)
   end
  
   pse.note_on = function(plant_id, note_to_play, pitch_frequency, beat_frequency, envelope_time_remaining)
@@ -26,10 +29,9 @@ function plant_sounds_externals:new(active_notes)
     if output_param == 2 or output_param == 3 or output_param == 4 then
       midi_out_device:note_on(note_to_play, 96, midi_out_channel)
       table.insert(active_notes, note_to_play)
-    
       -- Note off timeout
       local note_duration_param = plant_id == 1 and "plant_1_note_duration" or "plant_2_note_duration"
-      clock.run(pse.midi_note_off, envelope_length, note_to_play, midi_out_channel, plant_id)
+      clock.run(pse.midi_note_off, envelope_length, note_to_play, midi_out_channel, plant_id, #active_notes)
     end
     
     -- crow out
@@ -38,25 +40,27 @@ function plant_sounds_externals:new(active_notes)
         local envelope_data = envelopes[plant_id].get_envelope_arrays()
         local asl_envelope = ""
         for i=2, envelope_data.segments, 1
-          do
+        do
           local to_shape 
           if envelope_data.curves[i] > 0 then to_shape = 'exponential'
           elseif envelope_data.curves[i] < 0 then to_shape = 'logarithmic'
           else to_shape = 'linear'
           end
+          
           local to_string =  "to(" .. 
-                              (envelope_data.levels[i]) .. "," ..
-                              (envelope_data.times[i]-envelope_data.times[i-1]) .. 
-                              "," .. to_shape .. 
-                            "),"
-          asl_envelope = asl_envelope .. to_string
+                             (envelope_data.levels[i]) .. "," ..
+                             (envelope_data.times[i]-envelope_data.times[i-1]) .. 
+                             "," .. to_shape .. 
+                             "),"
+                             asl_envelope = asl_envelope .. to_string
+
           if i == envelope_data.segments then
-            local to_string =  "to(" .. 
+            local to_string = "to(" .. 
                               (envelope_data.levels[i]) .. "," ..
                               (env_length-envelope_data.times[i]) .. 
                               "," .. to_shape .. 
-                            "),"
-            asl_envelope = asl_envelope .. to_string
+                              "),"
+                              asl_envelope = asl_envelope .. to_string
           end
         end
       
