@@ -33,14 +33,13 @@ function plant_sounds:new(parent)
   end
     
   ps.play = function(node_obj)
-    
-
     if (node_obj.s_id == parent.current_sentence_id) then
       if (node_obj.note) then
         clock.sync(node_obj.duration)
         parent.show_note = true
       else 
-        clock.sync(0)
+        -- set clock.sync to 0.001 to prevent a stack overflow
+        clock.sync(0.001)
         
       end
       envelopes[parent.id].modulate_env()
@@ -116,7 +115,7 @@ function plant_sounds:new(parent)
     local s = parent.lsys.get_sentence()
     ps.note = last_note and last_note or #notes/2
     local s_id = last_s_id and last_s_id or parent.current_sentence_id
-    if (parent.changing_instructions == false and s_id == parent.current_sentence_id) then
+    if (initializing == false and parent.changing_instructions == false and s_id == parent.current_sentence_id) then
       i = last_index and last_index + 1 or 1
       local l = string.sub(s, i, i)
       local node_obj = {}

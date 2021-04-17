@@ -1,4 +1,4 @@
-
+-- external sounds and outputs
 
 local plant_sounds_externals = {}
 plant_sounds_externals.__index = plant_sounds_externals
@@ -16,7 +16,11 @@ function plant_sounds_externals:new(active_notes)
       note_off_delay = midi_out_envelope_override2 or delay
     end
     clock.sleep(note_off_delay)
-    table.remove(active_notes, note_location)
+    if note_location <= #active_notes then
+      table.remove(active_notes, note_location)
+    else
+    --   print("note location is out of bounds!!!", note_location, #active_notes)
+    end
     midi_out_device:note_off(note_num, nil, channel)
   end
  

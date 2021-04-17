@@ -21,8 +21,67 @@ function l_system:new(axiom, r)
   setmetatable(ls, l_system)
   ls.axiom = axiom      -- the starting sentence (a string)
   ls.sentence = axiom   -- the sentence (a string)
-  ls.ruleset = r        -- the ruleset (an array of rule objects)
+  ls.rulesets_raw = r        -- the rulesets (an array of raw rule objects)
   ls.generation = 0     -- keeping track of the generation #
+  
+  ls.rulesets = {}
+  
+  for i=1,#ls.rulesets_raw,1
+  do
+    ls.rulesets[i] = rule:new(ls.rulesets_raw[i][1],ls.rulesets_raw[i][2])
+  end
+  ls.num_rulesets = #ls.rulesets
+  
+  
+  ls.get_num_rulesets = function()
+    return ls.num_rulesets
+  end
+
+  ls.set_num_rulesets = function(incr)
+    if incr == - 1 then
+      if ls.num_rulesets == 1 and ls.rulesets[ls.num_rulesets] then return else 
+        table.remove(ls.rulesets_raw,ls.num_rulesets)
+        table.remove(ls.rulesets,ls.num_rulesets)
+        ls.num_rulesets = ls.num_rulesets + incr 
+      end 
+    else
+      if ls.num_rulesets < #ls.rulesets then
+        ls.num_rulesets = ls.num_rulesets + incr
+      else
+        ls.num_rulesets = ls.num_rulesets + incr
+        local i = ls.num_rulesets
+        ls.rulesets_raw[i] = {"F","F"}
+        ls.rulesets[i] = rule:new(ls.rulesets_raw[i][1],ls.rulesets_raw[i][2])
+      end
+    end
+  end
+  
+
+  ls.get_predecessor = function(ruleset_id)
+    return ls.rulesets[ruleset_id].get_a()
+  end
+
+  ls.get_successor = function(ruleset_id)
+    return ls.rulesets[ruleset_id].get_b()
+  end
+
+  ls.get_ruleset = function(ruleset_id)
+    return ls.rulesets[ruleset_id]  
+  end
+  
+  ls.set_ruleset = function(ruleset_id, predecessor, successor)
+    -- ls.rulesets[ruleset_id] = rule:new(predecessor, successor)
+    ls.rulesets_raw[ruleset_id] = {predecessor, successor}
+    ls.rulesets[ruleset_id] = rule:new(ls.rulesets_raw[ruleset_id][1],ls.rulesets_raw[ruleset_id][2])
+  end
+
+  ls.get_axiom = function()
+    return ls.axiom
+  end
+
+  ls.set_axiom = function(new_axiom)
+    ls.axiom = new_axiom
+  end
 
   -- generate the next generation
   -- param dir can be -1 or 1
@@ -44,12 +103,13 @@ function l_system:new(axiom, r)
       -- we will replace it with itself unless it matches one of our rules
       local replace = string.sub(ls.sentence, i, i)
       -- check every rule
-      for j=1, #ls.ruleset,1
+      for j=1, #ls.rulesets,1
       do
-        local a = ls.ruleset[j].get_a()
+        local a = ls.rulesets[j].get_a()
         -- if we match the rule, get the replacement string out of the rule
         if (a == replace) then
-          replace = ls.ruleset[j].get_b(ls.generation)
+          replace = ls.rulesets[j].get_b(ls.generation)
+          
           break
         end
       end
@@ -61,7 +121,6 @@ function l_system:new(axiom, r)
     local max_length = MAX_SENTENCE_LENGTH or 150
 
     local next_sentence = #next_gen < max_length and next_gen or string.sub(next_gen, 1, max_length)
-    -- print("next_gen/next_sentence length",#next_gen,#next_sentence)
     ls.sentence = next_sentence
   end
 

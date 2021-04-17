@@ -165,11 +165,23 @@ local draw_top_nav = function()
   screen.fill()
   screen.level(0)
   screen.move(4,7)
-
   if pages.index == 1 then
     local plant_info = show_instructions == true and "instructions" or plants[active_plant].get_plant_info()
     screen.text("plant " .. plant_info)
   elseif pages.index == 2 then
+		if show_instructions == true then
+      screen.text("modify instructions")
+      
+		elseif menu_status == false then 
+      -- label = modify.get_control_labels()
+      -- label = "mod " .. modify.get_control_labels()
+      -- print("label",label)
+      -- screen.text(label)
+  		modify.draw_modify_nav()
+  		modify.redraw()
+		end
+    --[[
+    old code
     local instruction_details = plants[active_plant].get_instructions_to_display()
     local instructions = show_instructions == true and "instructions" or instruction_details[1]
     local cursor_location = instruction_details[2]
@@ -179,6 +191,8 @@ local draw_top_nav = function()
       screen.move_rel(cursor_location , 2)
       screen.text('_')
     end
+    ]]
+    
   elseif pages.index == 3 then
     if show_instructions == true then
       screen.text("observe instructions")
@@ -291,8 +305,8 @@ local draw_pages = function(notes_only)
       elseif pages.index == 5 then
         water.display()
       end
-      draw_top_nav()
     end
+    draw_top_nav()
   end
 end
 

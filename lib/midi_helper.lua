@@ -46,7 +46,7 @@ local channel_vals_16n = {}
 
 -- note: this function isn't currently required
 local process_16n_data = function(data)
-  print("process 16n data")
+  -- print("process 16n data")
   local msg_data = midi.to_msg(data)
   
   midi_event_index = midi_event_index + 1
@@ -143,12 +143,11 @@ local get_16n_data_table = {0x7d,0x00,0x00,0x1F}
 -- midi handler functions
 -------------------------------
 
-  
 local midi_event_index = 0
 midi_event = function(data) 
-  -- print("midi event")
+  -- tab.print(data)
   if message_from_16n and receiving_configs_from_16n then
-    -- process_16n_data(data)
+    -- do something with 16n_data(data)
   else
     if data[1] == 240 and data[2] == 125 then        --- this is the start byte with a a message from the 16n faderbank 
       midi_event_index = 2
@@ -159,16 +158,94 @@ midi_event = function(data)
       receiving_configs_from_16n = true
     else
       -- handle other message types
+      if data[1] == midi_in_command1 then -- plant 1 engine note on
+        -- print("note_on", data[2])
+        envelopes[1].update_envelope()
+        local note_to_play = data[2]
+        -- set a random scalar for the note about to play
+        local num_active_cf_scalars = params:get("num_active_cf_scalars")
+        local random_cf_scalars_index = params:get(cf_scalars[math.random(num_active_cf_scalars)])
+        local cf_scalar = cf_scalars_map[random_cf_scalars_index]
+
+        -- set a random note_frequency for the note about to play
+        local num_note_freq_index = math.random(#tempo_offset_note_frequencies)
+        local random_note_frequency = tempo_offset_note_frequencies[num_note_freq_index]
+          
+        local freq = MusicUtil.note_num_to_freq(note_to_play) * cf_scalar
+        plants[1].sounds.engine_note_on(note_to_play, freq, random_note_frequency)
+      elseif data[1] == midi_in_command2 then -- plant 1 engine note on
+        -- print("note_on", data[2])
+        envelopes[2].update_envelope()
+        local note_to_play = data[2]
+        -- set a random scalar for the note about to play
+        local num_active_cf_scalars = params:get("num_active_cf_scalars")
+        local random_cf_scalars_index = params:get(cf_scalars[math.random(num_active_cf_scalars)])
+        local cf_scalar = cf_scalars_map[random_cf_scalars_index]
+
+        -- set a random note_frequency for the note about to play
+        local num_note_freq_index = math.random(#tempo_offset_note_frequencies)
+        local random_note_frequency = tempo_offset_note_frequencies[num_note_freq_index]
+        
+        local freq = MusicUtil.note_num_to_freq(note_to_play) * cf_scalar
+        plants[2].sounds.engine_note_on(note_to_play, freq, random_cf_scalars_index)
+      elseif data[1] == 128 then -- note off
+        -- todo: figure out how to implement note off
+      end
     end
   end
 end
 
 
 midi.add = function(device)
-  -- print("add midi device", device.id, device.name)
+-- print("midi device add ", device.id, device.name)
  if device.name == "16n" then 
     device_16n = device 
     -- send_16n_sysex(midi,get_16n_data_table)
  end
-  device.event = midi_event
+device.event = midi_event
 end
+
+--[[
+  -- MIDI input
+  local function midi_event(data)
+    
+    local msg = midi.to_msg(data)
+    local channel_param = params:get("midi_channel")
+    
+    if channel_param == 1 or (channel_param > 1 and msg.ch == channel_param - 1) then
+      
+      -- Note off
+      if msg.type == "note_off" then
+        note_off(msg.note)
+      
+      -- Note on
+      elseif msg.type == "note_on" then
+        note_on(msg.note, msg.vel / 127)
+        
+      -- Key pressure
+      elseif msg.type == "key_pressure" then
+        set_pressure(msg.note, msg.val / 127)
+        
+      -- Channel pressure
+      elseif msg.type == "channel_pressure" then
+        set_pressure_all(msg.val / 127)
+        
+      -- Pitch bend
+      elseif msg.type == "pitchbend" then
+        local bend_st = (util.round(msg.val / 2)) / 8192 * 2 -1 -- Convert to -1 to 1
+        local bend_range = params:get("bend_range")
+        set_pitch_bend_all(bend_st * bend_range)
+        
+      -- CC
+      elseif msg.type == "cc" then
+        -- Mod wheel
+        if msg.cc == 1 then
+          set_timbre_all(msg.val / 127)
+        end
+        
+      end
+    
+    end
+    
+end
+]]

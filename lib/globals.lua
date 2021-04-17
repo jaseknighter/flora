@@ -54,11 +54,13 @@ end
 engine.name = 'BandSaw'
 
 -- for params.lua
+WOBBLE_DEFAULT = 0.05
+FLUTTER_DEFAULT = 0.02
 updating_controls = false
 OUTPUT_DEFAULT = 4
 SCREEN_FRAMERATE = 1/15
-INITIAL_PLANT_INSTRUCTIONS_1 = 1
-INITIAL_PLANT_INSTRUCTIONS_2 = 2
+INITIAL_PLANT_INSTRUCTIONS_1 = 3 
+INITIAL_PLANT_INSTRUCTIONS_2 = 3
 menu_status = false
 pages = 0
 flora_params = {}
@@ -74,7 +76,7 @@ note_frequencies_min = 1
 note_frequencies_max = 8
 note_frequencies_offset_min = -0.99
 note_frequencies_offset_max = 0.99
-tempo_scalar_offset_min = 0.1
+tempo_scalar_offset_min = 1
 tempo_scalar_offset_max = 2
 tempo_scalar_offset_default = 1.5
 
@@ -139,6 +141,7 @@ show_instructions = false
 
 -- for plant.lua
 l_system_instructions = {}
+turtle_min_length = 0.2
 
 -- for plant_sounds.lua 
 note_scalar = 3
@@ -166,10 +169,13 @@ set_scale_length = function()
 end
 
 -- for midi_helper.lua
+midi_in_device = {}
 midi_out_channel1 = 1
 midi_out_channel2 = 1
 midi_out_envelope_override1 = nil
 midi_out_envelope_override2 = nil
+midi_in_channel1_default = 1
+midi_in_channel2_default = 2
 
 plow1_cc_channel = 1
 plow2_cc_channel = 1

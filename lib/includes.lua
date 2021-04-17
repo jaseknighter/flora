@@ -22,6 +22,7 @@ instructions = include "flora/lib/instructions"
 encoders_and_keys = include "flora/lib/encoders_and_keys"
 flora_pages = include("flora/lib/flora_pages")
 plant = include("flora/lib/plant")
+modify = include("flora/lib/modify")
 envelope = include "flora/lib/envelope"
 water = include "flora/lib/water"
 
@@ -36,6 +37,10 @@ rule = include("flora/lib/rule")
 
 -- required for plant_sounds.lua
 plant_sounds_externals = include("flora/lib/plant_sounds_externals") 
+
+-- required for modify.lua
+-- fileselect = require 'fileselect'
+-- textentry = require 'textentry'
 
 -- required for envelope.lua
 ArbGraph = include("flora/lib/ArbitraryGraph")

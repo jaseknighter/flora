@@ -114,7 +114,7 @@ flora_params.specs = specs
 --------------------------------
 
 flora_params.add_params = function(plants)
-  
+  params:add_separator("")
   params:add{type = "number", id = "page_turner", name = "page turner",
   min = 1, max = 5, default = 1, 
   action = function(x) 
@@ -148,8 +148,6 @@ flora_params.add_params = function(plants)
   min = 0, max = 127, default = root_note_default, formatter = function(param) return MusicUtil.note_num_to_name(param:get(), true) end,
   action = function() build_scale() end}
 
-  params:add_separator("outputs")
-  
   params:add{type = "option", id = "crow_clock", name = "crow clock out",
     options = {"off","on"},
     action = function(value)
@@ -157,6 +155,71 @@ flora_params.add_params = function(plants)
         crow.output[1].action = "{to(5,0),to(5,0.05),to(0,0)}"
       end
     end}
+
+--------------------------------
+-- inputs/outputs/midi params
+--------------------------------
+  params:add_separator(" ")
+  params:add_group("inputs/outputs",12)
+  params:add_separator("inputs")
+  
+  midi_in_device = {}
+  params:add{type = "number", id = "midi_device", name = "midi in device", min = 1, max = 16, default = 1, action = function(value)
+    midi_in_device.event = nil
+    -- print("midi in device", value)
+    midi_in_device = midi.connect(value)
+    midi_in_device.event = midi_event
+    end
+  }
+    
+  
+  params:add{
+    type = "number", id = "midi_in_channel1", name = "plant 1:midi in channel",
+    min = 1, max = 16, default = midi_in_channel1_default,
+    action = function(value)
+      -- all_notes_off()
+      midi_in_command1 = value + 143
+    end
+  }
+    
+  params:add{type = "number", id = "midi_in_channel2", name = "plant 2:midi in channel",
+    min = 1, max = 16, default = midi_in_channel2_default,
+    action = function(value)
+      -- all_notes_off()
+      midi_in_command2 = value + 143
+    end
+  }
+  
+  params:add{
+    type = "number", id = "plow1_cc_channel", name = "plow 1:midi cc channel",
+    min = 1, max = 16, default = plow1_cc_channel,
+    action = function(value)
+      -- all_notes_off()
+      plow1_cc_channel = value
+    end
+  }
+
+  params:add{
+    type = "number", id = "plow2_cc_channel", name = "plow 2:midi cc channel",
+    min = 1, max = 16, default = plow2_cc_channel,
+    action = function(value)
+      -- all_notes_off()
+      plow2_cc_channel = value
+    end
+  }
+  
+  params:add{
+    type = "number", id = "water_cc_channel", name = "water:midi cc channel",
+    min = 1, max = 16, default = water_cc_channel,
+    action = function(value)
+      -- all_notes_off()
+      water_cc_channel = value
+    end
+  }
+
+
+
+  params:add_separator("outputs")
   
   params:add{type = "option", id = "output", name = "output",
     options = options.OUTPUT,
@@ -172,10 +235,6 @@ flora_params.add_params = function(plants)
       --   crow.ii.jf.mode(1)
       end
     end}
-    
---------------------------------
--- midi params
---------------------------------
 
   params:add{
     type = "number", id = "midi_out_device", name = "midi out device",
@@ -200,14 +259,63 @@ flora_params.add_params = function(plants)
     end
   }
   
+
   
+  
+  
+  --------------------------------
+  -- gardens (load/save)
+  --------------------------------
+  --[[
+  params:add_group("gardens (load/save)",7)
+  params:add_separator("load/save")
+  params:add_trigger("load", "load garden")
+  params:set_action("load",
+  function(x)
+    local dirname = _path.data.."flora/"
+    if os.rename(dirname, dirname) == nil then
+      os.execute("mkdir " .. dirname)
+    end
+    local dirname = _path.data.."flora/names/"
+    if os.rename(dirname, dirname) == nil then
+      os.execute("mkdir " .. dirname)
+    end
+    fileselect.enter(_path.data.."flora/names/", named_loadstate)
+  end)
+  params:add_trigger("save", "save new garden")
+  params:set_action("save", function(x)
+    if Namesizer ~= nil then
+      textentry.enter(pre_save,Namesizer.phonic_nonsense().."_"..Namesizer.phonic_nonsense())
+    else
+      textentry.enter(pre_save)
+    end
+  end)
+  params:add_separator("danger zone!")
+  params:add_trigger("overwrite_garden", "overwrite loaded garden")
+  -- params:set_action("overwrite_coll", function(x) fileselect.enter(_path.data.."cheat_codes_2/names/", named_overwrite) end)
+  params:set_action("overwrite_garden", function(x)
+    if selected_garden ~= 0 then
+      named_overwrite(_path.data.."flora/names/"..selected_garden..".flora")
+    end
+  end)
+  params:add_trigger("delete_garden", "delete garden")
+  params:set_action("delete_garden", function(x) fileselect.enter(_path.data.."flora/names/", pre_delete) end)
+  params:add_trigger("save_default_garden", "save as default garden")
+  params:set_action("save default collection", function()
+    clock.run(save_screen,"DEFAULT")
+    _norns.key(1,1)
+    _norns.key(1,0)
+    -- screen_dirty = true
+  end)
+  ]]
   --------------------------------
   -- plant parameters
   --------------------------------
-  params:add_separator("plant")
+  params:add_group("plants",6)
+  -- params:add_separator("plant")
 
   params:add{
-    type = "number", id = "plant1_instructions", name = "plant 1: instructions", min=1, max=l_system_instructions.get_num_instructions(),
+    type = "number", id = "plant1_instructions", name = "plant 1: instructions", min=1, max = l_system_instructions.get_num_instructions(), default = INITIAL_PLANT_INSTRUCTIONS_1,
     action = function(value)
       if initializing == false then
         plants[1].set_instructions(value - plants[1].current_instruction)
@@ -216,7 +324,7 @@ flora_params.add_params = function(plants)
   }
 
   params:add{
-    type = "number", id = "plant2_instructions", name = "plant 2: instructions", min=1, max=l_system_instructions.get_num_instructions(),
+    type = "number", id = "plant2_instructions", name = "plant 2: instructions", min=1, max=l_system_instructions.get_num_instructions(), default = INITIAL_PLANT_INSTRUCTIONS_2,
     action = function(value)
       if initializing == false then
         plants[2].set_instructions(value - plants[2].current_instruction)
@@ -224,7 +332,7 @@ flora_params.add_params = function(plants)
     end
   }
   params:add{
-    type = "number", id = "plant1_angle", default=plants[1].get_angle(), name = "plant 1: angle",
+    type = "number", id = "plant1_angle", default=90, name = "plant 1: angle",
     action = function(value)
       if initializing == false and value ~= value-plants[1].get_angle() then
         plants[1].set_angle(value-plants[1].get_angle())
@@ -233,7 +341,7 @@ flora_params.add_params = function(plants)
   }
 
   params:add{
-    type = "number", id = "plant2_angle", default=plants[2].get_angle(), name = "plant 2: angle",
+    type = "number", id = "plant2_angle", default=90, name = "plant 2: angle",
     action = function(value)
       if initializing == false and value ~= value-plants[2].get_angle() then
         plants[2].set_angle(value-plants[2].get_angle())
@@ -260,27 +368,27 @@ flora_params.add_params = function(plants)
   }
 
 
-  params:add{
-    type = "text", id = "plant1_sentence", name = "plant 1 sentence",
-    action = function(value)
-      if value ~= nil and initializing == false and value ~= plants[1].get_sentence() then
-        -- clock.run(set_sentence_param, 1, value)
-        plants[1].set_sentence(value)
-      end
-    end
-  }
-  params:hide("plant1_sentence")
+  -- params:add{
+  --   type = "text", id = "plant1_sentence", name = "plant 1 sentence",
+  --   action = function(value)
+  --     if value ~= nil and initializing == false and value ~= plants[1].get_sentence() then
+  --       -- clock.run(set_sentence_param, 1, value)
+  --       plants[1].set_sentence(value)
+  --     end
+  --   end
+  -- }
+  -- params:hide("plant1_sentence")
   
-  params:add{
-    type = "text", id = "plant2_sentence", name = "plant 2 sentence",
-    action = function(value)
-      if value ~= nil and initializing == false and value ~= plants[2].get_sentence() then
-        -- clock.run(set_sentence_param, 2, value)
-        plants[2].set_sentence(value)
-      end
-    end
-  }
-  params:hide("plant2_sentence")
+  -- params:add{
+  --   type = "text", id = "plant2_sentence", name = "plant 2 sentence",
+  --   action = function(value)
+  --     if value ~= nil and initializing == false and value ~= plants[2].get_sentence() then
+  --       -- clock.run(set_sentence_param, 2, value)
+  --       plants[2].set_sentence(value)
+  --     end
+  --   end
+  -- }
+  -- params:hide("plant2_sentence")
 
   -- set_sentence_param = function(plant_id, value)
   --   clock.sleep(0.2)
@@ -290,26 +398,9 @@ flora_params.add_params = function(plants)
   --------------------------------
   -- plow (envelope) parameters
   --------------------------------
-  params:add_separator("plow")
-  
-  params:add{
-    type = "number", id = "plow1_cc_channel", name = "plow 1:midi cc channel",
-    min = 1, max = 16, default = plow1_cc_channel,
-    action = function(value)
-      -- all_notes_off()
-      plow1_cc_channel = value
-    end
-  }
-
-  params:add{
-    type = "number", id = "plow2_cc_channel", name = "plow 2:midi cc channel",
-    min = 1, max = 16, default = plow2_cc_channel,
-    action = function(value)
-      -- all_notes_off()
-      plow2_cc_channel = value
-    end
-  }
-  
+  params:add_group("plows (envs)",2+4+(2*(MAX_ENVELOPE_NODES*3))+19)
+  params:add_separator("env controls")
+  -- params:add_separator("plow")
   
   get_node_time = function(env_id, node_id)
     local node_time = envelopes[env_id].get_envelope_arrays().times[node_id]
@@ -410,15 +501,12 @@ flora_params.add_params = function(plants)
         params:hide(plow_curves[i])
       end
     end
+    _menu.rebuild_params()
   end
 
   params:add_number("num_plow1_controls", "num_plow1_controls", 3, MAX_ENVELOPE_NODES, 5)
   -- params:hide("num_plow1_controls")
 
-  params:add_number("num_plow2_controls", "num_plow2_controls", 3, MAX_ENVELOPE_NODES, 5)
-  -- params:hide("num_plow2_controls")
-  
-  
   params:set_action("num_plow1_controls", 
     function(x)
       if initializing == false then
@@ -426,6 +514,9 @@ flora_params.add_params = function(plants)
       end
     end
   )
+
+  params:add_number("num_plow2_controls", "num_plow2_controls", 3, MAX_ENVELOPE_NODES, 5)
+  -- params:hide("num_plow2_controls")
 
   params:set_action("num_plow2_controls", 
     function(x)
@@ -488,12 +579,7 @@ flora_params.add_params = function(plants)
       name = plow_id == 1 and "plow 1 max level" or "plow 2 max level",
       controlspec=specs.PLOW_LEVEL,
       action=function(x) 
-        -- if initializing == false and x ~= envelopes[plow_id].get_env_level() then 
-        if initializing == false then 
-          envelopes[plow_id].set_env_level(x) 
-          -- if initializing == false then clock.run(reset_plow_control_params,plow_id,true) end
-          -- if initializing == false then reset_plow_control_params(plow_id) end
-        end
+        if initializing == false then envelopes[plow_id].set_env_level(x) end
       end
     }
   
@@ -504,14 +590,9 @@ flora_params.add_params = function(plants)
       name = plow_id == 1 and "plow 1 max time" or "plow 2 max time",
       controlspec=specs.PLOW_TIME,
       action=function(x) 
-        if initializing == false then 
-          envelopes[plow_id].set_env_time(x) 
-          -- if initializing == false then clock.run(reset_plow_control_params,plow_id,true) end
-          -- if initializing == false then reset_plow_control_params(plow_id) end
-        end
+        if initializing == false then envelopes[plow_id].set_env_time(x) end
       end
     }  
-    -- for i=MAX_ENVELOPE_NODES, 1, -1
     for i=1, MAX_ENVELOPE_NODES, 1
     do
       for j=1, 3, 1
@@ -539,7 +620,6 @@ flora_params.add_params = function(plants)
           min_val = CURVE_MIN
           max_val = CURVE_MAX
         end        
-        
         
         params:add{
           type = "control", 
@@ -591,29 +671,15 @@ flora_params.add_params = function(plants)
     params:hide(plow_levels[num_plow_controls])
   end
 
-  params:add_group("plow 1 controls",MAX_ENVELOPE_NODES*3 + 2)
   init_plow_controls(1)
-  
-  params:add_group("plow 2 controls",MAX_ENVELOPE_NODES*3 + 2)
   init_plow_controls(2)
 
-    --[[
-      randomize_env_probability: 0-100
-      time_probability (0-100) 
-      level_probability (0-100) 
-      curve_probability (0-100)
-      time_modulation: 0-1
-      level_modulation: 0-1
-      curve_modulation: 0-1
-    ]]
-
+  params:add_separator("env mod params")
   params:add{type = "option", id = "show_env_mod_params", name = "show env mod params",
   options = {"off","on"}, default = 1,
   action = function(x)
     if x == 1 then show_env_mod_params = false else show_env_mod_params = true end
   end}
-
-  params:add_group("plow 1 modulation",8)
 
   params:add_taper("randomize_env_probability1", "1: env mod probability", 0, 100, 100, 0, "%")
   params:add_taper("time_probability1", "1: time mod probability", 0, 100, 0, 0, "%")
@@ -630,7 +696,6 @@ flora_params.add_params = function(plants)
     end
   end )
 
-  params:add_group("plow 2 modulation",8)
   params:add_taper("randomize_env_probability2", "2: env probability", 0, 100, 100, 0, "%")
   params:add_taper("time_probability2", "2: time probability", 0, 100, 0, 0, "%")
   params:add_taper("level_probability2", "2: level probability", 0, 100, 0, 0, "%")
@@ -650,16 +715,41 @@ flora_params.add_params = function(plants)
   --------------------------------
   -- water parameters
   --------------------------------
-  params:add_separator("water")
+  local num_note_frequencies = 6
 
+  local reset_note_frequencies = function()
+  local tempo_scalar_offset = params:get("tempo_scalar_offset")
+  local clock_tempo = params:get("clock_tempo")
+  local clock_tempo_scalar = clock_tempo/(60 * tempo_scalar_offset)
+  tempo_offset_note_frequencies = get_note_frequencies(clock_tempo_scalar)
+  note_frequencies = get_note_frequencies()
+  clock.run(set_dirty)
+end
+
+  params:add_group("water",4+num_cf_scalars_max+3+(3*num_note_frequencies)+2)
+  
   params:add{
-    type = "number", id = "water_cc_channel", name = "water:midi cc channel",
-    min = 1, max = 16, default = water_cc_channel,
-    action = function(value)
-      -- all_notes_off()
-      water_cc_channel = value
-    end
+    type = "control",
+    id = "tempo_scalar_offset", 
+    name = "tempo scalar offset", 
+    controlspec = specs.TEMPO_SCALAR_OFFSET
   }
+  
+  params:set_action("tempo_scalar_offset", 
+    function()
+      reset_note_frequencies()
+    end
+  )
+
+  -- overwrite clock tempo action
+  params:set_action("clock_tempo",
+    function(bpm)
+      local source = params:string("clock_source")
+      if source == "internal" then clock.internal.set_tempo(bpm)
+      elseif source == "link" then clock.link.set_tempo(bpm) end
+      norns.state.clock.tempo = bpm
+      reset_note_frequencies()
+    end)
 
   params:add{
     type="control",
@@ -714,14 +804,10 @@ flora_params.add_params = function(plants)
       local cf_scalar = params:get(cf_scalars[i])
       table.insert(active_cf_scalars,cf_scalar)
     end
-    -- engine.set_cfScalars(table.unpack(active_cf_scalars))
   end
   
-  params:add_group("cf scalars",num_cf_scalars)
-
   params:set_action("num_active_cf_scalars", 
     function(x) 
-      -- engine.set_numCFScalars(x)
       reset_cf_scalars()
       local num_active_cf_scalars = params:get("num_active_cf_scalars")
       for i=num_cf_scalars,1,-1 
@@ -732,6 +818,7 @@ flora_params.add_params = function(plants)
           params:show(cf_scalars[i])
         end
       end
+      _menu.rebuild_params()
     end
   )
   
@@ -780,8 +867,6 @@ flora_params.add_params = function(plants)
     end
   }
   
-
-  local num_note_frequencies = 6
   params:add_number("num_note_frequencies", "# note freqs", 1, num_note_frequencies, 1)
 
   function get_note_frequencies(scalar)
@@ -799,24 +884,8 @@ flora_params.add_params = function(plants)
     return frequencies
   end
 
-  local reset_note_frequencies = function()
-    
-    
-    local tempo_scalar_offset = params:get("tempo_scalar_offset")
-    local clock_tempo = params:get("clock_tempo")
-    local clock_tempo_scalar = clock_tempo/(60 * tempo_scalar_offset)
-    tempo_offset_note_frequencies = get_note_frequencies(clock_tempo_scalar)
-    --local engine_frequencies = get_note_frequencies(clock_tempo_scalar)
-    --engine.set_frequencies(table.unpack(engine_frequencies))
-    note_frequencies = get_note_frequencies()
-    clock.run(set_dirty)
-  end
-
-  params:add_group("note freqs",num_note_frequencies*3)
-
   params:set_action("num_note_frequencies", 
     function(x) 
-      -- engine.set_numFrequencies(x)
       reset_note_frequencies()
       
       local num_active_note_frequencies = params:get("num_note_frequencies")
@@ -833,6 +902,7 @@ flora_params.add_params = function(plants)
           params:show(note_frequency_offsets[i])        
         end
       end
+      _menu.rebuild_params()
     end
   )
   
@@ -875,35 +945,101 @@ flora_params.add_params = function(plants)
   end
 
   
+    
+  
+
+  --------------------------------
+  -- wow and flutter parameters
+  --------------------------------
+  params:add_group("wow and flutter",7)
+  
+  specs.WOBBLE_AMP = cs.def{
+                      min=0,
+                      max=0.20,
+                      warp='lin',
+                      step=0.01,
+                      default=WOBBLE_DEFAULT,
+                      wrap=false,
+                    }
+
+  specs.FLUTTER_AMP = cs.def{
+                      min=0,
+                      max=0.20,
+                      warp='lin',
+                      step=0.01,
+                      default=FLUTTER_DEFAULT,
+                      wrap=false,
+                    }
+
+  params:add{type = "option", id = "enable_wow_flutter", name = "enable wow and flutter",
+    options = {"off","on"}, default=2,
+    action = function(value)
+      if value == 1 then
+        engine.wobble_amp(0) 
+        engine.flutter_amp(0) 
+      else
+        engine.wobble_amp(params:get("wobble_amp"))
+        engine.wobble_amp(params:get("flutter_amp")) 
+      end
+    end
+  }
+
   params:add{
-    type = "control",
-    id = "tempo_scalar_offset", 
-    name = "tempo scalar offset", 
-    controlspec = specs.TEMPO_SCALAR_OFFSET
+    type = "number", id = "wobble_rpm", name = "wobble rpm", min=1, max=1000, default=33,
+    action=function(x)
+      engine.wobble_rpm(x) 
+    end
+  }
+
+  params:add{
+    type = "control", id = "wobble_amp", name = "wobble amp", controlspec = specs.WOBBLE_AMP,
+    action=function(x)
+      if params:get("enable_wow_flutter") == 1 then
+        engine.wobble_amp(0) 
+      else
+        engine.wobble_amp(x) 
+      end
+    end
+  }
+
+  params:add{
+    type = "number", id = "wobble_exp", name = "wobble exp", min=1, max=1000, default=39,
+    action=function(x)
+      engine.wobble_exp(x) 
+    end
   }
   
-  params:set_action("tempo_scalar_offset", 
-    function()
-      reset_note_frequencies()
+  params:add{
+    type = "control", id = "flutter_amp", name = "flutter amp", controlspec = specs.FLUTTER_AMP,
+    action=function(x)
+      if params:get("enable_wow_flutter") == 1 then
+        engine.flutter_amp(0) 
+      else
+        engine.flutter_amp(x) 
+      end
     end
-  )
+  }
 
-  -- overwrite clock tempo action
-  params:set_action("clock_tempo",
-    function(bpm)
-      local source = params:string("clock_source")
-      if source == "internal" then clock.internal.set_tempo(bpm)
-      elseif source == "link" then clock.link.set_tempo(bpm) end
-      norns.state.clock.tempo = bpm
-      reset_note_frequencies()
-    end)
-    
+  params:add{
+    type = "number", id = "flutter_fixedfreq", name = "flutter fixed freq", min=1, max=100, default=6,
+    action=function(x)
+      engine.flutter_fixedfreq(x) 
+    end
+  }
+
+  params:add{
+    type = "number", id = "flutter_variationfreq", name = "flutter variation freq", min=1, max=1000, default=6,
+    action=function(x)
+      engine.flutter_variationfreq(x) 
+    end
+  }
+
   --set the reverb input engine to -10db
   params:set(13, -10)
   params:bang()
   reset_note_frequencies()
   
-
+  
 --[[
   params:add{
     type = "control", 

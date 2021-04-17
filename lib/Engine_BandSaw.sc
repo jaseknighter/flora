@@ -34,6 +34,13 @@ Engine_BandSaw : CroneEngine {
   var frequency = 1;
   var bandsaw;
   
+  var wobble_rpm=33;
+  var wobble_amp=0.05; 
+  var wobble_exp=39;
+  var flutter_amp=0.03;
+  var flutter_fixedfreq=6;
+  var flutter_variationfreq=2;  
+  
   *new { arg context, doneCallback;
     ^super.new(context, doneCallback);
   }
@@ -53,10 +60,16 @@ Engine_BandSaw : CroneEngine {
       detune=0.2, pan=0, cfhzmin=0.1,cfhzmax=0.3,
       cf=500, rqmin=0.005, rqmax=0.008,
 //    cfmin=500, cfmax=2000, rqmin=0.005, rqmax=0.008,
-      lsf=200, ldb=0, amp=1, out=0;
+      lsf=200, ldb=0, amp=1, out=0,
+      wobble_rpm=33, wobble_amp=0.05, wobble_exp=39, flutter_amp=0.03, flutter_fixedfreq=6, flutter_variationfreq=2;
   		
       var sig, env, envctl;
 
+      var signed_wobble = wobble_amp*(SinOsc.kr(wobble_rpm/60)**wobble_exp);
+      var wow = Select.kr(signed_wobble > 0, signed_wobble, 0);
+      var flutter = flutter_amp*SinOsc.kr(flutter_fixedfreq+LFNoise2.kr(flutter_variationfreq));
+      var combined_defects = 1 + wow + flutter;
+      
       env = Env.newClear(maxsegments);
       envctl = \env.kr(env.asArray);
       
@@ -65,7 +78,7 @@ Engine_BandSaw : CroneEngine {
       
       sig = BPF.ar(
         sig,
-        cf,
+        cf * combined_defects,
         {LFNoise1.kr(0.1).exprange(rqmin,rqmax)}!2
       );
       
@@ -173,7 +186,13 @@ Engine_BandSaw : CroneEngine {
 //          \cfmax, cfval * cfScalarStream,
 //          \cfmax, cfval * cfScalarStream * Pwhite(1.008,1.025).asStream.next,
             \lsf, lsf,
-            \ldb, ldb
+            \ldb, ldb,
+            \wobble_rpm, wobble_rpm,
+            \wobble_amp, wobble_amp,
+            \wobble_exp, wobble_exp, // best an odd power, higher values produce sharper, smaller peak
+            \flutter_amp, flutter_amp,
+            \flutter_fixedfreq, flutter_fixedfreq,
+            \flutter_variationfreq, flutter_variationfreq
           ], 
   	      
   	      target: voiceGroup).onFree({ 
@@ -250,6 +269,32 @@ Engine_BandSaw : CroneEngine {
     this.addCommand("pan", "f", { arg msg;
       pan = msg[1];
     });
+    
+    // wow and flutter commands
+    this.addCommand("wobble_rpm", "f", { arg msg;
+      wobble_rpm = msg[1];
+    });
+    
+    this.addCommand("wobble_amp", "f", { arg msg;
+      wobble_amp = msg[1];
+    });
+    
+    this.addCommand("wobble_exp", "f", { arg msg;
+      wobble_exp = msg[1];
+    });
+    
+    this.addCommand("flutter_amp", "f", { arg msg;
+      flutter_amp = msg[1];
+    });
+    
+    this.addCommand("flutter_fixedfreq", "f", { arg msg;
+      flutter_fixedfreq = msg[1];
+    });
+    
+    this.addCommand("flutter_variationfreq", "f", { arg msg;
+      flutter_variationfreq = msg[1];
+    });
+    
   }
 
   free {

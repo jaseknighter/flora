@@ -22,13 +22,31 @@ instructions.display = function ()
     screen.move(5, 60)
     screen.text("k1 + k3: reset plants")
   elseif (pages.index == 2) then
-    screen.text("e2: go to next/prev letter")
-    screen.move(5, 44)
-    screen.text("e3: change letter")
-    screen.move(5, 52)
-    screen.text("k2/k3: -/+ letter")
-    screen.move(5, 60)
-    screen.text("k1 + k3: reset plants")
+    screen.text("e2: select control")
+    if modify.active_control > 1 and modify.active_control <= modify.num_rulesets * 2 + 2 then
+      if modify.active_control <= modify.num_rulesets * 2 + 1 then
+        if (modify.active_control - 1) % 2 == 1 then
+          -- "pre"
+          screen.move(5, 44)
+          screen.text("e1 + e3: change letter value")
+        else
+          -- "post"
+          screen.move(5, 44)
+          screen.text("e3: select letter")
+          screen.move(5, 52)
+          screen.text("e1 + e3: change letter value")
+        end
+      elseif modify.active_control <= modify.num_rulesets * 2 + 2 then
+        -- "axiom"
+        screen.move(5, 44)
+        screen.text("e3: select letter")
+        screen.move(5, 52)
+        screen.text("e1 + e3: change letter value")
+      end
+    else 
+      screen.move(5, 44)
+      screen.text("e1 + e3: change control value")
+    end 
   elseif (pages.index == 3) then
     screen.text("e2: move up/down")
     screen.move(5, 44)

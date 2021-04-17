@@ -165,7 +165,6 @@ function turtle:new(s, l, th)
       t.translate(last_vector_stored.x, last_vector_stored.y)
       t.rotation = last_angle_stored
     else 
-      -- print("nothing to pop")
     end
   end
   

@@ -241,8 +241,8 @@ function Envelope:new(id, num_plants, env_nodes)
   end
 
   e.set_env_time = function(env_time_max)
-    local old_time_max = e.env_time_max and e.env_time_max or 0.01 --0.5
-    local min_time = alt_key_active and e.env_time_min or 0.01 --0.5
+    local old_time_max = e.env_time_max and e.env_time_max or 0.5 --0.5
+    local min_time = alt_key_active and e.env_time_min or 0.25 --0.5
     e.env_time_max = util.clamp(env_time_max, min_time, e.x_max)
     for i=1, #e.graph_nodes, 1
       do

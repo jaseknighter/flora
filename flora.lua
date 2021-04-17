@@ -18,10 +18,7 @@
 --
 -- todo list: 
 --  improve the quality and portability of the code
---  (done) create parameters for envelope settings
---  (done) make additional Bandsaw variables available to crow, jf, and midi output (e.g., note frequency)
---  add modulation and probability controls
---  increase and decrease the brightness of the circles that appear when each note plays
+-- increase and decrease the brightness of the circles that appear when each note plays
 --    according to the level of the note's graph/envelope
 --  improve screen drawing efficiency
 --    then, the SCREEN_FRAMERATE value can be increased safely 
@@ -31,7 +28,9 @@
 --      'setup' vs 'init' vs 'new' 
   --    inconsistent use of ALL CAPS for naming constant values
 --      use of colon vs dot function syntax
---  enable control over ruleset variables (axiom and ruleset especially)
+--  (done) enable control over ruleset variables (axiom and ruleset especially)
+--  add ability to save changes to rulesets
+--  add ability to share custom rulesets (e.g. with norns.online)
 --  add keyboard control for updating sentences/rulesets
 --  explore support for more than two plants at a time
 --  investigate (seemingly non-consequential) error message at startup related to midi maps 
@@ -56,7 +55,6 @@ include "flora/lib/includes"
 -- init
 ------------------------------
 function init()
-
   -- set sensitivity of the encoders
   norns.enc.sens(1,6)
   norns.enc.sens(2,6)
@@ -92,14 +90,14 @@ function init()
   end
 
   parameters.add_params(plants)
-  -- env_parameters.add_params()
   build_scale()
 
   for i=1,num_plants,1
   do
-    plants[i].run_plant_code()
+    plants[i].setup(plants[i].get_current_instruction())
   end
   
+  modify.init()
   water.init()
   set_redraw_timer()
   page_scroll(1)
@@ -192,14 +190,13 @@ function set_redraw_timer()
       screen_dirty = true
     elseif menu_status == false and status == true then
       menu_status = true
+      _menu.rebuild_params()
     end
   end, SCREEN_FRAMERATE, -1)
   redrawtimer:start()
   
 end
 
-
 function cleanup ()
   all_notes_off()
 end
-

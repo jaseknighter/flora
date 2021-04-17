@@ -398,11 +398,6 @@ water.enc = function(n, delta, alt_key_active)
         else
           print("note frequency is limited to 0.2 to prevent loud noises!")
         end
-      -- elseif note_frequency_menu_index == 4 then
-      --   local tempo_scalar_offset = params:get("tempo_scalar_offset")
-      --   incr = alt_key_active == true and incr * 0.01 or incr * 0.1
-      --   new_value = util.clamp(incr + tempo_scalar_offset, tempo_scalar_offset_min, tempo_scalar_offset_max)
-      --   params:set("tempo_scalar_offset",new_value)
       end
     end
     fields.display()
@@ -430,7 +425,6 @@ end
 
 water.draw_water_nav = function()
   screen.level(10)
-  -- screen.move(0,10)  
   screen.rect(2,10, screen_size.x-2, 3)
   screen.fill()
   screen.level(0)
@@ -452,7 +446,6 @@ end
 water.redraw = function ()
   if show_instructions ~= true then
     water.update_controls()
-    -- water.draw_water_nav()
     water.draw_fields()
   end
 end

@@ -61,7 +61,7 @@ end
 -- set pset exclusions
 local function set_pset_param_exclusions(pset_exclusion_tables, pset_exclusion_table_labels)
   -- set params for custom exclusions
-  params:add_group("pset exclusions",#pset_exclusion_table_labels)
+  -- params:add_group("pset exclusions",#pset_exclusion_table_labels)
   for i=1,#pset_exclusion_tables,1
   do
     
@@ -170,7 +170,7 @@ pset_seq.pset_seq_timer_init = function (pset_exclusion_tables, pset_exclusion_t
 
   -- setup pset sequence parameters
   set_num_psets()
-  params:add_separator("pset sequencer")
+  params:add_group("pset sequencer",5+#pset_exclusion_table_labels)
   params:add_option("pset_seq_enabled","pset seq enabled", {"false", "true"})
   params:add_option("pset_seq_mode","pset seq mode", {"loop", "up/down", "random"})
   params:add_number("load_pset", "load pset", 1, pset_seq.get_num_psets(),1,nil, false, false)
@@ -193,13 +193,9 @@ pset_seq.pset_seq_timer_init = function (pset_exclusion_tables, pset_exclusion_t
   params:add_number("pset_seq_beats", "pset seq beats", 1, 16, 4)
   params:set_action("pset_seq_beats", function() 
     set_ticks_per_seq_cycle() 
-    -- ticks_per_seq_cycle = clock.get_tempo() * (params:get("pset_seq_beats")/params:get("pset_seq_beats_per_bar"))
-    -- pset_seq_ticks = 1
   end )
   params:add_number("pset_seq_beats_per_bar", "pset seq beats per bar", 1, 4, 1)
   params:set_action("pset_seq_beats_per_bar", function() set_ticks_per_seq_cycle() end )
-  -- params:hide("pset_seq_beats_per_bar")
-
   
   -- set default exclusions
   local default_exclusions = {"pset_seq_enabled","pset_seq_mode","load_pset", "pset_seq_beats","pset_seq_beats_per_bar"}
