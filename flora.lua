@@ -1,5 +1,5 @@
 ---flora - beta
--- v0.2.4-beta @jaseknighter
+-- v0.3.0-beta @jaseknighter
 -- lines: llllllll.co/t/40261
 --
 -- k1+k2: show/hide instructions
