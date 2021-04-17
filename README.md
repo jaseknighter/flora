@@ -27,7 +27,7 @@ Follow the discussion on lines: https://llllllll.co/t/40261
       - [Plow](#plow)
         * [Plow modulation](#plow-modulation)
       - [Water](#water)
-    + [Midi in and out] (#midi-in-and-out)
+    + [Midi in and out] (#midi-in-and-out) 
     + [Flutter and wow] (#flutter-and-wow)
     + [PSET Sequencer](#pset-sequencer)
     + [Generating new L-system axioms and rulesets](#generating-new-l-system-axioms-and-rulesets)
