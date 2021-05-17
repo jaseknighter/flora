@@ -8,6 +8,9 @@ function plant_sounds_externals:new(active_notes)
   pse.index = 1
   setmetatable(pse, plant_sounds_externals)
 
+  
+
+
   pse.midi_note_off = function(delay, note_num, channel, plant_id, note_location)
     local note_off_delay
     if plant_id == 1 then
@@ -25,12 +28,20 @@ function plant_sounds_externals:new(active_notes)
   end
  
   pse.note_on = function(plant_id, note_to_play, pitch_frequency, beat_frequency, envelope_time_remaining)
-    local output_param = params:get("output")
+    -- local output_param = params:get("output")
+    local output_midi = params:get("output_midi")
+    local output_crow = params:get("output_crow")
+    local output_crow2 = params:get("output_crow2")
+    local output_crow4 = params:get("output_crow4")
+    
+    local output_jf = params:get("output_jf")
+    local output_wsyn = params:get("output_wsyn")
+    
     local midi_out_channel = plant_id == 1 and midi_out_channel1 or midi_out_channel2
     local envelope_length = envelopes[plant_id].get_env_time()
 
     -- MIDI out
-    if output_param == 2 or output_param == 3 or output_param == 4 then
+    if output_midi == 2 then
       midi_out_device:note_on(note_to_play, 96, midi_out_channel)
       table.insert(active_notes, note_to_play)
       -- Note off timeout
@@ -39,7 +50,7 @@ function plant_sounds_externals:new(active_notes)
     end
     
     -- crow out
-    if output_param == 4 then
+    if output_crow == 2 then
       local asl_generator = function(env_length)
         local envelope_data = envelopes[plant_id].get_envelope_arrays()
         local asl_envelope = ""
@@ -72,22 +83,60 @@ function plant_sounds_externals:new(active_notes)
         return asl_envelope 
       end
       
+      local volts = (note_to_play-60)/12
       if plant_id == 1 then
-        crow.output[1].volts = (note_to_play-60)/12
-        local asl_envelope = asl_generator(envelopes[1].get_env_time())
-        crow.output[2].action = tostring(asl_envelope)
+        crow.output[1].volts = volts
+        local output_param = params:get("output_crow2")
+        if output_param == 1 then -- envelope
+          local asl_envelope = asl_generator(envelopes[1].get_env_time())
+          crow.output[2].action = tostring(asl_envelope)
+        elseif output_param == 2 then -- trigger
+          local time = 0.1
+          local level = params:get("plow1_max_level")
+          local polarity = 1
+          crow.output[2].action = "pulse(" .. time ..",".. level .. "," .. polarity .. ")"
+          print("pulse(" .. time ..",".. level .. "," .. polarity .. ")")
+        elseif output_param == 3 then -- gate
+          local time = params:get("plow1_max_time")
+          local level = params:get("plow1_max_level")
+          local polarity = 1
+          crow.output[2].action = "pulse(" .. time ..",".. level .. "," .. polarity .. ")"
+          print("pulse(" .. time ..",".. level .. "," .. polarity .. ")")
+        end
         crow.output[2]()
       else
-        crow.output[3].volts = (note_to_play-60)/12
-        local asl_envelope = asl_generator(envelopes[2].get_env_time())
-        crow.output[4].action = tostring(asl_envelope)
+        crow.output[3].volts = volts
+        local output_param = params:get("output_crow4")
+        if output_param == 1 then -- envelope
+          local asl_envelope = asl_generator(envelopes[2].get_env_time())
+          crow.output[4].action = tostring(asl_envelope)
+        elseif output_param == 2 then -- trigger
+          local time = 0.1
+          local level = params:get("plow2_max_level")
+          local polarity = 1
+          crow.output[4].action = "pulse(" .. time ..",".. level .. "," .. polarity .. ")"
+        elseif output_param == 3 then -- gate
+          local time = params:get("plow2_max_time")
+          local level = params:get("plow2_max_level")
+          local polarity = 1
+          crow.output[4].action = "pulse(" .. time ..",".. level .. "," .. polarity .. ")"
+        end
         crow.output[4]()
       end
     end
     
     -- just friends out
-    if output_param == 4 or output_param == 5 then
+    if output_jf == 2 then
       crow.ii.jf.play_note((note_to_play-60)/12,5)
+    end
+    
+    -- wsyn out
+    if output_wsyn == 2 then
+      
+      -- crow.send("ii.wsyn.play_note(".. ((notes[coll][scaled])+(36+(voice[i].octave*12)+semi+random_note[1].add)-48)/12 ..", " .. pset_wsyn_vel .. ")")
+      -- print("crow",  (note_to_play-48)/12, pset_wsyn_vel)
+      crow.send("ii.wsyn.play_note(".. (note_to_play-48)/12 .. ", " .. pset_wsyn_vel .. ")")
+      -- crow.send("ii.wsyn.play_note(".. (note_to_play-60)/12 .. ", " .. pset_wsyn_vel .. ")")
     end
     
     -- divide 1 over beat_frequency to translate from hertz (cycles per second) into beats per second

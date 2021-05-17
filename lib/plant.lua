@@ -5,7 +5,7 @@
 --
 -- includes: 
 --  plant_sounds = include("lib/plant_sounds") 
---  l_system_instructions = include("flora/lib/garden/garden_default.lua")
+--  garden = include("flora/lib/garden/garden.lua")
 --  l_system = include("flora/lib/l_system")
 --  turtle_class = include("flora/lib/turtle")
 --  matrix_stack = include("flora/lib/matrix_stack")
@@ -158,7 +158,7 @@ function plant:new(p_id, starting_instruction)
     if p.instr[instruction_number] then
       return p.instr[instruction_number]
     else 
-      return l_system_instructions.get_instruction(instruction_number)
+      return garden.get_instruction(instruction_number)
     end
   end 
   
@@ -336,7 +336,7 @@ function plant:new(p_id, starting_instruction)
   p.set_instructions = function(rotate_by, increment_generation_by)
     local increment_generation_by = increment_generation_by and increment_generation_by or 0
     p.sentence_cursor_index = 1
-    local num_instructions = l_system_instructions.get_num_instructions()
+    local num_instructions = garden.get_num_plants()
     local next_instruction = p.current_instruction + rotate_by
     local next_generation = p.current_generation + increment_generation_by
     if (next_generation > 0 and 

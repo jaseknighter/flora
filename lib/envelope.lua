@@ -303,7 +303,6 @@ function Envelope:new(id, num_plants, env_nodes)
     -- clock.run(reset_plow_control_params,e.id)
     
     -- reset_plow_control_params(e.id)
-
     clock.run(set_dirty)
 
   end

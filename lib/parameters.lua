@@ -148,19 +148,19 @@ flora_params.add_params = function(plants)
   min = 0, max = 127, default = root_note_default, formatter = function(param) return MusicUtil.note_num_to_name(param:get(), true) end,
   action = function() build_scale() end}
 
-  params:add{type = "option", id = "crow_clock", name = "crow clock out",
-    options = {"off","on"},
-    action = function(value)
-      if value == 2 then
-        crow.output[1].action = "{to(5,0),to(5,0.05),to(0,0)}"
-      end
-    end}
+  -- params:add{type = "option", id = "crow_clock", name = "crow clock out",
+  --   options = {"off","on"},
+  --   action = function(value)
+  --     if value == 2 then
+  --       crow.output[1].action = "{to(5,0),to(5,0.05),to(0,0)}"
+  --     end
+  --   end}
 
 --------------------------------
 -- inputs/outputs/midi params
 --------------------------------
   params:add_separator(" ")
-  params:add_group("inputs/outputs",12)
+  params:add_group("inputs/outputs",17+14)
   params:add_separator("inputs")
   
   midi_in_device = {}
@@ -221,29 +221,41 @@ flora_params.add_params = function(plants)
 
   params:add_separator("outputs")
   
-  params:add{type = "option", id = "output", name = "output",
-    options = options.OUTPUT,
-    default = OUTPUT_DEFAULT,
-    action = function(value)
-      -- all_notes_off()
-      if value == 4 or value == 5 then 
-        crow.output[2].action = "{to(5,0),to(0,0.25)}"
-        crow.ii.pullup(true)
-        crow.ii.jf.mode(1)
-      -- elseif value == 5 then
-      --   crow.ii.pullup(true)
-      --   crow.ii.jf.mode(1)
-      end
-    end}
+  -- params:add{type = "option", id = "output", name = "output",
+  --   options = options.OUTPUT,
+  --   default = OUTPUT_DEFAULT,
+  --   action = function(value)
+  --     -- all_notes_off()
+  --     if value == 4 or value == 5 then 
+  --       crow.output[2].action = "{to(5,0),to(0,0.25)}"
+  --       crow.ii.pullup(true)
+  --       crow.ii.jf.mode(1)
+  --     -- elseif value == 5 then
+  --     --   crow.ii.pullup(true)
+  --     --   crow.ii.jf.mode(1)
+  --     end
+  --   end}
+  
+  -- options.OUTPUT = {"audio (a)", "midi (m)", "a + m", "a, m, c ii JF, c out 1+2", "c ii JF"}
 
-  params:add{
-    type = "number", id = "midi_out_device", name = "midi out device",
+  params:add{type = "option", id = "output_bandsaw", name = "bandsaw (engine)",
+    options = {"off","on"},
+    default = 2,
+  }
+
+  params:add{type = "option", id = "output_midi", name = "midi",
+    options = {"off","on"},
+    default = 1,
+  }
+  
+    params:add{
+    type = "number", id = "midi_out_device", name = "  midi out device",
     min = 1, max = 4, default = 1,
     action = function(value) midi_out_device = midi.connect(value) end
   }
   
   params:add{
-    type = "number", id = "midi_out_channel1", name = "plant 1:midi out channel",
+    type = "number", id = "midi_out_channel1", name = "  plant 1:midi out channel",
     min = 1, max = 16, default = midi_out_channel1,
     action = function(value)
       -- all_notes_off()
@@ -251,17 +263,233 @@ flora_params.add_params = function(plants)
     end
   }
     
-  params:add{type = "number", id = "midi_out_channel2", name = "plant 2:midi out channel",
+  params:add{type = "number", id = "midi_out_channel2", name = "  plant 2:midi out channel",
     min = 1, max = 16, default = midi_out_channel2,
     action = function(value)
       -- all_notes_off()
       midi_out_channel2 = value
     end
   }
-  
+
+
+  params:add{type = "option", id = "output_crow", name = "crow",
+    options = {"off","on"},
+    default = 2,
+    action = function(value)
+      if value == 2 then 
+        crow.output[2].action = "{to(5,0),to(0,0.25)}"
+        crow.ii.pullup(true)
+        crow.ii.jf.mode(1)
+      end
+    end
+  }
+
+  params:add{type = "option", id = "output_crow2", name = "  crow 2 mode",
+    options = {"envelope","trigger","gate"},
+    default = 1,
+    action = function(value)
+      -- if value == 2 then 
+        -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
+        -- crow.ii.pullup(true)
+        -- crow.ii.jf.mode(1)
+      -- end
+    end
+  }
+
+  params:add{type = "option", id = "output_crow4", name = "  crow 4 mode",
+    options = {"envelope","trigger","gate"},
+    default = 1,
+    action = function(value)
+      -- if value == 2 then 
+        -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
+        -- crow.ii.pullup(true)
+        -- crow.ii.jf.mode(1)
+      -- end
+    end
+  }
+
+  params:add{type = "option", id = "output_jf", name = "just friends",
+    options = {"off","on"},
+    default = 2,
+    action = function(value)
+      if value == 2 then 
+        -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
+        crow.ii.pullup(true)
+        crow.ii.jf.mode(1)
+      end
+    end
+  }
 
   
+
+
+function wsyn_add_params()
+  -- params:add_separator("wsyn params")
+  -- params:add_group("w/syn",12)
+
+  params:add{type = "option", id = "output_wsyn", name = "wsyn",
+    options = {"off","on"},
+    default = 2,
+    action = function(value)
+      if value == 2 then 
+        -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
+        crow.ii.pullup(true)
+        crow.ii.jf.mode(1)
+      end
+    end
+  }
+
+  params:add {
+    type = "option",
+    id = "wsyn_ar_mode",
+    name = "  AR mode",
+    options = {"off", "on"},
+    default = 2,
+    action = function(val) 
+      crow.send("ii.wsyn.ar_mode(".. (val-1) ..")")
+    end
+  }
+  params:add {
+    type = "control",
+    id = "wsyn_vel",
+    name = "    Velocity",
+    controlspec = controlspec.new(0, 5, "lin", 0, 2, "v"),
+    action = function(val) 
+      pset_wsyn_vel = val
+    end
+  }
+  params:add {
+    type = "control",
+    id = "wsyn_curve",
+    name = "    Curve",
+    controlspec = controlspec.new(-5, 5, "lin", 0, 0, "v"),
+    action = function(val) 
+      crow.send("ii.wsyn.curve(" .. val .. ")") 
+      pset_wsyn_curve = val
+    end
+  }
+  params:add {
+    type = "control",
+    id = "wsyn_ramp",
+    name = "    Ramp",
+    controlspec = controlspec.new(-5, 5, "lin", 0, 0, "v"),
+    action = function(val) 
+      crow.send("ii.wsyn.ramp(" .. val .. ")") 
+      pset_wsyn_ramp = val
+    end
+  }
+  params:add {
+    type = "control",
+    id = "wsyn_fm_index",
+    name = "  FM index",
+    controlspec = controlspec.new(0, 5, "lin", 0, 0, "v"),
+    action = function(val) 
+      crow.send("ii.wsyn.fm_index(" .. val .. ")") 
+      pset_wsyn_fm_index = val
+    end
+  }
+  params:add {
+    type = "control",
+    id = "wsyn_fm_env",
+    name = "  FM env",
+    controlspec = controlspec.new(-5, 5, "lin", 0, 0, "v"),
+    action = function(val) 
+      crow.send("ii.wsyn.fm_env(" .. val .. ")") 
+      pset_wsyn_fm_env = val
+    end
+  }
+  params:add {
+    type = "control",
+    id = "wsyn_fm_ratio_num",
+    name = "  FM ratio numerator",
+    controlspec = controlspec.new(1, 20, "lin", 1, 2),
+    action = function(val) 
+      crow.send("ii.wsyn.fm_ratio(" .. val .. "," .. params:get("wsyn_fm_ratio_den") .. ")") 
+      pset_wsyn_fm_ratio_num = val
+    end
+  }
+  params:add {
+    type = "control",
+    id = "wsyn_fm_ratio_den",
+    name = "  FM ratio denominator",
+    controlspec = controlspec.new(1, 20, "lin", 1, 1),
+    action = function(val) 
+      crow.send("ii.wsyn.fm_ratio(" .. params:get("wsyn_fm_ratio_num") .. "," .. val .. ")") 
+      pset_wsyn_fm_ratio_den = val
+    end
+  }
+  params:add {
+    type = "control",
+    id = "wsyn_lpg_time",
+    name = "  LPG time",
+    controlspec = controlspec.new(-5, 5, "lin", 0, 0, "v"),
+    action = function(val) 
+      crow.send("ii.wsyn.lpg_time(" .. val .. ")") 
+      pset_wsyn_lpg_time = val
+    end
+  }
+  params:add {
+    type = "control",
+    id = "wsyn_lpg_symmetry",
+    name = "  LPG symmetry",
+    controlspec = controlspec.new(-5, 5, "lin", 0, 0, "v"),
+    action = function(val) 
+      crow.send("ii.wsyn.lpg_symmetry(" .. val .. ")") 
+      pset_wsyn_lpg_symmetry = val
+    end
+  }
+  params:add{
+    type = "trigger",
+    id = "wsyn_pluckylog",
+    name = "  Pluckylogger >>>",
+    action = function()
+      params:set("wsyn_curve", math.random(-40, 40)/10)
+      params:set("wsyn_ramp", math.random(-5, 5)/10)
+      params:set("wsyn_fm_index", math.random(-50, 50)/10)
+      params:set("wsyn_fm_env", math.random(-50, 40)/10)
+      params:set("wsyn_fm_ratio_num", math.random(1, 4))
+      params:set("wsyn_fm_ratio_den", math.random(1, 4))
+      params:set("wsyn_lpg_time", math.random(-28, -5)/10)
+      params:set("wsyn_lpg_symmetry", math.random(-50, -30)/10)
+    end
+  }
+  params:add{
+    type = "trigger",
+    id = "wsyn_randomize",
+    name = "  Randomize all >>>",
+    action = function()
+      params:set("wsyn_curve", math.random(-50, 50)/10)
+      params:set("wsyn_ramp", math.random(-50, 50)/10)
+      params:set("wsyn_fm_index", math.random(0, 50)/10)
+      params:set("wsyn_fm_env", math.random(-50, 50)/10)
+      params:set("wsyn_fm_ratio_num", math.random(1, 20))
+      params:set("wsyn_fm_ratio_den", math.random(1, 20))
+      params:set("wsyn_lpg_time", math.random(-50, 50)/10)
+      params:set("wsyn_lpg_symmetry", math.random(-50, 50)/10)
+    end
+  }
+  params:add{
+    type = "trigger",
+    id = "wsyn_init",
+    name = "  Init",
+    action = function()
+      params:set("wsyn_curve", pset_wsyn_curve)
+      params:set("wsyn_ramp", pset_wsyn_ramp)
+      params:set("wsyn_fm_index", pset_wsyn_fm_index)
+      params:set("wsyn_fm_env", pset_wsyn_fm_env)
+      params:set("wsyn_fm_ratio_num", pset_wsyn_fm_ratio_num)
+      params:set("wsyn_fm_ratio_den", pset_wsyn_fm_ratio_den)
+      params:set("wsyn_lpg_time", pset_wsyn_lpg_time)
+      params:set("wsyn_lpg_symmetry", pset_wsyn_lpg_symmetry)
+      params:set("wsyn_vel", pset_wsyn_vel)
+    end
+  }
+  params:hide("wsyn_init")
+  crow.send("ii.wsyn.ar_mode(1)")
   
+end
+  
+wsyn_add_params()
   
   --------------------------------
   -- gardens (load/save)
@@ -315,7 +543,7 @@ flora_params.add_params = function(plants)
   -- params:add_separator("plant")
 
   params:add{
-    type = "number", id = "plant1_instructions", name = "plant 1: instructions", min=1, max = l_system_instructions.get_num_instructions(), default = INITIAL_PLANT_INSTRUCTIONS_1,
+    type = "number", id = "plant1_instructions", name = "plant 1: instructions", min=1, max = garden.get_num_plants(), default = INITIAL_PLANT_INSTRUCTIONS_1,
     action = function(value)
       if initializing == false then
         plants[1].set_instructions(value - plants[1].current_instruction)
@@ -324,7 +552,7 @@ flora_params.add_params = function(plants)
   }
 
   params:add{
-    type = "number", id = "plant2_instructions", name = "plant 2: instructions", min=1, max=l_system_instructions.get_num_instructions(), default = INITIAL_PLANT_INSTRUCTIONS_2,
+    type = "number", id = "plant2_instructions", name = "plant 2: instructions", min=1, max=garden.get_num_plants(), default = INITIAL_PLANT_INSTRUCTIONS_2,
     action = function(value)
       if initializing == false then
         plants[2].set_instructions(value - plants[2].current_instruction)
@@ -1037,6 +1265,8 @@ end
   --set the reverb input engine to -10db
   params:set(13, -10)
   params:bang()
+  params:set("wsyn_init",1)
+
   reset_note_frequencies()
   
   

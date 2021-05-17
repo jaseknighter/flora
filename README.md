@@ -27,8 +27,6 @@ Follow the discussion on lines: https://llllllll.co/t/40261
       - [Plow](#plow)
         * [Plow modulation](#plow-modulation)
       - [Water](#water)
-    + [Midi in and out](#midi-in-and-out)
-    + [Flutter and wow](#flutter-and-wow)
     + [PSET Sequencer](#pset-sequencer)
     + [Generating new L-system axioms and rulesets](#generating-new-l-system-axioms-and-rulesets)
       - [Advanced sequencing](#advanced-sequencing)
@@ -131,15 +129,15 @@ k1 + k3: reset plants to original forms and restart their sequences
 ```
 
 #### Modify 
-![](images/modify_wide_inv2.png)
+![](images/modify_wide_inv.png)
 ```
 e1: next/previous page  
-k1+e1: select active plant  
-e2: select control
-e3: select letter ('suc' and 'axiom' screens only)
-e1 + e3: change control/letter value
+k1 + e1: select active plant  
+e2: go to next/previous letter  
+e3: change letter  
+k2/k3: delete/add letter  
+k1 + k3: reset plants to original forms and restart their sequences
 ```
-As of the v2.5-beta,
 
 #### Observe 
 ![](images/observe_wide_inv.png)
@@ -217,12 +215,6 @@ The water interface provides control for the output parameters:
 Fine grain controls: All of the controls in the above list with the characters '(fg)' attached to the control names allow for fine grain control using K1+E3.
 
 *Note*: Tempo scalar offset is a parameter that provides macro control over all active note frequencies. It is not yet available from the Water UI screen but can be adjusted from PARAMETERS->EDIT. The Tempo Scalar Offset’s default value of 1.5 can also be changed by updating the variable `tempo_scalar_offset_default` in the lib/globals.lua file.
-
-### Midi in and out
-Midi in and out parameters are set from the PARAMETERS->EDIT menu. As of the v3.0-beta, midi-in notes may be sent to Norns to sequence the Bandsaw SuperCollider engine. If audio is selected as one of the outputs, midi-in notes will play alongside the Flora sequencer.
-
-### Flutter and wow
-As of the v3.0-beta, flutter and wow may be set for the Bandsaw SuperCollider engine from the PARAMETERS->EDIT menu.
 
 ### PSET Sequencer
 As of version `v0.2.0-beta`, a PSET sequencer has been built into Flora. This feature allows PSETS saved in the PARAMETERS->PSET menu to be sequenced. The sequencer's parameters (accessed from the PARAMETERS->EDIT menu) include:
@@ -314,26 +306,22 @@ To share any ruleset(s) you have written, submit a [pull request](https://docs.g
 * Computer to create/update rulesets using Maiden (optional)
 
 ## Preliminary Roadmap 
-* Save modified l-system algorithms.
-* Community gardening: investigate using norns.online to share plant forms.
-* Improve outputs selection in params menu.
-* Fix intermittent plant freezing bug.
 * Improve the quality and portability of the code.
 * Improve the documentation.
-* Utilize crow inputs.
-* Add option for crow outputs to send triggers instead of envelopes.
+* (done) Create an option with all the outputs (Audio,  Midi, JF, and crow) 
 * Add support for w/syn.
-* Create a detailed video walkthrough for the script.
 * (added) Create a PSET sequencer
+* (done) Make additional Bandsaw engine and envelope variables available for Crow, Just Friends, and Midi outputs.
 * Add microtonal scales.
+* (done) Add a global setting to bypass the midi_note_off delay 
+* (added) Setup parameters for plant and plow (envelope) settings so they can be saved and loaded via PSETs.
+* (added) Add modulation and probability controls for envelopes.
 * Increase and decrease the brightness of the circles that appear when each note plays according to the level of the note's graph/envelope.
 
 ## Credits
 * Flora's L-system code is based on the code in Chapter 8.6 of Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/).
 * Many of the specific L-system algorithms are based on code from Paul Bourke's [L-System User Notes](http://paulbourke.net/fractals/lsys/).
 * *Bandsaw*, the bandpass-filtered sawtooth engine is based on SuperCollider code for a marimba presented by Eli Fieldsteel in his [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag).
-* Wow and flutter SuperCollider code: https://sccode.org/1-5bP 
-* Penrose tiling code by Leo Corte: https://thebrickinthesky.wordpress.com/2013/03/17/l-systems-and-penrose-p3-in-inkscape/
 * The code for this project was also deeply inspired by the following members of the lines community: Brian Crabtree (@tehn), Dan Derks (@dan_derks), Mark Wheeler (@markwheeler), Tom Armitage (@infovore), and Tyler Etters (@tyleretters).
 
 ## References

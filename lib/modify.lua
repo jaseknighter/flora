@@ -24,6 +24,7 @@
 -- -- -- initial turtle rotation 
 -- -- -- start from X 
 -- -- -- start from Y 
+-- -- -- save
 
 
 local modify = {}
@@ -56,6 +57,9 @@ modify.reset = function ()
   modify.instruction_cursor_indices = {}
   modify.instruction_cursor_indices[1] = {}
   modify.instruction_cursor_indices[2] = {}
+  modify.filesystem_cursor_indices = {}
+  modify.filesystem_cursor_indices[1] = {}
+  modify.filesystem_cursor_indices[2] = {}
 end
 
 ---------------------------
@@ -199,8 +203,9 @@ modify.set_param_labels = function()
     "init len",
     "angle",
     "init angle",
-    "X start",
-    "Y start"
+    "x start",
+    "y start",
+    "save"
   }
 end
 
@@ -215,10 +220,17 @@ modify.set_param_ids = function()
     "angle",
     "init_angle",
     "start_x",
-    "start_y"
+    "start_y",
+    "save"
 
   }
 end
+
+local filesystem_param_ids = {
+  "save",
+  "save_as",
+  "delete"
+}
 
 modify.set_ruleset_labels = function()
   local labels = {}
@@ -487,6 +499,10 @@ modify.get_control_labels = function()
   elseif modify.active_control - (modify.num_rulesets * 2) + 1 == 10 then
     -- start from Y (start_from_y)
     label = label .. modify.get_start_from_y()
+  else
+    print("save",modify.filesystem_cursor_indices[active_plant][modify.active_control])
+
+  
   end
 
   return label
@@ -516,7 +532,8 @@ modify.enc = function(n, delta, alt_key_active)
     -- do nothing here
   elseif n == 2 then 
     local incr = util.clamp(delta, -1, 1)
-    modify.active_control = util.clamp(incr + modify.active_control, 1, #param_ids+(modify.num_rulesets*2))
+    modify.active_control = util.clamp(incr + modify.active_control, 1, #param_ids+(modify.num_rulesets*2) + #filesystem_param_ids)
+    print("modify.active_control", modify.active_control)
   elseif n == 3 and alt_key_active then 
     local incr = util.clamp(delta, -1, 1)
     if modify.active_control > 1 and modify.active_control <= modify.num_rulesets * 2 + 2 then

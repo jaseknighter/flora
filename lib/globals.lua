@@ -4,6 +4,10 @@
 -- global functions
 -------------------------------------------
 
+function os.time2()
+  return clock.get_beats()*clock.get_beat_sec()
+end
+
 set_dirty = function()
   clock.sleep(0.1)
   -- clock.sleep(0.05)
@@ -53,11 +57,15 @@ end
 -------------------------------------------
 engine.name = 'BandSaw'
 
+-- for community gardening
+nursery_path = norns.state.data .. "nursery/" 
+planted_plants_path = norns.state.data .. "planted_plants.tbl"
+  
 -- for params.lua
 WOBBLE_DEFAULT = 0.05
 FLUTTER_DEFAULT = 0.02
 updating_controls = false
-OUTPUT_DEFAULT = 4
+-- OUTPUT_DEFAULT = 4
 SCREEN_FRAMERATE = 1/15
 INITIAL_PLANT_INSTRUCTIONS_1 = 3 
 INITIAL_PLANT_INSTRUCTIONS_2 = 3
@@ -65,7 +73,7 @@ menu_status = false
 pages = 0
 flora_params = {}
 options = {}
-options.OUTPUT = {"audio (a)", "midi (m)", "a + m", "a, m, c ii JF, c out 1+2", "c ii JF"}
+-- options.OUTPUT = {"audio (a)", "midi (m)", "a + m", "a, m, c ii JF, c out 1+2", "c ii JF"}
 options.SCALARS = {0.5,1,2,4}
 options.NOTE_DURATIONS = {0.125, 0.25,0.5,0.75,1,1.5,2,4,8,16}
 NOTE_DURATION_INDEX_DEFAULT_1 = 5
@@ -86,7 +94,7 @@ num_cf_scalars_default = 1
 ENV_TIME_MAX = 2 -- DO NOT CHANGE
 MAX_AMPLITUDE = 10
 AMPLITUDE_DEFAULT = 2
-MAX_ENV_LENGTH = 5 --10
+MAX_ENV_LENGTH = 10
 ENV_LENGTH_DEFAULT = 2
 CURVE_MIN = -10 -- -50
 CURVE_MAX = 10 --50
@@ -140,7 +148,7 @@ screen_dirty = true
 show_instructions = false
 
 -- for plant.lua
-l_system_instructions = {}
+-- l_system_instructions = {}
 turtle_min_length = 0.2
 
 -- for plant_sounds.lua 
@@ -167,6 +175,17 @@ end
 set_scale_length = function()
   scale_length = params:get("scale_length")
 end
+
+pset_wsyn_curve = 0
+pset_wsyn_ramp = 0
+pset_wsyn_fm_index = 0
+pset_wsyn_fm_env = 0
+pset_wsyn_fm_ratio_num = 0
+pset_wsyn_fm_ratio_den = 0
+pset_wsyn_lpg_time = 0
+pset_wsyn_lpg_symmetry = 0
+pset_wsyn_vel = 0
+
 
 -- for midi_helper.lua
 midi_in_device = {}

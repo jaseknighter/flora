@@ -40,7 +40,6 @@ function plant_sounds:new(parent)
       else 
         -- set clock.sync to 0.001 to prevent a stack overflow
         clock.sync(0.001)
-        
       end
       envelopes[parent.id].modulate_env()
   
@@ -74,8 +73,12 @@ function plant_sounds:new(parent)
           local freq = MusicUtil.note_num_to_freq(note_to_play)
           freq = freq * cf_scalar
           note_to_play = MusicUtil.freq_to_note_num(freq)
-          local output_param = params:get("output")
-          if output_param == 1 or output_param == 3 or output_param == 4 then
+          -- if parent.id == 1 then print("note_to_play", note_to_play) end
+          -- local output_param = params:get("output")
+          local output_bandsaw = params:get("output_bandsaw")
+    
+          if output_bandsaw == 2 then
+            
             ps.engine_note_on(note_to_play, freq, random_note_frequency)
           end
           local midi_out_channel = parent.id == 1 and midi_out_channel1 or midi_out_channel2
@@ -121,6 +124,7 @@ function plant_sounds:new(parent)
       local node_obj = {}
       node_obj.s_id = parent.current_sentence_id
       node_obj.duration = ps.get_note_duration()
+      -- print(parent.id, i, #s)
       if i == #s then
         node_obj.restart = true
         node_obj.s = s
@@ -143,10 +147,12 @@ function plant_sounds:new(parent)
       elseif (l == "+" and ps.note) then
         local new_note = ps.note + math.ceil(note_scalar * parent.turtle.theta) <= #notes and ps.note + math.ceil(note_scalar * parent.turtle.theta) or 1
         ps.note = new_note
+        -- if active_plant == 1 then print (new_note) end
       elseif (l == "-" and ps.note) then
         local new_note = ps.note + math.ceil(note_scalar * -parent.turtle.theta) > 1 and ps.note + math.ceil(note_scalar * -parent.turtle.theta)  or #notes
         ps.note = new_note
       end
+      -- print("run",ps.play)
       clock.run(ps.play,node_obj)
       -- ps.play(node_obj)
     else 

@@ -1,5 +1,5 @@
 ---flora - beta
--- v0.3.0-beta @jaseknighter
+-- v0.4.0-beta @jaseknighter
 -- lines: llllllll.co/t/40261
 --
 -- k1+k2: show/hide instructions
@@ -70,11 +70,11 @@ function init()
     end
   end
   
-  if default_to_community_garden then
-    l_system_instructions = l_system_instructions_community
-  else
-    l_system_instructions = l_system_instructions_default
-  end
+  -- if default_to_community_garden then
+  --   l_system_instructions = l_system_instructions_community
+  -- else
+  --   l_system_instructions = l_system_instructions_default
+  -- end
 
   for i=1,num_plants,1
   do
@@ -90,6 +90,7 @@ function init()
   end
 
   parameters.add_params(plants)
+  
   build_scale()
 
   for i=1,num_plants,1
@@ -99,6 +100,7 @@ function init()
   
   modify.init()
   water.init()
+  
   set_redraw_timer()
   page_scroll(1)
   -- polls.init()
@@ -150,6 +152,9 @@ function init()
   -- call pset sequencer to initialize and setup exclusion groups
   pset_seq.pset_seq_timer_init(pset_exclusion_tables, pset_exclusion_table_labels)
   
+  save_load.init()
+  sharer:new()
+  sharer:init()
   clock.run(init_done)
 end
 
