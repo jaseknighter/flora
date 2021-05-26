@@ -51,9 +51,7 @@ function w_slash.wdel_add_params()
     id = "wdel_time_short",
     name = "    Time: short (1-100ms)",
     controlspec = w_slash.DEL_TIME_SHORT,
-    -- controlspec = controlspec.new(0, 2, "exp", 0.1, 0),
     action = function(val) 
-      -- if val == 0 then val = 0.001 end
       crow.send("ii.wdel.time(" .. val/1000 .. ")") 
       pset_wdel_time_short = val
       params:set("wdel_freeze",1)
@@ -65,7 +63,6 @@ function w_slash.wdel_add_params()
     id = "wdel_time_long",
     name = "    Time: long (0.1-10s)",
     controlspec = w_slash.DEL_TIME_LONG,
-    -- controlspec = controlspec.new(0, 240, "lin", 1, 0),
     action = function(val) 
       crow.send("ii.wdel.time(" .. val .. ")") 
       pset_wdel_time_long = val
@@ -78,7 +75,7 @@ function w_slash.wdel_add_params()
     id = "wdel_feedback",
     name = "    Feedback",
     
-    controlspec = controlspec.new(0, 100, "lin", 0, 2.999451,"%"),
+    controlspec = controlspec.new(0, 100, "lin", 0, 30,"%"),
     action = function(val) 
       local feedback_val = util.linlin (0, 100, -5, 5, val)
       crow.send("ii.wdel.feedback(" .. feedback_val .. ")") 
@@ -100,7 +97,7 @@ function w_slash.wdel_add_params()
     end
   }
 
-
+  --[[
   params:add {
     type = "control",
     id = "wdel_length_count",
@@ -166,6 +163,7 @@ function w_slash.wdel_add_params()
       pset_wdel_cut_divisions = val
     end
   }
+  ]]
 
   params:add {
     type = "control",
@@ -205,12 +203,10 @@ function w_slash.wdel_add_params()
     type = "control",
     id = "wdel_rate",
     name = "    v8 Rate",
-    -- controlspec = w_slash.DEL_FILTER,
     controlspec = controlspec.new(-5, 5, "lin", 0, 0.353),
     action = function(val)       
       
       crow.send("ii.wdel.rate(" .. val .. ")") 
-      -- crow.send("ii.wdel.pluck(5)") 
       pset_wdel_rate = val
       params:set("wdel_freeze",1)
     end
@@ -250,7 +246,6 @@ function w_slash.wdel_add_params()
   }
 
   params:add{type = "trigger", id = "wdel_pluck", name = "    Pluck",
-    -- controlspec = controlspec.new(0, 10, "lin", 0, 0),
     action = function(val)
       crow.send("ii.wdel.pluck(5)") 
       params:set("wdel_freeze",1)
@@ -275,12 +270,6 @@ function w_slash.wdel_add_params()
       params:set("wdel_time_long", pset_wdel_time_long)
       params:set("wdel_feedback", pset_wdel_feedback)
       params:set("wdel_filter", pset_wdel_filter)
-      params:set("wdel_length_count", pset_wdel_length_count)
-      params:set("wdel_length_divisions", pset_wdel_length_divisions)
-      params:set("wdel_position_count", pset_wdel_position_divisions)
-      params:set("wdel_cut_count", pset_wdel_cut_count)
-      params:set("wdel_cut_divisions", pset_wdel_cut_divisions)
-      params:set("wdel_clock", pset_wdel_clock)
       params:set("wdel_clock_ratio_mul", pset_wdel_clock_ratio_mul)
       params:set("wdel_clock_ratio_div", pset_wdel_clock_ratio_div)
       params:set("wdel_rate", pset_wdel_rate)
@@ -289,27 +278,29 @@ function w_slash.wdel_add_params()
       params:set("wdel_mod_rate", pset_wdel_mod_rate)
       params:set("wdel_mod_amount", pset_wdel_mod_amount)
       params:set("wdel_freeze", pset_wdel_ffreeze)
+      --[[
+      params:set("wdel_length_count", pset_wdel_length_count)
+      params:set("wdel_length_divisions", pset_wdel_length_divisions)
+      params:set("wdel_position_count", pset_wdel_position_divisions)
+      params:set("wdel_cut_count", pset_wdel_cut_count)
+      params:set("wdel_cut_divisions", pset_wdel_cut_divisions)
+      params:set("wdel_clock", pset_wdel_clock)
+      ]]
     end
   }
   params:hide("wdel_init")
-  -- crow.send("ii.wsyn.ar_mode(1)")
-  
-
 end
 
 function w_slash.wsyn_add_params()
-  -- params:add_separator("wsyn params")
-  -- params:add_group("w/syn",12)
-
   params:add{type = "option", id = "output_wsyn", name = "wsyn",
     options = {"off","on"},
     default = 2,
     action = function(value)
-      if value == 2 then 
+      -- if value == 2 then 
         -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
         -- crow.ii.pullup(true)
         -- crow.ii.jf.mode(1)
-      end
+      -- end
     end
   }
 
@@ -491,8 +482,6 @@ function w_slash.wsyn_add_params()
     end
   }
   params:hide("wsyn_init")
-  -- crow.send("ii.wsyn.ar_mode(1)")
-  
 end
 
 function w_slash.wtape_add_params()
@@ -551,7 +540,6 @@ function w_slash.wtape_add_params()
       pset_wtape_loop_active = val
     end
   } 
-
     
   params:add {
     type = "option",
@@ -559,7 +547,6 @@ function w_slash.wtape_add_params()
     name = "    Echo Mode",
     options = {"off","on"},
     default = 1,
-    -- controlspec = controlspec.new(0, 1, "lin", 0, 0.5),
     action = function(val)
       local echo_mode = val == 1 and 0 or 1
       crow.send("ii.wtape.loop_active(" .. echo_mode .. ")") 
@@ -568,14 +555,12 @@ function w_slash.wtape_add_params()
   }
 
   params:add{type = "trigger", id = "wtape_loop_start", name = "    Loop Start",
-    -- controlspec = controlspec.new(0, 10, "lin", 0, 0),
     action = function()
       crow.send("ii.wtape.loop_start()") 
     end
   }
   
   params:add{type = "trigger", id = "wtape_loop_end", name = "    Loop End",
-    -- controlspec = controlspec.new(0, 10, "lin", 0, 0),
     action = function()
       crow.send("ii.wtape.loop_end()") 
     end
@@ -599,7 +584,6 @@ function w_slash.wtape_add_params()
   params:add{type = "option", id = "wtape_loop_scale_mult", name = "    Set Loop Scale",
     options = {"reset","half speed", "2x speed"},
     action = function(val)
-      -- crow.send("ii.wtape.loop_scale(" .. val .. ")") 
       if val == 1 then 
         pset_wtape_loop_scale = 0
       elseif val == 2 then 
@@ -667,28 +651,6 @@ function w_slash.wtape_add_params()
     end
   }
   
-  --[[
-  --- crow style ii interface
-  -- setters
-  --record( is_recording ) -- set state of recording
-  --play( is_playing ) -- set state of playback
-  --reverse() -- reverse tape direction
-  -- speed( rate/num, (optional)denominator ) -- tape rate as a float, or fraction
-  -- freq( v8 ) -- set rate in terms of 1-volt-per-octave, where freq(0) == speed(1)
-  -- erase_strength( level ) -- when recording, sets the gain of old material. 0==overwrite
-  -- monitor_level( gain ) -- set the gain of the 'dry' path direct from IN to OUT
-  -- rec_level( gain ) -- set the gain of IN before sending to the tapedeck
-  -- echo_mode( active ) -- set to 1 for 'destructive looping' effects
-  --loop_start() -- start a loop at the current tape location
-  --loop_end() -- set the end point of the loop at the current tape location
-  -- loop_active( is_active ) -- activate the loop (can recover old loops)
-  -- loop_scale( scale ) -- multiply or divide loop size by scale. send 0 to reset.
-  -- loop_next( direction ) -- move loop brace forward/backward to adjacent tape. 0 jumps to start of the current section (ie retriggers)
-  -- timestamp( seconds ) -- move tape playback to an absolute location in seconds
-  -- seek( seconds ) -- move tape playback by seconds relative to the current location
-
-  ]]
-
   params:add{
     type = "trigger",
     id = "wtape_init",
@@ -707,34 +669,9 @@ function w_slash.wtape_add_params()
       params:set("wtape_monitor_level", pset_wtape_monitor_level)
       params:set("wtape_rec_level", pset_wtape_rec_level)
       params:set("wtape_echo_mode", pset_wtape_echo_mode)
-      
-      --[[
-      params:set("wtape_time_mix", pset_wtape_mix)
-      params:set("wtape_time_short", pset_wtape_time_short)
-      params:set("wtape_time_long", pset_wtape_time_long)
-      params:set("wtape_feedback", pset_wtape_feedback)
-      params:set("wtape_filter", pset_wtape_filter)
-      params:set("wtape_length_count", pset_wtape_length_count)
-      params:set("wtape_length_divisions", pset_wtape_length_divisions)
-      params:set("wtape_position_count", pset_wtape_position_divisions)
-      params:set("wtape_cut_count", pset_wtape_cut_count)
-      params:set("wtape_cut_divisions", pset_wtape_cut_divisions)
-      params:set("wtape_clock", pset_wtape_clock)
-      params:set("wtape_clock_ratio_mul", pset_wtape_clock_ratio_mul)
-      params:set("wtape_clock_ratio_div", pset_wtape_clock_ratio_div)
-      params:set("wtape_rate", pset_wtape_rate)
-      params:set("wtape_freq", pset_wtape_freq)
-      params:set("wtape_pluck", pset_wtape_pluck)
-      params:set("wtape_freeze", pset_wtape_ffreeze)
-      ]]
     end
   }
   params:hide("wtape_init")
-  -- crow.send("ii.wsyn.ar_mode(1)")
-  
-
 end
-
-
 
 return w_slash
