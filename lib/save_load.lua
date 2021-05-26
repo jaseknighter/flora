@@ -88,9 +88,70 @@ function save_load.remove_plant_from_garden(plant_to_remove)
 end
 
 
+--[[
+-- code from norns_online lua (probably not needed)
+function refresh_directory()
+  if not refreshed_dir then
+    refreshed_dir=true 
+    uimessage="refreshing directory..."
+    redraw()
+    share.make_virtual_directory()
+    uimessage=""
+    redraw()
+  end
+end
+
+function show_message(message)
+  uimessage=message
+  redraw()
+  clock.run(function()
+    clock.sleep(1)
+    uimessage=""
+    redraw()
+  end)
+end
+
+function save_load.download_from_norns_online()
+-- elseif mode==2 or mode ==3 then
+  -- download
+  local dirtogo=""
+  -- if mode ==3 then 
+  --   dirtogo=""
+  -- end
+  refresh_directory()
+  fileselect.enter(share.get_virtual_directory(dirtogo),function(x)
+    if x == "cancel" then 
+      do return end 
+    end 
+    uimessage="downloading..."
+    redraw()
+    msg = share.download_from_virtual_directory(x)
+    show_message(msg)
+    redraw()
+  end)
+end
+
+function redraw()
+  if uimessage~="" then
+    screen.level(15)
+    local x=64
+    local y=28
+    local w=string.len(uimessage)*6
+    screen.rect(x-w/2,y,w,10)
+    screen.fill()
+    screen.level(15)
+    screen.rect(x-w/2,y,w,10)
+    screen.stroke()
+    screen.move(x,y+7)
+    screen.level(0)
+    screen.text_center(uimessage)
+  end
+end
+]]
+
 function save_load.init()
   params:add_separator()
-  params:add_separator("COMMUNITY GARDENING")
+  params:add_separator("GARDENING")
 
   params:add_trigger("save_plant_to_nursery", "> SAVE PLANT TO NURSERY")
   params:set_action("save_plant_to_nursery", function(x) textentry.enter(save_load.save_plant_to_nursery) end)
@@ -116,6 +177,7 @@ function save_load.init()
 
   -- params:default()
   -- params:bang()
+
 end
 
 return save_load

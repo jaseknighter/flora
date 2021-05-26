@@ -499,10 +499,6 @@ modify.get_control_labels = function()
   elseif modify.active_control - (modify.num_rulesets * 2) + 1 == 10 then
     -- start from Y (start_from_y)
     label = label .. modify.get_start_from_y()
-  else
-    print("save",modify.filesystem_cursor_indices[active_plant][modify.active_control])
-
-  
   end
 
   return label
@@ -533,7 +529,6 @@ modify.enc = function(n, delta, alt_key_active)
   elseif n == 2 then 
     local incr = util.clamp(delta, -1, 1)
     modify.active_control = util.clamp(incr + modify.active_control, 1, #param_ids+(modify.num_rulesets*2) + #filesystem_param_ids)
-    print("modify.active_control", modify.active_control)
   elseif n == 3 and alt_key_active then 
     local incr = util.clamp(delta, -1, 1)
     if modify.active_control > 1 and modify.active_control <= modify.num_rulesets * 2 + 2 then

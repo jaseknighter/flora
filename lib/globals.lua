@@ -143,6 +143,8 @@ active_plant = 1
 initializing = true
 
 envelopes = {}
+crow_trigger_2 = 0.05
+crow_trigger_4 = 0.05
 
 screen_dirty = true
 show_instructions = false

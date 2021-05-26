@@ -10,6 +10,18 @@
 
 local garden = {}
 
+function garden.init()
+  local planted_plants = tab.load(planted_plants_path) or {}
+  if #planted_plants > 0 then
+    for i=1,#planted_plants,1
+    do
+      local plant_name = planted_plants[i]
+      local plant_path = nursery_path .. plant_name
+      local plant = tab.load(plant_path)
+      table.insert(garden_catalog, plant)
+    end
+  end
+end
 
 -- local catalog = catalog_default
 function garden.get_num_plants()
@@ -18,9 +30,9 @@ end
 
 function garden.add(plant)
   table.insert(garden_catalog, plant)
-  plant_name = plant.name
   -- local planted_plants_path = nursery_path .. "planted_plants"
   local planted_plants = tab.load(planted_plants_path) or {}
+  print(planted_plants, plant.name, planted_plants_path)
   table.insert(planted_plants, plant.name)
   tab.save(planted_plants, planted_plants_path)
 end

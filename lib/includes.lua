@@ -12,8 +12,12 @@ fileselect = require 'fileselect'
 UI = require "ui"
 -- polls = include "flora/lib/polls"
 
+-- required for cloud.lua and save_load.lua
+share=include("norns.online/lib/share")
+
 -- required for parameters.lua
 cs = require 'controlspec'
+w_slash = include("flora/lib/w_slash")
 
 -- required for multiple files
 include("flora/lib/midi_helper")

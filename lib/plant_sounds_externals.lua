@@ -91,17 +91,17 @@ function plant_sounds_externals:new(active_notes)
           local asl_envelope = asl_generator(envelopes[1].get_env_time())
           crow.output[2].action = tostring(asl_envelope)
         elseif output_param == 2 then -- trigger
-          local time = 0.1
+          local time = crow_trigger_2
           local level = params:get("plow1_max_level")
           local polarity = 1
           crow.output[2].action = "pulse(" .. time ..",".. level .. "," .. polarity .. ")"
-          print("pulse(" .. time ..",".. level .. "," .. polarity .. ")")
+          -- print("pulse(" .. time ..",".. level .. "," .. polarity .. ")")
         elseif output_param == 3 then -- gate
           local time = params:get("plow1_max_time")
           local level = params:get("plow1_max_level")
           local polarity = 1
           crow.output[2].action = "pulse(" .. time ..",".. level .. "," .. polarity .. ")"
-          print("pulse(" .. time ..",".. level .. "," .. polarity .. ")")
+          -- print("pulse(" .. time ..",".. level .. "," .. polarity .. ")")
         end
         crow.output[2]()
       else
@@ -111,7 +111,7 @@ function plant_sounds_externals:new(active_notes)
           local asl_envelope = asl_generator(envelopes[2].get_env_time())
           crow.output[4].action = tostring(asl_envelope)
         elseif output_param == 2 then -- trigger
-          local time = 0.1
+          local time = crow_trigger_2
           local level = params:get("plow2_max_level")
           local polarity = 1
           crow.output[4].action = "pulse(" .. time ..",".. level .. "," .. polarity .. ")"
@@ -132,11 +132,22 @@ function plant_sounds_externals:new(active_notes)
     
     -- wsyn out
     if output_wsyn == 2 then
+      local pitch = (note_to_play-48)/12
+      local velocity = params:get("wsyn_vel")
       
-      -- crow.send("ii.wsyn.play_note(".. ((notes[coll][scaled])+(36+(voice[i].octave*12)+semi+random_note[1].add)-48)/12 ..", " .. pset_wsyn_vel .. ")")
-      -- print("crow",  (note_to_play-48)/12, pset_wsyn_vel)
-      crow.send("ii.wsyn.play_note(".. (note_to_play-48)/12 .. ", " .. pset_wsyn_vel .. ")")
-      -- crow.send("ii.wsyn.play_note(".. (note_to_play-60)/12 .. ", " .. pset_wsyn_vel .. ")")
+      if plant_id == 1 then
+        params:set("wsyn_init",1)
+        local voice = 1
+        -- crow.send("ii.wsyn.play_note(".. (note_to_play-48)/12 .. ", " .. pset_wsyn_vel .. ")")
+        -- local velocity = params:get("wsyn_vel")
+        crow.send("ii.wsyn.play_voice(" .. voice .."," .. pitch .."," .. velocity .. ")")
+      else
+        local voice = 2
+        -- params:set("wsyn_v2_init",1)
+        -- local velocity = params:get("wsyn_v2_vel")
+        -- crow.send("ii.wsyn.play_note(".. (note_to_play-48)/12 .. ", " .. pset_wsyn_vel .. ")")
+        crow.send("ii.wsyn.play_voice(" .. voice .."," .. pitch .."," .. velocity .. ")")
+      end
     end
     
     -- divide 1 over beat_frequency to translate from hertz (cycles per second) into beats per second

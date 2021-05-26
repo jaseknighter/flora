@@ -255,6 +255,9 @@ function plant:new(p_id, starting_instruction)
     p.current_instruction = instruction_number
     p.current_generation = 0
     p.instr[instruction_number] = p.get_instructions(instruction_number)
+    -- print(">>>>>>>>>>")
+    -- tab.print(p.instr[instruction_number])
+    -- print(">>>>>>>>>>")
     if p.id == 1 then
       p.start_from = vector:new(
         p.instr[instruction_number].start_from.x - screen_size.x/4, 
@@ -273,8 +276,11 @@ function plant:new(p_id, starting_instruction)
     p.max_generations = p.instr[instruction_number].max_generations
     p.length = p.instr[instruction_number].length
 
+    local p_instr_num = p.id == 1 and "plant1_instructions" or "plant2_instructions"
     local p_angle = p.id == 1 and "plant1_angle" or "plant2_angle"
-    
+
+    params:set(p_instr_num, instruction_number)
+
     params:set(p_angle, p.instr[instruction_number].angle)
     
     p.initial_turtle_rotation = p.instr[instruction_number].initial_turtle_rotation

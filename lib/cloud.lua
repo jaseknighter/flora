@@ -27,7 +27,7 @@ function Cloud:init()
   end
 
   local script_name="flora"
-  local share=include("norns.online/lib/share")
+  -- local share=include("norns.online/lib/share")
 
   -- start uploader with name of your script
   local uploader=share:new{script_name=script_name}
@@ -37,7 +37,7 @@ function Cloud:init()
   end
 
   -- add parameters
-  params:add_group("SHARE WITH COMMUNITY",4)
+  params:add_group("COMMUNITY GARDENS",4)
 
   -- uploader (CHANGE THIS TO FIT WHAT YOU NEED)
   -- select a save
@@ -106,7 +106,7 @@ function Cloud:init()
 
   -- downloader
   download_dir=share.get_virtual_directory(script_name)
-  params:add_file("share_download","download",download_dir)
+  params:add_file("share_download","download to nursery",download_dir)
   params:set_action("share_download",function(y)
     -- prevent banging
     local x=y
@@ -122,11 +122,12 @@ function Cloud:init()
     local msg=share.download_from_virtual_directory(x)
 
     -- move the temporary pset file to any free slot in the psets
-    local pset_name=snapshot:pset_next()
-    os.execute("mv /dev/shm/temp.pset "..pset_name)
+    -- local pset_name=snapshot:pset_next()
+    -- os.execute("mv /dev/shm/temp.pset "..pset_name)
 
     params:set("share_message",msg)
   end)
+  
   params:add{type='binary',name='refresh directory',id='share_refresh',behavior='momentary',action=function(v)
     print("updating directory")
     params:set("share_message","refreshing directory.")

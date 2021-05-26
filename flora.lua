@@ -1,5 +1,5 @@
 ---flora - beta
--- v0.4.0-beta @jaseknighter
+-- v0.5.0-beta @jaseknighter
 -- lines: llllllll.co/t/40261
 --
 -- k1+k2: show/hide instructions
@@ -29,8 +29,8 @@
   --    inconsistent use of ALL CAPS for naming constant values
 --      use of colon vs dot function syntax
 --  (done) enable control over ruleset variables (axiom and ruleset especially)
---  add ability to save changes to rulesets
---  add ability to share custom rulesets (e.g. with norns.online)
+--  (done) add ability to save changes to rulesets
+--  (done) add ability to share custom rulesets (e.g. with norns.online)
 --  add keyboard control for updating sentences/rulesets
 --  explore support for more than two plants at a time
 --  investigate (seemingly non-consequential) error message at startup related to midi maps 
@@ -100,6 +100,7 @@ function init()
   
   modify.init()
   water.init()
+  garden.init()
   
   set_redraw_timer()
   page_scroll(1)
