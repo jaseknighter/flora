@@ -235,7 +235,7 @@ flora_params.add_params = function(plants)
   
   -- options.OUTPUT = {"audio (a)", "midi (m)", "a + m", "a, m, c ii JF, c out 1+2", "c ii JF"}
 
-  params:add{type = "option", id = "output_midi", name = "midi",
+  params:add{type = "option", id = "output_midi", name = "midi out",
     options = {"off","on"},
     default = 1,
   }
@@ -312,7 +312,7 @@ flora_params.add_params = function(plants)
 
   params:add{type = "option", id = "output_jf", name = "just friends",
     options = {"off","on"},
-    default = 1,
+    default = 2,
     action = function(value)
       if value == 2 then 
         -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
@@ -329,7 +329,7 @@ flora_params.add_params = function(plants)
   w_slash.wsyn_add_params()
   -- w_slash.wsyn_v2_add_params()
 
-  params:add_group("w/ wdel",14)
+  params:add_group("w/ wdel",15)
   w_slash.wdel_add_params()
 
   params:add_group("w/ wtape",17)

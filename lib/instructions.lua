@@ -28,24 +28,24 @@ instructions.display = function ()
         if (modify.active_control - 1) % 2 == 1 then
           -- "pre"
           screen.move(5, 44)
-          screen.text("e1 + e3: change letter value")
+          screen.text("k1 + e3: change letter value")
         else
           -- "post"
           screen.move(5, 44)
           screen.text("e3: select letter")
           screen.move(5, 52)
-          screen.text("e1 + e3: change letter value")
+          screen.text("k1 + e3: change letter value")
         end
       elseif modify.active_control <= modify.num_rulesets * 2 + 2 then
         -- "axiom"
         screen.move(5, 44)
         screen.text("e3: select letter")
         screen.move(5, 52)
-        screen.text("e1 + e3: change letter value")
+        screen.text("k1 + e3: change letter value")
       end
     else 
       screen.move(5, 44)
-      screen.text("e1 + e3: change control value")
+      screen.text("k1 + e3: change control value")
     end 
   elseif (pages.index == 3) then
     screen.text("e2: move up/down")

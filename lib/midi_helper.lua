@@ -174,7 +174,6 @@ midi_event = function(data)
         local freq = MusicUtil.note_num_to_freq(note_to_play) * cf_scalar
         plants[1].sounds.engine_note_on(note_to_play, freq, random_note_frequency)
       elseif data[1] == midi_in_command2 then -- plant 1 engine note on
-        -- print("note_on", data[2])
         envelopes[2].update_envelope()
         local note_to_play = data[2]
         -- set a random scalar for the note about to play

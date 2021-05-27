@@ -1,13 +1,12 @@
 w_slash = {}
 
-
 function w_slash.wdel_add_params()
   w_slash.DEL_TIME_SHORT = cs.def{
-    min=1,
+    min=0,
     max=100,
     warp='lin',
     step=1,
-    default=100,
+    default=0,
     -- quantum=1,
     wrap=false,
   }
@@ -33,6 +32,29 @@ function w_slash.wdel_add_params()
     wrap=false,
   }
 
+  function start_ks()
+    clock.sleep(0.001)
+    params:set("wdel_time_short",0)
+    crow.ii.wdel.time(0)
+    params:set("wdel_mix",50)
+  end
+
+  params:add{type = "option", id = "output_wdel_ks", name = "    Karplus-strong",
+    options = {"off","plant 1","plant 2"},
+    default = 2,
+    action = function(value)
+      if value > 1 then
+        params:set("wdel_feedback",99)
+        params:set("wdel_filter",12000)
+        params:set("wdel_frequency",0)
+        params:set("wdel_rate",0)
+        params:set("wdel_mix",0)
+        pset_wdel_ks = val
+        clock.run(start_ks)
+      end
+    end
+  }
+
   params:add {
     type = "control",
     id = "wdel_mix",
@@ -47,12 +69,13 @@ function w_slash.wdel_add_params()
   }
 
   params:add {
-    type = "control",
+    type = "number",
     id = "wdel_time_short",
-    name = "    Time: short (1-100ms)",
+    name = "    Time: short (0-100ms)",
     controlspec = w_slash.DEL_TIME_SHORT,
     action = function(val) 
-      crow.send("ii.wdel.time(" .. val/1000 .. ")") 
+      if val < 0 then params:set("wdel_time_short",0) end
+      crow.send("ii.wdel.time(" .. val/10000 .. ")") 
       pset_wdel_time_short = val
       params:set("wdel_freeze",1)
     end
@@ -198,14 +221,12 @@ function w_slash.wdel_add_params()
     end
   }
   
-
   params:add {
     type = "control",
     id = "wdel_rate",
-    name = "    v8 Rate",
+    name = "    Rate",
     controlspec = controlspec.new(-5, 5, "lin", 0, 0.353),
     action = function(val)       
-      
       crow.send("ii.wdel.rate(" .. val .. ")") 
       pset_wdel_rate = val
       params:set("wdel_freeze",1)
@@ -215,7 +236,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_frequency",
-    name = "    Frequency",
+    name = "    Frequency (V8)",
     controlspec = controlspec.new(-5, 5, "lin", 0, -1.5),
     action = function(val)       
       crow.send("ii.wdel.freq(" .. val .. ")") 
@@ -265,9 +286,10 @@ function w_slash.wdel_add_params()
     id = "wdel_init",
     name = "  W Delay Init",
     action = function()
+      params:set("output_wdel_ks", pset_wdel_ks)
       params:set("wdel_time_mix", pset_wdel_mix)
-      params:set("wdel_time_short", pset_wdel_time_short)
       params:set("wdel_time_long", pset_wdel_time_long)
+      params:set("wdel_time_short", pset_wdel_time_short)
       params:set("wdel_feedback", pset_wdel_feedback)
       params:set("wdel_filter", pset_wdel_filter)
       params:set("wdel_clock_ratio_mul", pset_wdel_clock_ratio_mul)
@@ -295,8 +317,9 @@ function w_slash.wsyn_add_params()
   params:add{type = "option", id = "output_wsyn", name = "wsyn",
     options = {"off","on"},
     default = 2,
-    action = function(value)
-      -- if value == 2 then 
+    action = function(val)
+      pset_wsyn_outut_wsyn = val
+      -- if val == 2 then 
         -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
         -- crow.ii.pullup(true)
         -- crow.ii.jf.mode(1)
@@ -305,7 +328,8 @@ function w_slash.wsyn_add_params()
   }
 
 
-  --[[
+  --[[ 
+  -- code for wsyn patching (work in progress)
   local patch_options = {'none','ramp','curve','fm_env','fm_index','lpg_time','lpg_symmetry','gate','v8 (gate rqrd)','fm_ratio (num)','fm_ratio (denom)'}
   params:add {
     type = "option",
@@ -342,8 +366,10 @@ function w_slash.wsyn_add_params()
     default = 2,
     action = function(val) 
       crow.send("ii.wsyn.ar_mode(".. (val-1) ..")")
+      pset_wsyn_ar_mode = val
     end
   }
+
   params:add {
     type = "control",
     id = "wsyn_vel",
@@ -526,7 +552,6 @@ function w_slash.wtape_add_params()
   }
 
   params:add{type = "trigger", id = "wtape_reverse", name = "    Reverse",
-    -- controlspec = controlspec.new(0, 10, "lin", 0, 0),
     action = function()
       crow.send("ii.wtape.reverse()") 
     end
@@ -595,7 +620,7 @@ function w_slash.wtape_add_params()
     end
   } 
 
-    params:add {
+  params:add {
     type = "control",
     id = "wtape_speed",
     name = "    Speed",
@@ -605,7 +630,6 @@ function w_slash.wtape_add_params()
       pset_wtape_speed = val
     end
   }
-
 
   params:add {
     type = "control",

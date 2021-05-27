@@ -28,7 +28,6 @@ function plant_sounds_externals:new(active_notes)
   end
  
   pse.note_on = function(plant_id, note_to_play, pitch_frequency, beat_frequency, envelope_time_remaining)
-    -- local output_param = params:get("output")
     local output_midi = params:get("output_midi")
     local output_crow = params:get("output_crow")
     local output_crow2 = params:get("output_crow2")
@@ -36,6 +35,7 @@ function plant_sounds_externals:new(active_notes)
     
     local output_jf = params:get("output_jf")
     local output_wsyn = params:get("output_wsyn")
+    local output_wdel_ks = params:get("output_wdel_ks")
     
     local midi_out_channel = plant_id == 1 and midi_out_channel1 or midi_out_channel2
     local envelope_length = envelopes[plant_id].get_env_time()
@@ -95,13 +95,11 @@ function plant_sounds_externals:new(active_notes)
           local level = params:get("plow1_max_level")
           local polarity = 1
           crow.output[2].action = "pulse(" .. time ..",".. level .. "," .. polarity .. ")"
-          -- print("pulse(" .. time ..",".. level .. "," .. polarity .. ")")
         elseif output_param == 3 then -- gate
-          local time = params:get("plow1_max_time")
+          local time = crow_trigger_4
           local level = params:get("plow1_max_level")
           local polarity = 1
           crow.output[2].action = "pulse(" .. time ..",".. level .. "," .. polarity .. ")"
-          -- print("pulse(" .. time ..",".. level .. "," .. polarity .. ")")
         end
         crow.output[2]()
       else
@@ -138,18 +136,29 @@ function plant_sounds_externals:new(active_notes)
       if plant_id == 1 then
         params:set("wsyn_init",1)
         local voice = 1
-        -- crow.send("ii.wsyn.play_note(".. (note_to_play-48)/12 .. ", " .. pset_wsyn_vel .. ")")
-        -- local velocity = params:get("wsyn_vel")
         crow.send("ii.wsyn.play_voice(" .. voice .."," .. pitch .."," .. velocity .. ")")
       else
         local voice = 2
-        -- params:set("wsyn_v2_init",1)
-        -- local velocity = params:get("wsyn_v2_vel")
-        -- crow.send("ii.wsyn.play_note(".. (note_to_play-48)/12 .. ", " .. pset_wsyn_vel .. ")")
         crow.send("ii.wsyn.play_voice(" .. voice .."," .. pitch .."," .. velocity .. ")")
       end
     end
     
+    -- wdel karplus-strong out
+    -- local pitch = (note_to_play-48)/12
+    local pitch = (note_to_play-48)/12
+    -- print(pitch,pitch_frequency)
+    if output_wdel_ks == 2 and plant_id == 1 then
+      local level = params:get("plow1_max_level")
+      crow.send("ii.wdel.pluck(" .. level .. ")")
+      crow.send("ii.wdel.freq(" .. pitch .. ")")
+      params:set("wdel_rate",0)
+    elseif output_wdel_ks == 3 and plant_id == 2 then
+      local level = params:get("plow2_max_level") 
+      crow.send("ii.wdel.pluck(" .. level .. ")")
+      crow.send("ii.wdel.freq(" .. pitch .. ")")
+      params:set("wdel_rate",0)
+    end
+  
     -- divide 1 over beat_frequency to translate from hertz (cycles per second) into beats per second
     if envelope_length > 1/beat_frequency then
       local time_remaining = envelope_time_remaining and envelope_time_remaining - 1/beat_frequency or envelope_length - 1/beat_frequency 
