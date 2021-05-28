@@ -291,7 +291,7 @@ instruction.initial_turtle_rotation = 90
 source: http://algorithmicbotany.org/papers/abop/abop-ch1.pdf (Figure 1.24(d))
 
 #### Community gardening
-As of Flora v0.4.0 as new *community gardening* feature has been enabled, which leverages norns.online to allow custom plant shapes (i.e. sequences) to be shared through the Norn's UI.
+As of Flora v0.4.0, a new *community gardening* feature has been enabled, which leverages norns.online to allow custom plant shapes (i.e. sequences) to be shared through the Norn's UI.
 
 To take advantage of the new *community gardening* feature, install Flora v0.4.0 or later as well as the [norns.online](https://norns.community/authors/infinitedigits/norns-online) script.
 
