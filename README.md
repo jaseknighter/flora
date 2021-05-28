@@ -326,10 +326,10 @@ As of v0.4.0, Flora provides i2c integration with Whimsical Raps' W/2 eurorack m
 Flora's integration with W/2 is accessed via the PARAMETERS>EDIT menu. Prior to accessing the parameters for a particular mode, W/2 must first be put into the proper mode.
 
 ### W Syn sequencing
-W/Syn can be sequenced with Flora by setting the *wsyn* parameter to `on` in the *w/syn* menu. When setting the *wsyn* parameter to `on`, each of Flora's plant sequences is sent to a separate W/Syn voice.
+W/Syn can be sequenced with Flora via i2c by setting the *wsyn* parameter to `on` in the *parameters>edit>w/syn* menu. When setting the *wsyn* parameter to `on`, each of Flora's plant sequences is sent to a separate W/Syn voice.
 
 ### Karplus-Strong sequencing
-W/Del supports Karplus-Strong style string synthesis, which can be sequenced with Flora by setting the *Karplus-Strong* parameter to `on` in the *w/del* menu.
+W/Del supports Karplus-Strong style string synthesis, which can be sequenced with Flora via i2c by setting the *Karplus-Strong* parameter to `on` in the *parameters>edit>w/del* menu.
 
 ### Integration with other Norns scripts
 Flora's code to integrate with W/2 may be easily dropped into another Norns script:
