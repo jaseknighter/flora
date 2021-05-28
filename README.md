@@ -10,6 +10,7 @@ Follow the discussion on lines: https://llllllll.co/t/40261
 
 ## Documentation
 - [Flora - beta](#flora---beta)
+  * [Documentation](#documentation)
   * [Overview](#overview)
     + [L-systems and their sequencing](#l-systems-and-their-sequencing)
       - [L-system basics](#l-system-basics)
@@ -17,8 +18,8 @@ Follow the discussion on lines: https://llllllll.co/t/40261
       - [Sequencing the L-system](#sequencing-the-l-system)
         * [The Flora alphabet](#the-flora-alphabet)
         * [Changes in pitch](#changes-in-pitch)
-    + [Bandsaw](#bandsaw)  
-        - [SAFETY NOTES](#safety-notes)
+    + [Bandsaw](#bandsaw)
+      - [SAFETY NOTES](#safety-notes)
   * [Norns UI](#norns-ui)
     + [Screens](#screens)
       - [Plant](#plant)
@@ -30,12 +31,16 @@ Follow the discussion on lines: https://llllllll.co/t/40261
     + [PSET Sequencer](#pset-sequencer)
     + [Generating new L-system axioms and rulesets](#generating-new-l-system-axioms-and-rulesets)
       - [Advanced sequencing](#advanced-sequencing)
-      - [Community Gardening](#community-gardening)
+      - [Community gardening](#community-gardening)
+  * [W Integration](#w-integration)
+    + [Overview](#overview-1)
+    + [W Syn sequencing](#w-syn-sequencing)
+    + [Karplus-Strong sequencing](#karplus-strong-sequencing)
+    + [Integration with other Norns scripts](#integration-with-other-norns-scripts)
   * [Requirements](#requirements)
   * [Preliminary Roadmap](#preliminary-roadmap)
   * [Credits](#credits)
   * [References](#references)
-
 
 ## Overview
 ### L-systems and their sequencing
@@ -286,17 +291,66 @@ instruction.initial_turtle_rotation = 90
 source: http://algorithmicbotany.org/papers/abop/abop-ch1.pdf (Figure 1.24(d))
 
 #### Community gardening
-A community garden is under development to share rulesets written by members of the [lines](https://llllllll.co/) community. 
+As of Flora v0.4.0 as new *community gardening* feature has been enabled, which leverages norns.online to allow custom plant shapes (i.e. sequences) to be shared through the Norn's UI.
 
-Steps to locally enable and work in the community garden:  
-- Open the lib/gardens/garden_community.lua file  in [Maiden](https://monome.org/docs/norns/maiden/).  
-- Add a new ruleset to the file.  
-- Set the `number_of_instructions` variable equal to the number of instructions in the lib/gardens/garden_community.lua file.  
-- Set the `default_to_community_garden` variable to `true` in the lib/gardens/gardens_community.lua file.   
-- Reload the Flora program in Maiden.
-- Test the ruleset.  
+To take advantage of the new *community gardening* feature, install Flora v0.4.0 or later as well as the [norns.online](https://norns.community/authors/infinitedigits/norns-online) script.
 
-To share any ruleset(s) you have written, submit a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) for the lib/gardens/garden_community.lua file or contact me ([@jaseknighter](https://llllllll.co/u/jaseknighter/summary)) on the lines forum for assistance.
+Once Flora v0.4.0 and norns.online have been installed, the community gardening features may be accessed from the *Gardening* section at the bottom of the *PARAMATERS>EDIT* menu as follows:
+
+**Steps to share a plant shape with the community**
+1. *Save plant to nursery*: locally saves the active plant shape to the Norn's filesystem (in `data/flora/nursery/`)
+2. Enter the *Community gardening* submenu 
+3. Select *refresh directory* 
+4. Select *upload from nursery*
+5. Choose the plant you saved to your *nursery* in step 1 above
+
+**Steps to obtain a plant shape from the community garden**
+1. Enter the *Community gardening* submenu 
+2. Select *refresh directory* 
+3. Select *download to nursery*
+4. Exit the *Community gardening* submenu 
+5. Select *Add plant to garden*
+** Note, selecting a plant to be added to the *garden* will append it to the the end of the list of selectable plants found on the *plant* screen. On this screen, use K1+E2 to select the plant. By default there are 11 plants, so the first plant added to the *garden* will be shown as *plant i12*, the second plant will be shown as *plant i12*, and so on.
+
+**Additional gardening features**
+* *Remove plant from nursery*: locally removes a selected plant shape previously saved to the Norn's filesystem. 
+** Note, this cannot be undone as the plant definition is removed from the local filesystem
+* *Remove plant from garden*: removes a plant from the *garden*
+** Note, removing a plant from the *garden* does not remove it from the *nursery* (that is, the plant definition remains on the local filesystem)
+
+
+## W Integration
+### Overview
+As of v0.4.0, Flora provides integration with Whimsical Raps' W/2 eurorack module. All three modes, W/Tape, W/Syn, and W/Del, are supported. See the W/2 documentation on the [lines forum ](https://llllllll.co/t/mannequins-w-2-beta-testing/34091) about how each mode functions.
+
+Flora's integration with W/2 is accessed via the PARAMETERS>EDIT menu. Prior to accessing the parameters for a particular mode, W/2 must first be put into the proper mode.
+
+### W Syn sequencing
+W/Syn can be sequenced with Flora by setting the *wsyn* parameter to `on` in the *w/syn* menu. When setting the *wsyn* parameter to `on`, each of Flora's plant sequences is sent to a separate W/Syn voice.
+
+### Karplus-Strong sequencing
+W/Del supports Karplus-Strong style string synthesis, which can be sequenced with Flora by setting the *Karplus-Strong* parameter to `on` in the *w/del* menu.
+
+### Integration with other Norns scripts
+Flora's code to integrate with W/2 may be easily dropped into another Norns script:
+
+1. Install Flora v0.4.0 or later
+2. At the start of the Norns script add the following two lines of code:
+```
+cs = require 'controlspec'
+w_slash = include("flora/lib/w_slash")
+```
+3. At the end of the script's init function add the following six lines of code:
+```
+  params:add_group("w/del",15)
+  w_slash.wdel_add_params()
+  params:add_group("w/syn",14)
+  w_slash.wsyn_add_params()
+  params:add_group("w/tape",17)
+  w_slash.wtape_add_params()
+```
+
+Note, enabling sequencing with w/Syn and W/Del in another script requires additional code (see Flora's *plant_sounds_externals.lua* file for details).
 
 ## Requirements
 * Norns (required)
@@ -309,13 +363,10 @@ To share any ruleset(s) you have written, submit a [pull request](https://docs.g
 * Improve the quality and portability of the code.
 * Improve the documentation.
 * (done) Create an option with all the outputs (Audio,  Midi, JF, and crow) 
-* Add support for w/syn.
-* (added) Create a PSET sequencer
-* (done) Make additional Bandsaw engine and envelope variables available for Crow, Just Friends, and Midi outputs.
+* Add i2c control for Just Friends parameters
+* (done) Add support for w/syn, w/del, and w/tape.
 * Add microtonal scales.
-* (done) Add a global setting to bypass the midi_note_off delay 
-* (added) Setup parameters for plant and plow (envelope) settings so they can be saved and loaded via PSETs.
-* (added) Add modulation and probability controls for envelopes.
+* Fix intermittent flickers on the *water* screen
 * Increase and decrease the brightness of the circles that appear when each note plays according to the level of the note's graph/envelope.
 
 ## Credits

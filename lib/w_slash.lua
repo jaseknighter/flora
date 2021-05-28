@@ -39,9 +39,9 @@ function w_slash.wdel_add_params()
     params:set("wdel_mix",50)
   end
 
-  params:add{type = "option", id = "output_wdel_ks", name = "    Karplus-strong",
+  params:add{type = "option", id = "output_wdel_ks", name = "Karplus-strong",
     options = {"off","plant 1","plant 2"},
-    default = 2,
+    default = 1,
     action = function(value)
       if value > 1 then
         params:set("wdel_feedback",99)
@@ -58,7 +58,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_mix",
-    name = "    Mix (dry->wet)",
+    name = "Mix (dry->wet)",
     controlspec = controlspec.new(0, 100, "lin", 0, 50,"%"),
     action = function(val) 
       local mix_val = util.linlin (0, 100, -5, 5, val)
@@ -71,7 +71,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "number",
     id = "wdel_time_short",
-    name = "    Time: short (0-100ms)",
+    name = "Time: short (0-100ms)",
     controlspec = w_slash.DEL_TIME_SHORT,
     action = function(val) 
       if val < 0 then params:set("wdel_time_short",0) end
@@ -84,7 +84,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_time_long",
-    name = "    Time: long (0.1-10s)",
+    name = "Time: long (0.1-10s)",
     controlspec = w_slash.DEL_TIME_LONG,
     action = function(val) 
       crow.send("ii.wdel.time(" .. val .. ")") 
@@ -96,7 +96,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_feedback",
-    name = "    Feedback",
+    name = "Feedback",
     
     controlspec = controlspec.new(0, 100, "lin", 0, 30,"%"),
     action = function(val) 
@@ -110,7 +110,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_filter",
-    name = "    Fdbk Filter",
+    name = "Fdbk Filter",
     controlspec = w_slash.DEL_FILTER,
     action = function(val)       
       local filter_val = util.explin (w_slash.DEL_FILTER.minval, w_slash.DEL_FILTER.maxval, -5, 5, val)
@@ -124,7 +124,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_length_count",
-    name = "    Length Count",
+    name = "Length Count",
     controlspec = controlspec.new(0, 10, "lin", 0,  1),
     action = function(val)       
       crow.send("ii.wdel.length(" .. val ..",".. params:get("wdel_length_divisions") .. ")") 
@@ -135,7 +135,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_length_divisions",
-    name = "    Length Divisions",
+    name = "Length Divisions",
     controlspec = controlspec.new(0, 10, "lin", 0, 1),
     action = function(val)       
       crow.send("ii.wdel.length(" .. params:get("wdel_length_count") ..",".. val .. ")") 
@@ -146,7 +146,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_position_count",
-    name = "    Position Count",
+    name = "Position Count",
     controlspec = controlspec.new(0, 10, "lin", 0, 1),
     action = function(val)       
       crow.send("ii.wdel.position(" .. val ..",".. params:get("wdel_position_divisions") .. ")") 
@@ -157,7 +157,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_position_divisions",
-    name = "    Position Divisions",
+    name = "Position Divisions",
     controlspec = controlspec.new(0, 10, "lin", 0, 1),
     action = function(val)       
       crow.send("ii.wdel.position(" .. params:get("wdel_position_count") ..",".. val .. ")") 
@@ -168,7 +168,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_cut_count",
-    name = "    Cut Count",
+    name = "Cut Count",
     controlspec = controlspec.new(0, 10, "lin", 0, 1),
     action = function(val)       
       crow.send("ii.wdel.cut(" .. val ..",".. params:get("wdel_cut_divisions") .. ")") 
@@ -179,7 +179,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_cut_divisions",
-    name = "    Cut Divisions",
+    name = "Cut Divisions",
     controlspec = controlspec.new(0, 10, "lin", 0, 1),
     action = function(val)       
       crow.send("ii.wdel.cut(" .. params:get("wdel_cut_count") ..",".. val .. ")") 
@@ -191,7 +191,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_clock",
-    name = "    Clock",
+    name = "Clock",
     controlspec = controlspec.new(-5, 5, "lin", 0, 1),
     action = function(val)       
       crow.send("ii.wdel.clock(" .. val .. ")") 
@@ -202,7 +202,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_clock_ratio_mul",
-    name = "    Clock ratio mul",
+    name = "Clock ratio mul",
     controlspec = controlspec.new(0, 10, "lin", 0, 1),
     action = function(val)       
       crow.send("ii.wdel.clock_ratio(" .. val ..",".. params:get("wdel_clock_ratio_div") .. ")") 
@@ -213,7 +213,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_clock_ratio_div",
-    name = "    clock ratio div",
+    name = "clock ratio div",
     controlspec = controlspec.new(0, 10, "lin", 0, 1),
     action = function(val)       
       crow.send("ii.wdel.clock_ratio(" .. params:get("wdel_clock_ratio_mul") ..",".. val .. ")") 
@@ -224,7 +224,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_rate",
-    name = "    Rate",
+    name = "Rate",
     controlspec = controlspec.new(-5, 5, "lin", 0, 0.353),
     action = function(val)       
       crow.send("ii.wdel.rate(" .. val .. ")") 
@@ -236,7 +236,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_frequency",
-    name = "    Frequency (V8)",
+    name = "Frequency (V8)",
     controlspec = controlspec.new(-5, 5, "lin", 0, -1.5),
     action = function(val)       
       crow.send("ii.wdel.freq(" .. val .. ")") 
@@ -247,7 +247,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_mod_rate",
-    name = "    Mod Rate",
+    name = "Mod Rate",
     controlspec = controlspec.new(-5, 5, "lin", 0, 0),
     action = function(val)       
       crow.send("ii.wdel.mod_rate(" .. val .. ")") 
@@ -258,7 +258,7 @@ function w_slash.wdel_add_params()
   params:add {
     type = "control",
     id = "wdel_mod_amount",
-    name = "    Mod Amount",
+    name = "Mod Amount",
     controlspec = controlspec.new(-5, 5, "lin", 0, 0),
     action = function(val)       
       crow.send("ii.wdel.mod_amount(" .. val .. ")") 
@@ -266,14 +266,14 @@ function w_slash.wdel_add_params()
     end
   }
 
-  params:add{type = "trigger", id = "wdel_pluck", name = "    Pluck",
+  params:add{type = "trigger", id = "wdel_pluck", name = "Pluck",
     action = function(val)
       crow.send("ii.wdel.pluck(5)") 
       params:set("wdel_freeze",1)
     end
   }
 
-    params:add{type = "option", id = "wdel_freeze", name = "    Freeze",
+    params:add{type = "option", id = "wdel_freeze", name = "Freeze",
     options = {"active","frozen"}, default=1,
     action = function(val)
       local freeze_val = val == 1 and 0 or 1
@@ -284,7 +284,7 @@ function w_slash.wdel_add_params()
   params:add{
     type = "trigger",
     id = "wdel_init",
-    name = "  W Delay Init",
+    name = "W Delay Init",
     action = function()
       params:set("output_wdel_ks", pset_wdel_ks)
       params:set("wdel_time_mix", pset_wdel_mix)
@@ -316,7 +316,7 @@ end
 function w_slash.wsyn_add_params()
   params:add{type = "option", id = "output_wsyn", name = "wsyn",
     options = {"off","on"},
-    default = 2,
+    default = 1,
     action = function(val)
       pset_wsyn_outut_wsyn = val
       -- if val == 2 then 
@@ -334,7 +334,7 @@ function w_slash.wsyn_add_params()
   params:add {
     type = "option",
     id = "input1",
-    name = "  Input 1",
+    name = "Input 1",
     options = patch_options,
     default = 1,
     action = function(val) 
@@ -347,7 +347,7 @@ function w_slash.wsyn_add_params()
   params:add {
     type = "option",
     id = "input2",
-    name = "  Input 2",
+    name = "Input 2",
     options = patch_options,
     default = 1,
     action = function(val) 
@@ -361,7 +361,7 @@ function w_slash.wsyn_add_params()
   params:add {
     type = "option",
     id = "wsyn_ar_mode",
-    name = "  AR mode",
+    name = "AR mode",
     options = {"off", "on"},
     default = 2,
     action = function(val) 
@@ -373,7 +373,7 @@ function w_slash.wsyn_add_params()
   params:add {
     type = "control",
     id = "wsyn_vel",
-    name = "    Velocity",
+    name = " Velocity",
     controlspec = controlspec.new(0, 5, "lin", 0, 2, "v"),
     action = function(val) 
       pset_wsyn_vel = val
@@ -383,7 +383,7 @@ function w_slash.wsyn_add_params()
   params:add {
     type = "control",
     id = "wsyn_curve",
-    name = "    Curve",
+    name = " Curve",
     controlspec = controlspec.new(-5, 5, "lin", 0, 0, "v"),
     action = function(val) 
       crow.send("ii.wsyn.curve(" .. val .. ")") 
@@ -394,7 +394,7 @@ function w_slash.wsyn_add_params()
   params:add {
     type = "control",
     id = "wsyn_ramp",
-    name = "    Ramp",
+    name = " Ramp",
     controlspec = controlspec.new(-5, 5, "lin", 0, 0, "v"),
     action = function(val) 
       crow.send("ii.wsyn.ramp(" .. val .. ")") 
@@ -404,7 +404,7 @@ function w_slash.wsyn_add_params()
   params:add {
     type = "control",
     id = "wsyn_fm_index",
-    name = "  FM index",
+    name = "FM index",
     controlspec = controlspec.new(0, 5, "lin", 0, 0, "v"),
     action = function(val) 
       crow.send("ii.wsyn.fm_index(" .. val .. ")") 
@@ -414,7 +414,7 @@ function w_slash.wsyn_add_params()
   params:add {
     type = "control",
     id = "wsyn_fm_env",
-    name = "  FM env",
+    name = "FM env",
     controlspec = controlspec.new(-5, 5, "lin", 0, 0, "v"),
     action = function(val) 
       crow.send("ii.wsyn.fm_env(" .. val .. ")") 
@@ -424,7 +424,7 @@ function w_slash.wsyn_add_params()
   params:add {
     type = "control",
     id = "wsyn_fm_ratio_num",
-    name = "  FM ratio numerator",
+    name = "FM ratio numerator",
     controlspec = controlspec.new(1, 20, "lin", 1, 2),
     action = function(val) 
       crow.send("ii.wsyn.fm_ratio(" .. val .. "," .. params:get("wsyn_fm_ratio_den") .. ")") 
@@ -434,7 +434,7 @@ function w_slash.wsyn_add_params()
   params:add {
     type = "control",
     id = "wsyn_fm_ratio_den",
-    name = "  FM ratio denominator",
+    name = "FM ratio denominator",
     controlspec = controlspec.new(1, 20, "lin", 1, 1),
     action = function(val) 
       crow.send("ii.wsyn.fm_ratio(" .. params:get("wsyn_fm_ratio_num") .. "," .. val .. ")") 
@@ -444,7 +444,7 @@ function w_slash.wsyn_add_params()
   params:add {
     type = "control",
     id = "wsyn_lpg_time",
-    name = "  LPG time",
+    name = "LPG time",
     controlspec = controlspec.new(-5, 5, "lin", 0, 0, "v"),
     action = function(val) 
       crow.send("ii.wsyn.lpg_time(" .. val .. ")") 
@@ -454,7 +454,7 @@ function w_slash.wsyn_add_params()
   params:add {
     type = "control",
     id = "wsyn_lpg_symmetry",
-    name = "  LPG symmetry",
+    name = "LPG symmetry",
     controlspec = controlspec.new(-5, 5, "lin", 0, 0, "v"),
     action = function(val) 
       crow.send("ii.wsyn.lpg_symmetry(" .. val .. ")") 
@@ -464,7 +464,7 @@ function w_slash.wsyn_add_params()
   params:add{
     type = "trigger",
     id = "wsyn_pluckylog",
-    name = "  Pluckylogger >>>",
+    name = "Pluckylogger >>>",
     action = function()
       params:set("wsyn_curve", math.random(-40, 40)/10)
       params:set("wsyn_ramp", math.random(-5, 5)/10)
@@ -479,7 +479,7 @@ function w_slash.wsyn_add_params()
   params:add{
     type = "trigger",
     id = "wsyn_randomize",
-    name = "  Randomize all >>>",
+    name = "Randomize all >>>",
     action = function()
       params:set("wsyn_curve", math.random(-50, 50)/10)
       params:set("wsyn_ramp", math.random(-50, 50)/10)
@@ -494,7 +494,7 @@ function w_slash.wsyn_add_params()
   params:add{
     type = "trigger",
     id = "wsyn_init",
-    name = "  W Synth Init",
+    name = "W Synth Init",
     action = function()
       params:set("wsyn_curve", pset_wsyn_curve)
       params:set("wsyn_ramp", pset_wsyn_ramp)
@@ -514,7 +514,7 @@ function w_slash.wtape_add_params()
   params:add {
     type = "number",
     id = "wtape_timestamp",
-    name = "    Timestamp",
+    name = "Timestamp",
     min = 0,
     action = function(val)       
       crow.send("ii.wtape.timestamp(" .. val .. ")") 
@@ -525,7 +525,7 @@ function w_slash.wtape_add_params()
   params:add {
     type = "number",
     id = "wtape_seek",
-    name = "    Seek",
+    name = "Seek",
     default = 0,
     action = function(val)       
       crow.send("ii.wtape.seek(" .. val .. ")") 
@@ -533,7 +533,7 @@ function w_slash.wtape_add_params()
     end
   }
 
-  params:add{type = "option", id = "wtape_record", name = "    Record",
+  params:add{type = "option", id = "wtape_record", name = "Record",
     options = {"off","on"}, default=1,
     action = function(val)
       local record_val = val == 1 and 0 or 1
@@ -542,7 +542,7 @@ function w_slash.wtape_add_params()
     end
   }
 
-  params:add{type = "option", id = "wtape_play", name = "    Play",
+  params:add{type = "option", id = "wtape_play", name = "Play",
     options = {"off","on"}, default=1,
     action = function(val)
       local play_val = val == 1 and 0 or 1
@@ -551,13 +551,13 @@ function w_slash.wtape_add_params()
     end
   }
 
-  params:add{type = "trigger", id = "wtape_reverse", name = "    Reverse",
+  params:add{type = "trigger", id = "wtape_reverse", name = "Reverse",
     action = function()
       crow.send("ii.wtape.reverse()") 
     end
   }
 
-  params:add{type = "option", id = "wtape_loop_active", name = "    Loop Active",
+  params:add{type = "option", id = "wtape_loop_active", name = "Loop Active",
     options = {"false","true"}, default=1,
     action = function(val)
       local loop_active = val == 1 and 0 or 1
@@ -569,7 +569,7 @@ function w_slash.wtape_add_params()
   params:add {
     type = "option",
     id = "wtape_echo_mode",
-    name = "    Echo Mode",
+    name = "Echo Mode",
     options = {"off","on"},
     default = 1,
     action = function(val)
@@ -579,19 +579,19 @@ function w_slash.wtape_add_params()
     end
   }
 
-  params:add{type = "trigger", id = "wtape_loop_start", name = "    Loop Start",
+  params:add{type = "trigger", id = "wtape_loop_start", name = "Loop Start",
     action = function()
       crow.send("ii.wtape.loop_start()") 
     end
   }
   
-  params:add{type = "trigger", id = "wtape_loop_end", name = "    Loop End",
+  params:add{type = "trigger", id = "wtape_loop_end", name = "Loop End",
     action = function()
       crow.send("ii.wtape.loop_end()") 
     end
   }
 
-  params:add{type = "option", id = "wtape_loop_next", name = "    Loop Next",
+  params:add{type = "option", id = "wtape_loop_next", name = "Loop Next",
     options = {"backward","forward"}, default=1,
     action = function(val)
       local direction = val == 1 and -1 or 1
@@ -600,13 +600,13 @@ function w_slash.wtape_add_params()
     end
   }
 
-  params:add{type = "trigger", id = "wtape_loop_next_trigger", name = "    Loop Next Trigger",
+  params:add{type = "trigger", id = "wtape_loop_next_trigger", name = "Loop Next Trigger",
     action = function(val)
       crow.send("ii.wtape.loop_next(" .. pset_wtape_next .. ")") 
     end
   } 
 
-  params:add{type = "option", id = "wtape_loop_scale_mult", name = "    Set Loop Scale",
+  params:add{type = "option", id = "wtape_loop_scale_mult", name = "Set Loop Scale",
     options = {"reset","half speed", "2x speed"},
     action = function(val)
       if val == 1 then 
@@ -623,7 +623,7 @@ function w_slash.wtape_add_params()
   params:add {
     type = "control",
     id = "wtape_speed",
-    name = "    Speed",
+    name = "Speed",
     controlspec = controlspec.new(0.75, 1.5, "lin", 0, 1),
     action = function(val)       
       crow.send("ii.wtape.speed(" .. val .. ")") 
@@ -634,7 +634,7 @@ function w_slash.wtape_add_params()
   params:add {
     type = "control",
     id = "wtape_freq",
-    name = "    Freq (v8)",
+    name = "Freq (v8)",
     controlspec = controlspec.new(-5, 5, "lin", 0, 0),
     action = function(val)       
       crow.send("ii.wtape.freq(" .. val .. ")") 
@@ -645,7 +645,7 @@ function w_slash.wtape_add_params()
   params:add {
     type = "control",
     id = "wtape_erase_strength",
-    name = "    Erase Strength",
+    name = "Erase Strength",
     controlspec = controlspec.new(0, 1, "lin", 0, 0.5),
     action = function(val)       
       crow.send("ii.wtape.erase_strength(" .. val .. ")") 
@@ -656,7 +656,7 @@ function w_slash.wtape_add_params()
   params:add {
     type = "control",
     id = "wtape_monitor_level",
-    name = "    Monitor Level",
+    name = "Monitor Level",
     controlspec = controlspec.new(0, 1, "lin", 0, 0.5),
     action = function(val)       
       crow.send("ii.wtape.monitor_level(" .. val .. ")") 
@@ -667,7 +667,7 @@ function w_slash.wtape_add_params()
   params:add {
     type = "control",
     id = "wtape_rec_level",
-    name = "    Record Level",
+    name = "Record Level",
     controlspec = controlspec.new(0, 1, "lin", 0, 0.5),
     action = function(val)       
       crow.send("ii.wtape.rec_level(" .. val .. ")") 
@@ -678,7 +678,7 @@ function w_slash.wtape_add_params()
   params:add{
     type = "trigger",
     id = "wtape_init",
-    name = "  W Tape Init",
+    name = "W Tape Init",
     action = function()
       params:set("wtape_record", pset_wtape_record)
       params:set("wtape_play", pset_wtape_play)

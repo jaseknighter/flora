@@ -28,9 +28,6 @@
 --      'setup' vs 'init' vs 'new' 
   --    inconsistent use of ALL CAPS for naming constant values
 --      use of colon vs dot function syntax
---  (done) enable control over ruleset variables (axiom and ruleset especially)
---  (done) add ability to save changes to rulesets
---  (done) add ability to share custom rulesets (e.g. with norns.online)
 --  add keyboard control for updating sentences/rulesets
 --  explore support for more than two plants at a time
 --  investigate (seemingly non-consequential) error message at startup related to midi maps 
