@@ -4,6 +4,10 @@
 -- global functions
 -------------------------------------------
 
+function os.time2()
+  return clock.get_beats()*clock.get_beat_sec()
+end
+
 set_dirty = function()
   clock.sleep(0.1)
   -- clock.sleep(0.05)
@@ -53,11 +57,15 @@ end
 -------------------------------------------
 engine.name = 'BandSaw'
 
+-- for community gardening
+nursery_path = norns.state.data .. "nursery/" 
+planted_plants_path = norns.state.data .. "planted_plants.tbl"
+  
 -- for params.lua
 WOBBLE_DEFAULT = 0.05
 FLUTTER_DEFAULT = 0.02
 updating_controls = false
-OUTPUT_DEFAULT = 4
+-- OUTPUT_DEFAULT = 4
 SCREEN_FRAMERATE = 1/15
 INITIAL_PLANT_INSTRUCTIONS_1 = 3 
 INITIAL_PLANT_INSTRUCTIONS_2 = 3
@@ -65,7 +73,7 @@ menu_status = false
 pages = 0
 flora_params = {}
 options = {}
-options.OUTPUT = {"audio (a)", "midi (m)", "a + m", "a, m, c ii JF, c out 1+2", "c ii JF"}
+-- options.OUTPUT = {"audio (a)", "midi (m)", "a + m", "a, m, c ii JF, c out 1+2", "c ii JF"}
 options.SCALARS = {0.5,1,2,4}
 options.NOTE_DURATIONS = {0.125, 0.25,0.5,0.75,1,1.5,2,4,8,16}
 NOTE_DURATION_INDEX_DEFAULT_1 = 5
@@ -83,14 +91,61 @@ tempo_scalar_offset_default = 1.5
 num_cf_scalars_max = 4
 num_cf_scalars_default = 1
 
-ENV_TIME_MAX = 2 -- DO NOT CHANGE
 MAX_AMPLITUDE = 10
-AMPLITUDE_DEFAULT = 2
-MAX_ENV_LENGTH = 5 --10
-ENV_LENGTH_DEFAULT = 2
+MAX_ENV_LENGTH = 10
 CURVE_MIN = -10 -- -50
 CURVE_MAX = 10 --50
 MAX_ENVELOPE_NODES = 20
+ENV_TIME_MAX = 2 -- DO NOT CHANGE
+
+
+-----------------------------------------
+-- IMPORTANT NOTE: when changing AMPLITUDE_DEFAULT or ENV_LENGTH_DEFAULT
+--    Make sure the 'level' and 'time' variables for each envelope node 
+--      set by DEFAULT_GRAPH_NODES_P1 and DEFAULT_GRAPH_NODES_P2
+--      do not exceed the settings for AMPLITUDE_DEFAULT and ENV_LENGTH_DEFAULT
+-----------------------------------------
+
+AMPLITUDE_DEFAULT = 5
+ENV_LENGTH_DEFAULT = 2
+
+DEFAULT_GRAPH_NODES_P1 = {}
+DEFAULT_GRAPH_NODES_P1[1] = {}
+DEFAULT_GRAPH_NODES_P1[1].time = 0.00
+DEFAULT_GRAPH_NODES_P1[1].level = 0.00
+DEFAULT_GRAPH_NODES_P1[1].curve = 0.00
+DEFAULT_GRAPH_NODES_P1[2] = {}
+DEFAULT_GRAPH_NODES_P1[2].time = 0.00
+DEFAULT_GRAPH_NODES_P1[2].level = 1.0
+DEFAULT_GRAPH_NODES_P1[2].curve = -10
+DEFAULT_GRAPH_NODES_P1[3] = {}
+DEFAULT_GRAPH_NODES_P1[3].time = 0.50
+DEFAULT_GRAPH_NODES_P1[3].level = 0.50
+DEFAULT_GRAPH_NODES_P1[3].curve = -10
+DEFAULT_GRAPH_NODES_P1[4] = {}
+DEFAULT_GRAPH_NODES_P1[4].time = 1.00
+DEFAULT_GRAPH_NODES_P1[4].level = 1.5
+DEFAULT_GRAPH_NODES_P1[4].curve = -10
+DEFAULT_GRAPH_NODES_P1[5] = {}
+DEFAULT_GRAPH_NODES_P1[5].time = 1.5
+DEFAULT_GRAPH_NODES_P1[5].level = 0.00
+DEFAULT_GRAPH_NODES_P1[5].curve = -10
+
+DEFAULT_GRAPH_NODES_P2 = {}
+DEFAULT_GRAPH_NODES_P2[1] = {}
+DEFAULT_GRAPH_NODES_P2[1].time = 0.00
+DEFAULT_GRAPH_NODES_P2[1].level = 0.00
+DEFAULT_GRAPH_NODES_P2[1].curve = 0.00
+DEFAULT_GRAPH_NODES_P2[2] = {}
+DEFAULT_GRAPH_NODES_P2[2].time = 0.00
+DEFAULT_GRAPH_NODES_P2[2].level = 4.0
+DEFAULT_GRAPH_NODES_P2[2].curve = -10
+DEFAULT_GRAPH_NODES_P2[3] = {}
+DEFAULT_GRAPH_NODES_P2[3].time = 1.5
+DEFAULT_GRAPH_NODES_P2[3].level = 0.00
+DEFAULT_GRAPH_NODES_P2[3].curve = -10
+
+-----------------------------------------
 
 rqmin_min = 0.1
 rqmin_max = 30
@@ -135,12 +190,14 @@ active_plant = 1
 initializing = true
 
 envelopes = {}
+crow_trigger_2 = 0.005
+crow_trigger_4 = 0.005
 
 screen_dirty = true
 show_instructions = false
 
 -- for plant.lua
-l_system_instructions = {}
+-- l_system_instructions = {}
 turtle_min_length = 0.2
 
 -- for plant_sounds.lua 
@@ -167,6 +224,17 @@ end
 set_scale_length = function()
   scale_length = params:get("scale_length")
 end
+
+pset_wsyn_curve = 0
+pset_wsyn_ramp = 0
+pset_wsyn_fm_index = 0
+pset_wsyn_fm_env = 0
+pset_wsyn_fm_ratio_num = 0
+pset_wsyn_fm_ratio_den = 0
+pset_wsyn_lpg_time = 0
+pset_wsyn_lpg_symmetry = 0
+pset_wsyn_vel = 0
+
 
 -- for midi_helper.lua
 midi_in_device = {}

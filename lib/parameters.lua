@@ -148,25 +148,22 @@ flora_params.add_params = function(plants)
   min = 0, max = 127, default = root_note_default, formatter = function(param) return MusicUtil.note_num_to_name(param:get(), true) end,
   action = function() build_scale() end}
 
-  params:add{type = "option", id = "crow_clock", name = "crow clock out",
-    options = {"off","on"},
-    action = function(value)
-      if value == 2 then
-        crow.output[1].action = "{to(5,0),to(5,0.05),to(0,0)}"
-      end
-    end}
-
 --------------------------------
 -- inputs/outputs/midi params
 --------------------------------
-  params:add_separator(" ")
-  params:add_group("inputs/outputs",12)
-  params:add_separator("inputs")
+  params:add_separator("inputs/outputs")
+  -- params:add_group("inputs/outputs",17+14)
+  params:add{type = "option", id = "output_bandsaw", name = "bandsaw (engine)",
+  options = {"off","on"},
+  default = 2,
+}
+
+  params:add_group("midi",10)
+  -- params:add_separator("inputs")
   
   midi_in_device = {}
   params:add{type = "number", id = "midi_device", name = "midi in device", min = 1, max = 16, default = 1, action = function(value)
     midi_in_device.event = nil
-    -- print("midi in device", value)
     midi_in_device = midi.connect(value)
     midi_in_device.event = midi_event
     end
@@ -219,31 +216,38 @@ flora_params.add_params = function(plants)
 
 
 
-  params:add_separator("outputs")
+  -- params:add_separator("outputs")
   
-  params:add{type = "option", id = "output", name = "output",
-    options = options.OUTPUT,
-    default = OUTPUT_DEFAULT,
-    action = function(value)
-      -- all_notes_off()
-      if value == 4 or value == 5 then 
-        crow.output[2].action = "{to(5,0),to(0,0.25)}"
-        crow.ii.pullup(true)
-        crow.ii.jf.mode(1)
-      -- elseif value == 5 then
-      --   crow.ii.pullup(true)
-      --   crow.ii.jf.mode(1)
-      end
-    end}
+  -- params:add{type = "option", id = "output", name = "output",
+  --   options = options.OUTPUT,
+  --   default = OUTPUT_DEFAULT,
+  --   action = function(value)
+  --     -- all_notes_off()
+  --     if value == 4 or value == 5 then 
+  --       crow.output[2].action = "{to(5,0),to(0,0.25)}"
+  --       crow.ii.pullup(true)
+  --       crow.ii.jf.mode(1)
+  --     -- elseif value == 5 then
+  --     --   crow.ii.pullup(true)
+  --     --   crow.ii.jf.mode(1)
+  --     end
+  --   end}
+  
+  -- options.OUTPUT = {"audio (a)", "midi (m)", "a + m", "a, m, c ii JF, c out 1+2", "c ii JF"}
 
-  params:add{
-    type = "number", id = "midi_out_device", name = "midi out device",
+  params:add{type = "option", id = "output_midi", name = "midi out",
+    options = {"off","on"},
+    default = 1,
+  }
+  
+    params:add{
+    type = "number", id = "midi_out_device", name = "  midi out device",
     min = 1, max = 4, default = 1,
     action = function(value) midi_out_device = midi.connect(value) end
   }
   
   params:add{
-    type = "number", id = "midi_out_channel1", name = "plant 1:midi out channel",
+    type = "number", id = "midi_out_channel1", name = "  plant 1:midi out channel",
     min = 1, max = 16, default = midi_out_channel1,
     action = function(value)
       -- all_notes_off()
@@ -251,63 +255,88 @@ flora_params.add_params = function(plants)
     end
   }
     
-  params:add{type = "number", id = "midi_out_channel2", name = "plant 2:midi out channel",
+  params:add{type = "number", id = "midi_out_channel2", name = "  plant 2:midi out channel",
     min = 1, max = 16, default = midi_out_channel2,
     action = function(value)
       -- all_notes_off()
       midi_out_channel2 = value
     end
   }
-  
 
-  
-  
-  
-  --------------------------------
-  -- gardens (load/save)
-  --------------------------------
-  --[[
-  params:add_group("gardens (load/save)",7)
-  params:add_separator("load/save")
-  params:add_trigger("load", "load garden")
-  params:set_action("load",
-  function(x)
-    local dirname = _path.data.."flora/"
-    if os.rename(dirname, dirname) == nil then
-      os.execute("mkdir " .. dirname)
+  params:add_group("crow",4)
+
+  params:add{type = "option", id = "crow_clock", name = "crow clock out",
+  options = {"off","on"},
+  action = function(value)
+    if value == 2 then
+      crow.output[1].action = "{to(5,0),to(5,0.05),to(0,0)}"
     end
-    local dirname = _path.data.."flora/names/"
-    if os.rename(dirname, dirname) == nil then
-      os.execute("mkdir " .. dirname)
+  end}
+
+
+  params:add{type = "option", id = "output_crow", name = "crow",
+    options = {"off","on"},
+    default = 2,
+    action = function(value)
+      if value == 2 then 
+        crow.output[2].action = "{to(5,0),to(0,0.25)}"
+        -- crow.ii.pullup(true)
+        -- crow.ii.jf.mode(1)
+      end
     end
-    fileselect.enter(_path.data.."flora/names/", named_loadstate)
-  end)
-  params:add_trigger("save", "save new garden")
-  params:set_action("save", function(x)
-    if Namesizer ~= nil then
-      textentry.enter(pre_save,Namesizer.phonic_nonsense().."_"..Namesizer.phonic_nonsense())
-    else
-      textentry.enter(pre_save)
+  }
+
+  params:add{type = "option", id = "output_crow2", name = "  crow 2 mode",
+    options = {"envelope","trigger","gate"},
+    default = 1,
+    action = function(value)
+      -- if value == 2 then 
+        -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
+        -- crow.ii.pullup(true)
+        -- crow.ii.jf.mode(1)
+      -- end
     end
-  end)
-  params:add_separator("danger zone!")
-  params:add_trigger("overwrite_garden", "overwrite loaded garden")
-  -- params:set_action("overwrite_coll", function(x) fileselect.enter(_path.data.."cheat_codes_2/names/", named_overwrite) end)
-  params:set_action("overwrite_garden", function(x)
-    if selected_garden ~= 0 then
-      named_overwrite(_path.data.."flora/names/"..selected_garden..".flora")
+  }
+
+  params:add{type = "option", id = "output_crow4", name = "  crow 4 mode",
+    options = {"envelope","trigger","gate"},
+    default = 1,
+    action = function(value)
+      -- if value == 2 then 
+        -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
+        -- crow.ii.pullup(true)
+        -- crow.ii.jf.mode(1)
+      -- end
     end
-  end)
-  params:add_trigger("delete_garden", "delete garden")
-  params:set_action("delete_garden", function(x) fileselect.enter(_path.data.."flora/names/", pre_delete) end)
-  params:add_trigger("save_default_garden", "save as default garden")
-  params:set_action("save default collection", function()
-    clock.run(save_screen,"DEFAULT")
-    _norns.key(1,1)
-    _norns.key(1,0)
-    -- screen_dirty = true
-  end)
-  ]]
+  }
+
+  params:add{type = "option", id = "output_jf", name = "just friends",
+    options = {"off","on"},
+    default = 1,
+    action = function(value)
+      if value == 2 then 
+        -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
+        crow.ii.pullup(true)
+        crow.ii.jf.mode(1)
+      else 
+        crow.ii.jf.mode(0)
+        -- crow.ii.pullup(false)
+      end
+    end
+  }
+
+  params:add_group("w/syn",14)
+  w_slash.wsyn_add_params()
+  -- w_slash.wsyn_v2_add_params()
+
+  params:add_group("w/del",15)
+  w_slash.wdel_add_params()
+
+  params:add_group("w/tape",17)
+  w_slash.wtape_add_params()
+
+
+  params:add_separator("plant/plow/water")
   --------------------------------
   -- plant parameters
   --------------------------------
@@ -315,7 +344,7 @@ flora_params.add_params = function(plants)
   -- params:add_separator("plant")
 
   params:add{
-    type = "number", id = "plant1_instructions", name = "plant 1: instructions", min=1, max = l_system_instructions.get_num_instructions(), default = INITIAL_PLANT_INSTRUCTIONS_1,
+    type = "number", id = "plant1_instructions", name = "plant 1: instructions", min=1, max = garden.get_num_plants(), default = INITIAL_PLANT_INSTRUCTIONS_1,
     action = function(value)
       if initializing == false then
         plants[1].set_instructions(value - plants[1].current_instruction)
@@ -324,7 +353,7 @@ flora_params.add_params = function(plants)
   }
 
   params:add{
-    type = "number", id = "plant2_instructions", name = "plant 2: instructions", min=1, max=l_system_instructions.get_num_instructions(), default = INITIAL_PLANT_INSTRUCTIONS_2,
+    type = "number", id = "plant2_instructions", name = "plant 2: instructions", min=1, max=garden.get_num_plants(), default = INITIAL_PLANT_INSTRUCTIONS_2,
     action = function(value)
       if initializing == false then
         plants[2].set_instructions(value - plants[2].current_instruction)
@@ -557,8 +586,8 @@ flora_params.add_params = function(plants)
     -- clock.run(reset_plow_control_params,plow_id, true)
   end
 
-  specs.PLOW_LEVEL = cs.new(0.0,MAX_AMPLITUDE,'lin',0,4,'')
-  specs.PLOW_TIME = cs.new(0.0,MAX_ENV_LENGTH,'lin',0,2,'')
+  specs.PLOW_LEVEL = cs.new(0.0,MAX_AMPLITUDE,'lin',0,AMPLITUDE_DEFAULT,'')
+  specs.PLOW_TIME = cs.new(0.0,MAX_ENV_LENGTH,'lin',0,ENV_TIME_MAX,'')
 
   local init_plow_controls = function(plow_id)
     
@@ -951,6 +980,8 @@ end
   --------------------------------
   -- wow and flutter parameters
   --------------------------------
+  params:add_separator("")
+
   params:add_group("wow and flutter",7)
   
   specs.WOBBLE_AMP = cs.def{
@@ -1036,7 +1067,11 @@ end
 
   --set the reverb input engine to -10db
   params:set(13, -10)
+  
   params:bang()
+  params:set("wsyn_init",1)
+  -- params:set("wsyn_v2_init",1)
+
   reset_note_frequencies()
   
   

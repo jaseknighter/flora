@@ -86,6 +86,7 @@ Engine_BandSaw : CroneEngine {
       sig = BLowShelf.ar(sig, lsf, 0.5, ldb);
       sig = Balance2.ar(sig[0], sig[1], pan);
       sig = sig * amp * EnvGen.kr(envctl, doneAction:2);
+      
       Out.ar(out, sig);
     }).add;
       
@@ -136,7 +137,6 @@ Engine_BandSaw : CroneEngine {
       var c1=1, c2=(-1);
       //var cfScalarStream = Prand(cfScalars,1).asStream.next;
       var env = Array.new(~numSegs-1);
-
       if (frequency < 0.2) {
         frequency = 0.2;
         ("frequency too low!!!!").postln;
@@ -152,6 +152,7 @@ Engine_BandSaw : CroneEngine {
 
       // Remove voice if ID matches or there are too many
       voiceToRemove = voiceList.detect{arg item; item.id == id};
+      //(voiceList.size >= maxNumVoices).postln;
       if(voiceToRemove.isNil && (voiceList.size >= maxNumVoices), {
         voiceToRemove = voiceList.detect{arg v; v.gate == 0};
       	if(voiceToRemove.isNil, {
@@ -196,6 +197,7 @@ Engine_BandSaw : CroneEngine {
           ], 
   	      
   	      target: voiceGroup).onFree({ 
+            //("free").postln;
             voiceList.remove(newVoice); 
           })
         );

@@ -10,6 +10,7 @@ Follow the discussion on lines: https://llllllll.co/t/40261
 
 ## Documentation
 - [Flora - beta](#flora---beta)
+  * [Documentation](#documentation)
   * [Overview](#overview)
     + [L-systems and their sequencing](#l-systems-and-their-sequencing)
       - [L-system basics](#l-system-basics)
@@ -17,9 +18,9 @@ Follow the discussion on lines: https://llllllll.co/t/40261
       - [Sequencing the L-system](#sequencing-the-l-system)
         * [The Flora alphabet](#the-flora-alphabet)
         * [Changes in pitch](#changes-in-pitch)
-    + [Bandsaw](#bandsaw)  
-        - [SAFETY NOTES](#safety-notes)
-  * [Norns UI](#norns-ui)
+    + [Bandsaw](#bandsaw)
+      - [SAFETY NOTES](#safety-notes)
+  * [norns UI](#norns-ui)
     + [Screens](#screens)
       - [Plant](#plant)
       - [Modify](#modify)
@@ -27,17 +28,19 @@ Follow the discussion on lines: https://llllllll.co/t/40261
       - [Plow](#plow)
         * [Plow modulation](#plow-modulation)
       - [Water](#water)
-    + [Midi in and out](#midi-in-and-out)
-    + [Flutter and wow](#flutter-and-wow)
     + [PSET Sequencer](#pset-sequencer)
     + [Generating new L-system axioms and rulesets](#generating-new-l-system-axioms-and-rulesets)
       - [Advanced sequencing](#advanced-sequencing)
-      - [Community Gardening](#community-gardening)
+      - [Community gardening](#community-gardening)
+  * [W Integration](#w-integration)
+    + [Overview](#overview-1)
+    + [W Syn sequencing](#w-syn-sequencing)
+    + [Karplus-Strong sequencing](#karplus-strong-sequencing)
+    + [Integration with other norns scripts](#integration-with-other-norns-scripts)
   * [Requirements](#requirements)
   * [Preliminary Roadmap](#preliminary-roadmap)
   * [Credits](#credits)
   * [References](#references)
-
 
 ## Overview
 ### L-systems and their sequencing
@@ -109,7 +112,7 @@ The Bandsaw engine becomes loudly percussive as the values for `rqmin` and `rqma
 
 ![](images/three_more_plants_inv.png)
 
-## Norns UI
+## norns UI
 
 Flora's interface consists of five screens (or "pages"). Navigation between screens occurs using Encoder 1 (E1). While the controls for each screen vary, basic instructions for each screen can always be accessed using the key combination: Key 1 (K1) + Key 2 (K2). The instructions may also be found in the lib/instructions.lua file.
 
@@ -117,7 +120,7 @@ For many parameters, fine-grained adjustments can be made by pressing K1 along w
 
 ### Screens
 
-The first three screens of the Flora program (Plant, Modify, and Observe) display two L-system rulesets, used by the program to sequence notes. The fourth screen (Plow) displays two envelopes. The fifth screen (Water) displays controls for the Bandsaw engine and other outputs (i.e. Midi, [Just Friends](https://www.whimsicalraps.com/products/just-friends?variant=5586981781533), and [Crow](https://monome.org/docs/crow/)).
+The first three screens of the Flora program (Plant, Modify, and Observe) display two L-system rulesets, used by the program to sequence notes. The fourth screen (Plow) displays two envelopes. The fifth screen (Water) displays controls for the Bandsaw engine and other outputs (i.e. Midi, [Just Friends](https://www.whimsicalraps.com/products/just-friends?variant=5586981781533), and [crow](https://monome.org/docs/crow/)).
 
 #### Plant 
 ![](images/plant_wide_inv.png)
@@ -131,15 +134,15 @@ k1 + k3: reset plants to original forms and restart their sequences
 ```
 
 #### Modify 
-![](images/modify_wide_inv2.png)
+![](images/modify_wide_inv.png)
 ```
 e1: next/previous page  
-k1+e1: select active plant  
-e2: select control
-e3: select letter ('suc' and 'axiom' screens only)
-e1 + e3: change control/letter value
+k1 + e1: select active plant  
+e2: go to next/previous letter  
+e3: change letter  
+k2/k3: delete/add letter  
+k1 + k3: reset plants to original forms and restart their sequences
 ```
-As of the v2.5-beta,
 
 #### Observe 
 ![](images/observe_wide_inv.png)
@@ -218,12 +221,6 @@ Fine grain controls: All of the controls in the above list with the characters '
 
 *Note*: Tempo scalar offset is a parameter that provides macro control over all active note frequencies. It is not yet available from the Water UI screen but can be adjusted from PARAMETERS->EDIT. The Tempo Scalar Offset’s default value of 1.5 can also be changed by updating the variable `tempo_scalar_offset_default` in the lib/globals.lua file.
 
-### Midi in and out
-Midi in and out parameters are set from the PARAMETERS->EDIT menu. As of the v3.0-beta, midi-in notes may be sent to Norns to sequence the Bandsaw SuperCollider engine. If audio is selected as one of the outputs, midi-in notes will play alongside the Flora sequencer.
-
-### Flutter and wow
-As of the v3.0-beta, flutter and wow may be set for the Bandsaw SuperCollider engine from the PARAMETERS->EDIT menu.
-
 ### PSET Sequencer
 As of version `v0.2.0-beta`, a PSET sequencer has been built into Flora. This feature allows PSETS saved in the PARAMETERS->PSET menu to be sequenced. The sequencer's parameters (accessed from the PARAMETERS->EDIT menu) include:
 
@@ -294,37 +291,89 @@ instruction.initial_turtle_rotation = 90
 source: http://algorithmicbotany.org/papers/abop/abop-ch1.pdf (Figure 1.24(d))
 
 #### Community gardening
-A community garden is under development to share rulesets written by members of the [lines](https://llllllll.co/) community. 
+As of Flora v0.4.0, a new *community gardening* feature has been enabled, which leverages norns.online to allow custom plant shapes (i.e. sequences) to be shared through the norns' UI.
 
-Steps to locally enable and work in the community garden:  
-- Open the lib/gardens/garden_community.lua file  in [Maiden](https://monome.org/docs/norns/maiden/).  
-- Add a new ruleset to the file.  
-- Set the `number_of_instructions` variable equal to the number of instructions in the lib/gardens/garden_community.lua file.  
-- Set the `default_to_community_garden` variable to `true` in the lib/gardens/gardens_community.lua file.   
-- Reload the Flora program in Maiden.
-- Test the ruleset.  
+To take advantage of the new *community gardening* feature, install Flora v0.4.0 or later as well as the [norns.online](https://norns.community/authors/infinitedigits/norns-online) script.
 
-To share any ruleset(s) you have written, submit a [pull request](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) for the lib/gardens/garden_community.lua file or contact me ([@jaseknighter](https://llllllll.co/u/jaseknighter/summary)) on the lines forum for assistance.
+Once Flora v0.4.0 and norns.online have been installed, the community gardening features may be accessed from the *Gardening* section at the bottom of the *PARAMATERS>EDIT* menu as follows:
+
+**Steps to share a plant shape with the community**
+1. *Save plant to nursery*: locally saves the active plant shape to the norns' filesystem (in `data/flora/nursery/`)
+2. Enter the *Community gardening* submenu 
+3. Select *refresh directory* 
+4. Select *upload from nursery* and choose a plant
+5. Choose the plant you saved to your *nursery* in step 1 above
+
+**Steps to obtain a plant shape from the community garden**
+1. Enter the *Community gardening* submenu 
+2. Select *refresh directory* 
+3. Select *download to nursery* and choose a plant
+4. Exit the *Community gardening* submenu 
+5. Select *Add plant to garden* and choose the plant you downloaded from the community gardens
+
+** Note, selecting a plant to be added to your local 'garden' will append it to the end of the list of selectable plants found on the *plant* screen. On this screen, use K1+E2 to select the plant. By default there are 11 plants, so the first plant added to the *garden* will be shown as *plant i12*, the second plant will be shown as *plant i13*, and so on.
+
+**Additional gardening features**
+* *Remove plant from nursery*: locally removes a selected plant shape previously saved to the norns' filesystem. 
+** Note, this cannot be undone as the plant definition is removed from the local filesystem.
+* *Remove plant from garden*: removes a plant from the *garden*
+** Note, removing a plant from the *garden* does not remove it from the *nursery* (that is, the plant definition remains on the local filesystem).
+
+
+## W Integration
+### Overview
+As of v0.4.0, Flora provides i2c integration with Whimsical Raps' W/2 eurorack module via crow. All three modes, W/Tape, W/Syn, and W/Del, are supported. See the W/2 documentation on the [lines forum ](https://llllllll.co/t/mannequins-w-2-beta-testing/34091) about how each mode functions.
+
+Flora's integration with W/2 is accessed via the PARAMETERS>EDIT menu. Prior to accessing the parameters for a particular mode, W/2 must first be put into the proper mode.
+
+### W Syn sequencing
+W/Syn can be sequenced with Flora via i2c by setting the *wsyn* parameter to `on` in the *parameters>edit>w/syn* menu. When setting the *wsyn* parameter to `on`, each of Flora's plant sequences is sent to a separate W/Syn voice.
+
+### Karplus-Strong sequencing
+W/Del supports Karplus-Strong style string synthesis, which can be sequenced with Flora via i2c by setting the *Karplus-Strong* parameter to `on` in the *parameters>edit>w/del* menu.
+
+### Integration with other norns scripts
+Flora's code to integrate with W/2 may be relatively easily dropped into another norns script:
+
+1. Install Flora v0.4.0 or later
+2. At the start of the norns script add the following two lines of code:
+```
+cs = require 'controlspec'
+w_slash = include("flora/lib/w_slash")
+```
+3. At the end of the script's init function add the following six lines of code:
+```
+  params:add_group("w/del",15)
+  w_slash.wdel_add_params()
+  params:add_group("w/syn",14)
+  w_slash.wsyn_add_params()
+  params:add_group("w/tape",17)
+  w_slash.wtape_add_params()
+```
+
+Note, enabling sequencing with w/Syn and W/Del in another script requires additional code (see Flora's *plant_sounds_externals.lua* file for details).
 
 ## Requirements
-* Norns (required)
-* Crow (optional)
+* norns (required)
+* norns.online (required for *community gardening*)
+* crow (optional)
+* W/2 (optional)
 * Just Friends (optional)
 * Midi (optional)
 * Computer to create/update rulesets using Maiden (optional)
 
 ## Preliminary Roadmap 
-* Save modified l-system algorithms.
-* Community gardening: investigate using norns.online to share plant forms.
-* Improve outputs selection in params menu.
-* Fix intermittent plant freezing bug.
+* (Done) Save modified l-system algorithms.
+* (Done) Community gardening: investigate using norns.online to share plant forms.
+* (Done) Improve outputs selection in params menu.
+* (Done) Fix intermittent plant freezing bug.
+* Support sending sysex messages to other midi controllers in addition to the 16n faderbank (currently supported)
 * Improve the quality and portability of the code.
 * Improve the documentation.
 * Utilize crow inputs.
-* Add option for crow outputs to send triggers instead of envelopes.
-* Add support for w/syn.
+* (Done) Add option for crow outputs to send triggers and gates in addition to envelopes.
+* (Done) Add support for w/syn, w/tape, and w/del.
 * Create a detailed video walkthrough for the script.
-* (added) Create a PSET sequencer
 * Add microtonal scales.
 * Increase and decrease the brightness of the circles that appear when each note plays according to the level of the note's graph/envelope.
 
@@ -332,8 +381,7 @@ To share any ruleset(s) you have written, submit a [pull request](https://docs.g
 * Flora's L-system code is based on the code in Chapter 8.6 of Daniel Shiffman's [The Nature of Code](https://natureofcode.com/book/chapter-8-fractals/).
 * Many of the specific L-system algorithms are based on code from Paul Bourke's [L-System User Notes](http://paulbourke.net/fractals/lsys/).
 * *Bandsaw*, the bandpass-filtered sawtooth engine is based on SuperCollider code for a marimba presented by Eli Fieldsteel in his [SuperCollider Tutorial #15: Composing a Piece, Part I](https://youtu.be/lGs7JOOVjag).
-* Wow and flutter SuperCollider code: https://sccode.org/1-5bP 
-* Penrose tiling code by Leo Corte: https://thebrickinthesky.wordpress.com/2013/03/17/l-systems-and-penrose-p3-in-inkscape/
+* @schollz and @linusschrab for their kindness and assistance setting up and testing norns.online.
 * The code for this project was also deeply inspired by the following members of the lines community: Brian Crabtree (@tehn), Dan Derks (@dan_derks), Mark Wheeler (@markwheeler), Tom Armitage (@infovore), and Tyler Etters (@tyleretters).
 
 ## References

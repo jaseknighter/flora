@@ -37,29 +37,7 @@ function Envelope:new(id, num_plants, env_nodes)
   e.index = 1
   setmetatable(e, Envelope)
   e.id = id
-  
-  e.default_graph_nodes = {}
-  e.default_graph_nodes[1] = {}
-  e.default_graph_nodes[1].time = 0.00
-  e.default_graph_nodes[1].level = 0.00
-  e.default_graph_nodes[1].curve = 0.00
-  e.default_graph_nodes[2] = {}
-  e.default_graph_nodes[2].time = 0.00
-  e.default_graph_nodes[2].level = 1.0
-  e.default_graph_nodes[2].curve = -10
-  e.default_graph_nodes[3] = {}
-  e.default_graph_nodes[3].time = 0.50
-  e.default_graph_nodes[3].level = 0.50
-  e.default_graph_nodes[3].curve = -10
-  e.default_graph_nodes[4] = {}
-  e.default_graph_nodes[4].time = 1.00
-  e.default_graph_nodes[4].level = 1.5
-  e.default_graph_nodes[4].curve = -10
-  e.default_graph_nodes[5] = {}
-  e.default_graph_nodes[5].time = 1.5
-  e.default_graph_nodes[5].level = 0.00
-  e.default_graph_nodes[5].curve = -10
-  
+    
   -- this is where we will store the graph
   e.graph = {}
   e.graph_params = {}
@@ -85,8 +63,8 @@ function Envelope:new(id, num_plants, env_nodes)
   e.node_params = {"time", "level", "curve"}
   
   e.updating_graph = false
-
-  e.graph_nodes = env_nodes and env_nodes or e.default_graph_nodes
+  e.DEFAULT_GRAPH_NODES = id == 1 and DEFAULT_GRAPH_NODES_P1 or DEFAULT_GRAPH_NODES_P2
+  e.graph_nodes = env_nodes and env_nodes or e.DEFAULT_GRAPH_NODES
   e.active_node = 0
   e.active_node_param = 1
   
@@ -303,7 +281,6 @@ function Envelope:new(id, num_plants, env_nodes)
     -- clock.run(reset_plow_control_params,e.id)
     
     -- reset_plow_control_params(e.id)
-
     clock.run(set_dirty)
 
   end

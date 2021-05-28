@@ -309,10 +309,7 @@ water.enc = function(n, delta, alt_key_active)
       local amp = params:get("amp")
       local new_value = util.clamp(incr + amp, 0, 10)
       params:set("amp",new_value)
-
-  
-  
-  elseif water.active_control == 2 then
+    elseif water.active_control == 2 then
       local current_value = params:get("plant_1_note_duration")
       local range = params:get_range("plant_1_note_duration")
       local new_value = util.clamp(incr + current_value, range[1], range[2])
