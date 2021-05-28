@@ -321,7 +321,7 @@ Once Flora v0.4.0 and norns.online have been installed, the community gardening 
 
 ## W Integration
 ### Overview
-As of v0.4.0, Flora provides integration with Whimsical Raps' W/2 eurorack module. All three modes, W/Tape, W/Syn, and W/Del, are supported. See the W/2 documentation on the [lines forum ](https://llllllll.co/t/mannequins-w-2-beta-testing/34091) about how each mode functions.
+As of v0.4.0, Flora provides i2c integration with Whimsical Raps' W/2 eurorack module via Crow . All three modes, W/Tape, W/Syn, and W/Del, are supported. See the W/2 documentation on the [lines forum ](https://llllllll.co/t/mannequins-w-2-beta-testing/34091) about how each mode functions.
 
 Flora's integration with W/2 is accessed via the PARAMETERS>EDIT menu. Prior to accessing the parameters for a particular mode, W/2 must first be put into the proper mode.
 
