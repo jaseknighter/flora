@@ -39,7 +39,7 @@ function w_slash.wdel_add_params()
     params:set("wdel_mix",50)
   end
 
-  params:add{type = "option", id = "output_wdel_ks", name = "Karplus-strong",
+  params:add{type = "option", id = "output_wdel_ks", name = "Karplus-Strong",
     options = {"off","plant 1","plant 2"},
     default = 1,
     action = function(value)
@@ -314,7 +314,7 @@ function w_slash.wdel_add_params()
 end
 
 function w_slash.wsyn_add_params()
-  params:add{type = "option", id = "output_wsyn", name = "wsyn",
+  params:add{type = "option", id = "output_wsyn", name = "wsyn output",
     options = {"off","on"},
     default = 1,
     action = function(val)

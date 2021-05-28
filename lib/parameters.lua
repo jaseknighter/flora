@@ -325,14 +325,14 @@ flora_params.add_params = function(plants)
     end
   }
 
-  params:add_group("w/ wsyn",14)
+  params:add_group("w/syn",14)
   w_slash.wsyn_add_params()
   -- w_slash.wsyn_v2_add_params()
 
-  params:add_group("w/ wdel",15)
+  params:add_group("w/del",15)
   w_slash.wdel_add_params()
 
-  params:add_group("w/ wtape",17)
+  params:add_group("w/tape",17)
   w_slash.wtape_add_params()
 
 
