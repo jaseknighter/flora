@@ -333,7 +333,7 @@ W/Syn can be sequenced with Flora via i2c by setting the *wsyn* parameter to `on
 W/Del supports Karplus-Strong style string synthesis, which can be sequenced with Flora via i2c by setting the *Karplus-Strong* parameter to `on` in the *parameters>edit>w/del* menu.
 
 ### Integration with other norns scripts
-Flora's code to integrate with W/2 may be easily dropped into another norns script:
+Flora's code to integrate with W/2 may be relatively easily dropped into another norns script:
 
 1. Install Flora v0.4.0 or later
 2. At the start of the norns script add the following two lines of code:
