@@ -91,10 +91,23 @@ tempo_scalar_offset_default = 1.5
 num_cf_scalars_max = 4
 num_cf_scalars_default = 1
 
-ENV_TIME_MAX = 2 -- DO NOT CHANGE
 MAX_AMPLITUDE = 10
+MAX_ENV_LENGTH = 10
+CURVE_MIN = -10 -- -50
+CURVE_MAX = 10 --50
+MAX_ENVELOPE_NODES = 20
+ENV_TIME_MAX = 2 -- DO NOT CHANGE
+
+
+-----------------------------------------
+-- IMPORTANT NOTE: when changing AMPLITUDE_DEFAULT or ENV_LENGTH_DEFAULT
+--    Make sure the 'level' and 'time' variables for each envelope node 
+--      set by DEFAULT_GRAPH_NODES_P1 and DEFAULT_GRAPH_NODES_P2
+--      do not exceed the settings for AMPLITUDE_DEFAULT and ENV_LENGTH_DEFAULT
+-----------------------------------------
 
 AMPLITUDE_DEFAULT = 5
+ENV_LENGTH_DEFAULT = 2
 
 DEFAULT_GRAPH_NODES_P1 = {}
 DEFAULT_GRAPH_NODES_P1[1] = {}
@@ -132,12 +145,7 @@ DEFAULT_GRAPH_NODES_P2[3].time = 1.5
 DEFAULT_GRAPH_NODES_P2[3].level = 0.00
 DEFAULT_GRAPH_NODES_P2[3].curve = -10
 
-
-MAX_ENV_LENGTH = 10
-ENV_LENGTH_DEFAULT = 2
-CURVE_MIN = -10 -- -50
-CURVE_MAX = 10 --50
-MAX_ENVELOPE_NODES = 20
+-----------------------------------------
 
 rqmin_min = 0.1
 rqmin_max = 30
