@@ -312,7 +312,7 @@ flora_params.add_params = function(plants)
 
   params:add{type = "option", id = "output_jf", name = "just friends",
     options = {"off","on"},
-    default = 2,
+    default = 1,
     action = function(value)
       if value == 2 then 
         -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
@@ -586,8 +586,8 @@ flora_params.add_params = function(plants)
     -- clock.run(reset_plow_control_params,plow_id, true)
   end
 
-  specs.PLOW_LEVEL = cs.new(0.0,MAX_AMPLITUDE,'lin',0,4,'')
-  specs.PLOW_TIME = cs.new(0.0,MAX_ENV_LENGTH,'lin',0,2,'')
+  specs.PLOW_LEVEL = cs.new(0.0,MAX_AMPLITUDE,'lin',0,AMPLITUDE_DEFAULT,'')
+  specs.PLOW_TIME = cs.new(0.0,MAX_ENV_LENGTH,'lin',0,ENV_TIME_MAX,'')
 
   local init_plow_controls = function(plow_id)
     
