@@ -28,6 +28,7 @@ function plant_sounds_externals:new(active_notes)
   end
  
   pse.note_on = function(plant_id, note_to_play, pitch_frequency, beat_frequency, envelope_time_remaining)
+    -- print(plant_id, note_to_play, pitch_frequency, beat_frequency, envelope_time_remaining)
     local output_midi = params:get("output_midi")
     local output_crow = params:get("output_crow")
     local output_crow2 = params:get("output_crow2")

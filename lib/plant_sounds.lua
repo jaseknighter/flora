@@ -14,8 +14,8 @@ function plant_sounds:new(parent)
   
   ps.active_notes = {}
 
-  local externals1 = plant_sounds_externals:new(ps.active_notes)
-  local externals2 = plant_sounds_externals:new(ps.active_notes)
+  ps.externals1 = plant_sounds_externals:new(ps.active_notes)
+  ps.externals2 = plant_sounds_externals:new(ps.active_notes)
 
   all_notes_off = function()
     if (params:get("output") == 2 or params:get("output") == 3) then
@@ -83,9 +83,9 @@ function plant_sounds:new(parent)
           end
           local midi_out_channel = parent.id == 1 and midi_out_channel1 or midi_out_channel2
           if parent.id == 1 then 
-            externals1.note_on(parent.id, note_to_play, freq, random_note_frequency)
+            -- ps.externals1.note_on(parent.id, note_to_play, freq, random_note_frequency)
           else
-            externals2.note_on(parent.id, note_to_play, freq, random_note_frequency)
+            -- ps.externals2.note_on(parent.id, note_to_play, freq, random_note_frequency)
           end 
         elseif (node_obj.rest and parent.initializing == false) then
           clock.sync(node_obj.duration)
