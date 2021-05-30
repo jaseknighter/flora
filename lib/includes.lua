@@ -13,7 +13,9 @@ UI = require "ui"
 -- polls = include "flora/lib/polls"
 
 -- required for cloud.lua and save_load.lua
-share=include("norns.online/lib/share")
+if util.file_exists(_path.code.."norns.online") then
+  share=include("norns.online/lib/share")
+end
 
 -- required for parameters.lua
 cs = require 'controlspec'
