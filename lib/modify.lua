@@ -205,7 +205,7 @@ modify.set_param_labels = function()
     "init angle",
     "x start",
     "y start",
-    "save"
+    -- "save"
   }
 end
 
@@ -221,7 +221,7 @@ modify.set_param_ids = function()
     "init_angle",
     "start_x",
     "start_y",
-    "save"
+    -- "save"
 
   }
 end
@@ -528,7 +528,8 @@ modify.enc = function(n, delta, alt_key_active)
     -- do nothing here
   elseif n == 2 then 
     local incr = util.clamp(delta, -1, 1)
-    modify.active_control = util.clamp(incr + modify.active_control, 1, #param_ids+(modify.num_rulesets*2) + #filesystem_param_ids)
+    modify.active_control = util.clamp(incr + modify.active_control, 1, #param_ids+(modify.num_rulesets*2) )
+    -- modify.active_control = util.clamp(incr + modify.active_control, 1, #param_ids+(modify.num_rulesets*2) + #filesystem_param_ids)
   elseif n == 3 and alt_key_active then 
     local incr = util.clamp(delta, -1, 1)
     if modify.active_control > 1 and modify.active_control <= modify.num_rulesets * 2 + 2 then

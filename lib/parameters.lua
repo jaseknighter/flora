@@ -171,16 +171,16 @@ flora_params.add_params = function(plants)
     
   
   params:add{
-    type = "number", id = "midi_in_channel1", name = "plant 1:midi in channel",
-    min = 1, max = 16, default = midi_in_channel1_default,
+    type = "number", id = "plant1_cc_channel", name = "plant 1:midi in channel",
+    min = 1, max = 16, default = plant1_cc_channel,
     action = function(value)
       -- all_notes_off()
       midi_in_command1 = value + 143
     end
   }
     
-  params:add{type = "number", id = "midi_in_channel2", name = "plant 2:midi in channel",
-    min = 1, max = 16, default = midi_in_channel2_default,
+  params:add{type = "number", id = "plant2_cc_channel", name = "plant 2:midi in channel",
+    min = 1, max = 16, default = plant2_cc_channel,
     action = function(value)
       -- all_notes_off()
       midi_in_command2 = value + 143
@@ -361,37 +361,43 @@ flora_params.add_params = function(plants)
     end
   }
   params:add{
-    type = "number", id = "plant1_angle", default=90, name = "plant 1: angle",
+    type = "number", id = "plant1_angle", default=90, min=-360, max=360, step=1, name = "plant 1: angle",
     action = function(value)
+      print(value)
       if initializing == false and value ~= value-plants[1].get_angle() then
-        plants[1].set_angle(value-plants[1].get_angle())
+        plants[1].set_angle(value-plants[1].get_angle(), true)
+        -- plants[1].set_angle(value)
       end
     end
   }
 
   params:add{
-    type = "number", id = "plant2_angle", default=90, name = "plant 2: angle",
+    type = "number", id = "plant2_angle", default=90, min=-360, max=360, step=1, name = "plant 2: angle",
     action = function(value)
       if initializing == false and value ~= value-plants[2].get_angle() then
-        plants[2].set_angle(value-plants[2].get_angle())
+        -- plants[2].set_angle(value-plants[2].get_angle())
+        plants[2].set_angle(value-plants[2].get_angle(), true)
       end
     end
   }
 
   params:add{
-    type = "number", id = "plant1_generation", name = "plant 1: generation", min=1, max=1, default=1,
+    type = "number", id = "plant1_generation", name = "plant 1: generation", min=1, max=10, default=1,
     action = function(value)
+      print(value , plants[1].current_instruction)
       if initializing == false and value ~= value-plants[1].current_instruction then
-        clock.run(plants[1].change_instructions,plants[1].current_instruction, value)
+        -- clock.run(plants[1].change_instructions,plants[1].current_instruction, value)
+        plants[1].change_instructions(plants[1].current_instruction, value)
       end
     end
   }
 
   params:add{
-    type = "number", id = "plant2_generation", name = "plant 2: generation", min=1, max=1, default=1,
+    type = "number", id = "plant2_generation", name = "plant 2: generation", min=1, max=10, default=1,
     action = function(value)
       if initializing == false and value ~= value-plants[2].current_instruction then
-        clock.run(plants[2].change_instructions,plants[2].current_instruction, value)
+        -- clock.run(plants[2].change_instructions,plants[2].current_instruction, value)
+        plants[2].change_instructions(plants[2].current_instruction, value)
       end
     end
   }

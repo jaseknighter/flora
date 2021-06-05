@@ -110,11 +110,11 @@ function plant:new(p_id, starting_instruction)
     return p.turtle.get_positions()
   end
   
-  p.set_angle = function(angle_delta)
+  p.set_angle = function(angle_delta, set_from_param)
     p.instr[p.get_current_instruction()].angle = p.instr[p.get_current_instruction()].angle + angle_delta
     p.turtle.theta = math.rad(p.instr[p.get_current_instruction()].angle)
     local p_angle = p.id == 1 and "plant1_angle" or "plant2_angle"
-    params:set(p_angle, p.instr[p.get_current_instruction()].angle)
+    if set_from_param ~= true then params:set(p_angle, p.instr[p.get_current_instruction()].angle) end
       
   end
 
@@ -362,6 +362,7 @@ function plant:new(p_id, starting_instruction)
   p.change_instructions = function(next_instruction, target_generation)
     -- clock.sleep(0.1)
     if (p.initializing == false) then
+      print("CI", next_instruction, target_generation)
       p.setup(next_instruction, target_generation)
       p.play_turtle = true
       modify.reset()

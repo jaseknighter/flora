@@ -242,9 +242,9 @@ midi_out_channel1 = 1
 midi_out_channel2 = 1
 midi_out_envelope_override1 = nil
 midi_out_envelope_override2 = nil
-midi_in_channel1_default = 1
-midi_in_channel2_default = 2
 
+plant1_cc_channel = 1
+plant2_cc_channel = 1
 plow1_cc_channel = 1
 plow2_cc_channel = 1
 water_cc_channel = 1

@@ -7,7 +7,13 @@ midi_out_device = midi.connect(1)
 
 set_midi_channels = function()
   -- print("set midi channels")
-  if pages.index == 4 then
+  if pages.index < 4 then
+    if active_plant == 1 then
+      if device_16n then set_16n_channel_and_cc_values(plant1_cc_channel) end
+    else
+      if device_16n then set_16n_channel_and_cc_values(plant2_cc_channel) end
+    end
+  elseif pages.index == 4 then
     if active_plant == 1 then
       if device_16n then set_16n_channel_and_cc_values(plow1_cc_channel) end
     else
@@ -93,7 +99,6 @@ end
 update16n = function()
   local data_table = {0x7d,0x00,0x00,0x0c}
   local m = midi
-
   for i=1,16,1
   do
     local hex_val = i<15 and "0x"..string.format("%x",channel_vals_16n[i]) or "0x01"
