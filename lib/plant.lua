@@ -38,7 +38,7 @@ function plant:new(p_id, starting_instruction)
   p.turtle = {}
   p.instr = {}
   
-  engine.set_numSegs(5)
+  -- engine.set_numSegs(5)
 
   p.current_instruction = starting_instruction
   p.changing_instructions = false

@@ -29,7 +29,9 @@ function plant_sounds:new(parent)
 
   ps.engine_note_on = function(note_to_play, freq, random_note_frequency)
     envelopes[parent.id].update_envelope()
-    engine.note_on(note_to_play, freq, random_note_frequency)
+    print(note_to_play,freq,random_note_frequency)
+    --engine.note_on(note_to_play, freq, random_note_frequency)
+    skeys:on({name="ghost piano",midi=note_to_play,velocity=120})
   end
     
   ps.play = function(node_obj)

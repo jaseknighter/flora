@@ -263,7 +263,7 @@ function Envelope:new(id, num_plants, env_nodes)
   end
   
   e.update_envelope = function()
-    engine.set_numSegs(#e.graph_nodes)
+    -- engine.set_numSegs(#e.graph_nodes)
     
     local env_arrays = e.get_envelope_arrays()
     
@@ -275,9 +275,9 @@ function Envelope:new(id, num_plants, env_nodes)
     add_nil_values_to_array(env_arrays.times,MAX_ENVELOPE_NODES)
     add_nil_values_to_array(env_arrays.curves,MAX_ENVELOPE_NODES)
   
-    engine.set_env_levels(table.unpack(env_arrays.levels))
-    engine.set_env_times(table.unpack(env_arrays.times))
-    engine.set_env_curves(table.unpack(env_arrays.curves))
+    -- engine.set_env_levels(table.unpack(env_arrays.levels))
+    -- engine.set_env_times(table.unpack(env_arrays.times))
+    -- engine.set_env_curves(table.unpack(env_arrays.curves))
     -- clock.run(reset_plow_control_params,e.id)
     
     -- reset_plow_control_params(e.id)

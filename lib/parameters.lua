@@ -784,7 +784,9 @@ end
     type="control",
     id="amp",
     controlspec=specs.AMP,
-    action=function(x) engine.amp(x) end
+    action=function(x) 
+      --engine.amp(x) 
+    end
   }
   
   params:add{
@@ -793,7 +795,7 @@ end
     name = "rqmin (/1000)",  
     controlspec = specs.RQMIN,
     action=function(x)
-      engine.rqmin(x/1000) 
+      -- engine.rqmin(x/1000) 
     end
   }
 
@@ -803,7 +805,7 @@ end
     name = "rqmax (/1000)",  
     controlspec = specs.RQMAX,
     action=function(x)
-      engine.rqmax(x/1000) 
+      -- engine.rqmax(x/1000) 
     end
   }
 
@@ -1006,11 +1008,11 @@ end
     options = {"off","on"}, default=2,
     action = function(value)
       if value == 1 then
-        engine.wobble_amp(0) 
-        engine.flutter_amp(0) 
+        -- engine.wobble_amp(0) 
+        -- engine.flutter_amp(0) 
       else
-        engine.wobble_amp(params:get("wobble_amp"))
-        engine.wobble_amp(params:get("flutter_amp")) 
+        -- engine.wobble_amp(params:get("wobble_amp"))
+        -- engine.wobble_amp(params:get("flutter_amp")) 
       end
     end
   }
@@ -1018,7 +1020,7 @@ end
   params:add{
     type = "number", id = "wobble_rpm", name = "wobble rpm", min=1, max=1000, default=33,
     action=function(x)
-      engine.wobble_rpm(x) 
+      -- engine.wobble_rpm(x) 
     end
   }
 
@@ -1026,9 +1028,9 @@ end
     type = "control", id = "wobble_amp", name = "wobble amp", controlspec = specs.WOBBLE_AMP,
     action=function(x)
       if params:get("enable_wow_flutter") == 1 then
-        engine.wobble_amp(0) 
+        -- engine.wobble_amp(0) 
       else
-        engine.wobble_amp(x) 
+        -- engine.wobble_amp(x) 
       end
     end
   }
@@ -1036,7 +1038,7 @@ end
   params:add{
     type = "number", id = "wobble_exp", name = "wobble exp", min=1, max=1000, default=39,
     action=function(x)
-      engine.wobble_exp(x) 
+      -- engine.wobble_exp(x) 
     end
   }
   
@@ -1044,9 +1046,9 @@ end
     type = "control", id = "flutter_amp", name = "flutter amp", controlspec = specs.FLUTTER_AMP,
     action=function(x)
       if params:get("enable_wow_flutter") == 1 then
-        engine.flutter_amp(0) 
+        -- engine.flutter_amp(0) 
       else
-        engine.flutter_amp(x) 
+        -- engine.flutter_amp(x) 
       end
     end
   }
@@ -1054,14 +1056,14 @@ end
   params:add{
     type = "number", id = "flutter_fixedfreq", name = "flutter fixed freq", min=1, max=100, default=6,
     action=function(x)
-      engine.flutter_fixedfreq(x) 
+      -- engine.flutter_fixedfreq(x) 
     end
   }
 
   params:add{
     type = "number", id = "flutter_variationfreq", name = "flutter variation freq", min=1, max=1000, default=6,
     action=function(x)
-      engine.flutter_variationfreq(x) 
+      -- engine.flutter_variationfreq(x) 
     end
   }
 
