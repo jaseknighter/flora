@@ -255,9 +255,6 @@ function plant:new(p_id, starting_instruction)
     p.current_instruction = instruction_number
     p.current_generation = 0
     p.instr[instruction_number] = p.get_instructions(instruction_number)
-    -- print(">>>>>>>>>>")
-    -- tab.print(p.instr[instruction_number])
-    -- print(">>>>>>>>>>")
     if p.id == 1 then
       p.start_from = vector:new(
         p.instr[instruction_number].start_from.x - screen_size.x/4, 
@@ -362,7 +359,7 @@ function plant:new(p_id, starting_instruction)
   p.change_instructions = function(next_instruction, target_generation)
     -- clock.sleep(0.1)
     if (p.initializing == false) then
-      print("CI", next_instruction, target_generation)
+      -- print("CI", next_instruction, target_generation)
       p.setup(next_instruction, target_generation)
       p.play_turtle = true
       modify.reset()

@@ -163,6 +163,7 @@ midi_event = function(data)
       receiving_configs_from_16n = true
     else
       -- handle other message types
+      local output_bandsaw = params:get("output_bandsaw")
       if data[1] == midi_in_command1 then -- plant 1 engine note on
         -- print("note_on", data[2])
         envelopes[1].update_envelope()
@@ -177,7 +178,12 @@ midi_event = function(data)
         local random_note_frequency = tempo_offset_note_frequencies[num_note_freq_index]
           
         local freq = MusicUtil.note_num_to_freq(note_to_play) * cf_scalar
-        plants[1].sounds.engine_note_on(note_to_play, freq, random_note_frequency)
+        if output_bandsaw == 2 then
+          plants[1].sounds.engine_note_on(note_to_play, freq, random_note_frequency)
+          -- print(1, note_to_play, freq, random_note_frequency)
+        end
+        -- plants[1].sounds.engine_note_on(note_to_play, freq, random_note_frequency)
+        plants[1].sounds.externals1.note_on(1, note_to_play, freq, random_note_frequency)
       elseif data[1] == midi_in_command2 then -- plant 1 engine note on
         envelopes[2].update_envelope()
         local note_to_play = data[2]
@@ -191,7 +197,11 @@ midi_event = function(data)
         local random_note_frequency = tempo_offset_note_frequencies[num_note_freq_index]
         
         local freq = MusicUtil.note_num_to_freq(note_to_play) * cf_scalar
-        plants[2].sounds.engine_note_on(note_to_play, freq, random_cf_scalars_index)
+        if output_bandsaw == 2 then
+          plants[2].sounds.engine_note_on(note_to_play, freq, random_cf_scalars_index)
+        end
+        plants[2].sounds.externals2.note_on(2, note_to_play, freq, random_note_frequency)
+        -- plants[2].sounds.engine_note_on(note_to_play, freq, random_cf_scalars_index)
       elseif data[1] == 128 then -- note off
         -- todo: figure out how to implement note off
       end

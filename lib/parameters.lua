@@ -158,8 +158,10 @@ flora_params.add_params = function(plants)
   default = 2,
 }
 
-  params:add_group("midi",10)
-  -- params:add_separator("inputs")
+-- midi
+
+  params:add_group("midi",14)
+  params:add_separator("midi in")
   
   midi_in_device = {}
   params:add{type = "number", id = "midi_device", name = "midi in device", min = 1, max = 16, default = 1, action = function(value)
@@ -234,6 +236,8 @@ flora_params.add_params = function(plants)
   --   end}
   
   -- options.OUTPUT = {"audio (a)", "midi (m)", "a + m", "a, m, c ii JF, c out 1+2", "c ii JF"}
+  
+  params:add_separator("midi out")
 
   params:add{type = "option", id = "output_midi", name = "midi out",
     options = {"off","on"},
@@ -263,6 +267,24 @@ flora_params.add_params = function(plants)
     end
   }
 
+  params:add_separator("midi thru")
+  
+  params:add{type = "option", id = "midi_thru_jf", name = "midi thru jf",
+    options = {"off","on"},
+    default = 1,
+    action = function(value)
+      if value == 2 then 
+        -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
+        crow.ii.pullup(true)
+        crow.ii.jf.mode(1)
+      else 
+        crow.ii.jf.mode(0)
+        -- crow.ii.pullup(false)
+      end
+    end
+  }
+
+-- crow
   params:add_group("crow",4)
 
   params:add{type = "option", id = "crow_clock", name = "crow clock out",
@@ -310,6 +332,7 @@ flora_params.add_params = function(plants)
     end
   }
 
+-- just friends
   params:add{type = "option", id = "output_jf", name = "just friends",
     options = {"off","on"},
     default = 1,
@@ -324,6 +347,22 @@ flora_params.add_params = function(plants)
       end
     end
   }
+
+  params:add{type = "option", id = "jf_mode", name = "just friends mode",
+    options = {"mono","poly"},
+    default = 1,
+    action = function(value)
+      -- if value == 2 then 
+      --   -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
+      --   crow.ii.pullup(true)
+      --   crow.ii.jf.mode(1)
+      -- else 
+      --   crow.ii.jf.mode(0)
+      --   -- crow.ii.pullup(false)
+      -- end
+    end
+  }
+
 
   params:add_group("w/syn",14)
   w_slash.wsyn_add_params()
@@ -363,7 +402,6 @@ flora_params.add_params = function(plants)
   params:add{
     type = "number", id = "plant1_angle", default=90, min=-360, max=360, step=1, name = "plant 1: angle",
     action = function(value)
-      print(value)
       if initializing == false and value ~= value-plants[1].get_angle() then
         plants[1].set_angle(value-plants[1].get_angle(), true)
         -- plants[1].set_angle(value)
@@ -384,7 +422,7 @@ flora_params.add_params = function(plants)
   params:add{
     type = "number", id = "plant1_generation", name = "plant 1: generation", min=1, max=10, default=1,
     action = function(value)
-      print(value , plants[1].current_instruction)
+      -- print(value , plants[1].current_instruction)
       if initializing == false and value ~= value-plants[1].current_instruction then
         -- clock.run(plants[1].change_instructions,plants[1].current_instruction, value)
         plants[1].change_instructions(plants[1].current_instruction, value)
@@ -536,7 +574,6 @@ flora_params.add_params = function(plants)
         params:hide(plow_curves[i])
       end
     end
-    _menu.rebuild_params()
   end
 
   params:add_number("num_plow1_controls", "num_plow1_controls", 3, MAX_ENVELOPE_NODES, 5)
@@ -758,7 +795,8 @@ flora_params.add_params = function(plants)
   local clock_tempo_scalar = clock_tempo/(60 * tempo_scalar_offset)
   tempo_offset_note_frequencies = get_note_frequencies(clock_tempo_scalar)
   note_frequencies = get_note_frequencies()
-  clock.run(set_dirty)
+  -- clock.run(set_dirty)
+  set_dirty()
 end
 
   params:add_group("water",4+num_cf_scalars_max+3+(3*num_note_frequencies)+2)
@@ -853,7 +891,6 @@ end
           params:show(cf_scalars[i])
         end
       end
-      _menu.rebuild_params()
     end
   )
   
@@ -937,7 +974,6 @@ end
           params:show(note_frequency_offsets[i])        
         end
       end
-      _menu.rebuild_params()
     end
   )
   

@@ -9,14 +9,14 @@ function os.time2()
 end
 
 set_dirty = function()
-  clock.sleep(0.1)
+  -- clock.sleep(0.1)
   -- clock.sleep(0.05)
-  if (pages.index == 4) then
-    screen.clear()
-  end
+  -- if (pages.index == 4) then
+  --   screen.clear()
+  -- end
 
-  screen_dirty = true
-  clock.sleep(0.5)
+  -- screen_dirty = true
+  -- clock.sleep(0.5)
   -- clock.sleep(0.1)
   screen_dirty = true
 end

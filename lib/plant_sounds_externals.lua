@@ -28,12 +28,17 @@ function plant_sounds_externals:new(active_notes)
   end
  
   pse.note_on = function(plant_id, note_to_play, pitch_frequency, beat_frequency, envelope_time_remaining)
+    -- print(plant_id, note_to_play, pitch_frequency, beat_frequency, envelope_time_remaining)
+
     local output_midi = params:get("output_midi")
     local output_crow = params:get("output_crow")
     local output_crow2 = params:get("output_crow2")
     local output_crow4 = params:get("output_crow4")
     
     local output_jf = params:get("output_jf")
+    local jf_mode = params:get("jf_mode")
+    local midi_thru_jf = params:get("midi_thru_jf")
+
     local output_wsyn = params:get("output_wsyn")
     local output_wdel_ks = params:get("output_wdel_ks")
     
@@ -89,6 +94,7 @@ function plant_sounds_externals:new(active_notes)
         local output_param = params:get("output_crow2")
         if output_param == 1 then -- envelope
           local asl_envelope = asl_generator(envelopes[1].get_env_time())
+          -- print("2",asl_envelope)
           crow.output[2].action = tostring(asl_envelope)
         elseif output_param == 2 then -- trigger
           local time = crow_trigger_2
@@ -107,6 +113,7 @@ function plant_sounds_externals:new(active_notes)
         local output_param = params:get("output_crow4")
         if output_param == 1 then -- envelope
           local asl_envelope = asl_generator(envelopes[2].get_env_time())
+          -- print("4",asl_envelope)
           crow.output[4].action = tostring(asl_envelope)
         elseif output_param == 2 then -- trigger
           local time = crow_trigger_2
@@ -124,8 +131,17 @@ function plant_sounds_externals:new(active_notes)
     end
     
     -- just friends out
-    if output_jf == 2 then
-      crow.ii.jf.play_note((note_to_play-60)/12,5)
+    if output_jf == 2 or midi_thru_jf == 2 then
+      -- crow.ii.jf.play_note((note_to_play-60)/12,5)
+      if jf_mode == 1 then
+        if plant_id == 1 then
+          crow.ii.jf.play_voice(1,(note_to_play-60)/12,5)
+        else
+          crow.ii.jf.play_voice(2,(note_to_play-60)/12,5)
+        end
+      else
+        crow.ii.jf.play_note((note_to_play-60)/12,5)
+      end
     end
     
     -- wsyn out
@@ -146,7 +162,6 @@ function plant_sounds_externals:new(active_notes)
     -- wdel karplus-strong out
     -- local pitch = (note_to_play-48)/12
     local pitch = (note_to_play-48)/12
-    -- print(pitch,pitch_frequency)
     if output_wdel_ks == 2 and plant_id == 1 then
       local level = params:get("plow1_max_level")
       crow.send("ii.wdel.pluck(" .. level .. ")")
@@ -154,6 +169,17 @@ function plant_sounds_externals:new(active_notes)
       params:set("wdel_rate",0)
     elseif output_wdel_ks == 3 and plant_id == 2 then
       local level = params:get("plow2_max_level") 
+      crow.send("ii.wdel.pluck(" .. level .. ")")
+      crow.send("ii.wdel.freq(" .. pitch .. ")")
+      params:set("wdel_rate",0)
+    elseif output_wdel_ks == 4 then
+      local level
+      if plant_id == 1 then
+        level = params:get("plow1_max_level") 
+      else
+        level = params:get("plow2_max_level") 
+      end
+      -- print(pitch,level)
       crow.send("ii.wdel.pluck(" .. level .. ")")
       crow.send("ii.wdel.freq(" .. pitch .. ")")
       params:set("wdel_rate",0)

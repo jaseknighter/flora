@@ -61,7 +61,8 @@ local enc = function (n, delta)
       end
     end
   end
-  clock.run(set_dirty)
+  -- clock.run(set_dirty)
+  set_dirty()
 end
 
 local key = function (n,z)
@@ -130,7 +131,8 @@ local key = function (n,z)
     plants[1].set_instructions(0)
     plants[2].set_instructions(0)
   end
-  clock.run(set_dirty)
+  -- clock.run(set_dirty)
+  set_dirty()
 end
 
 return{

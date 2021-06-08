@@ -36,15 +36,15 @@ function w_slash.wdel_add_params()
     clock.sleep(0.001)
     params:set("wdel_time_short",0)
     crow.ii.wdel.time(0)
+    params:set("wdel_feedback",99)
     params:set("wdel_mix",50)
   end
 
   params:add{type = "option", id = "output_wdel_ks", name = "Karplus-Strong",
-    options = {"off","plant 1","plant 2"},
+    options = {"off","plant 1","plant 2","midi through"},
     default = 1,
     action = function(value)
       if value > 1 then
-        params:set("wdel_feedback",99)
         params:set("wdel_filter",12000)
         params:set("wdel_frequency",0)
         params:set("wdel_rate",0)
