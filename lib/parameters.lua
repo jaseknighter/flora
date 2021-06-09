@@ -153,24 +153,35 @@ flora_params.add_params = function(plants)
 --------------------------------
   params:add_separator("inputs/outputs")
   -- params:add_group("inputs/outputs",17+14)
-  params:add{type = "option", id = "output_bandsaw", name = "bandsaw (engine)",
-  options = {"off","on"},
+  params:add{type = "option", id = "output_bandsaw", name = "bandsaw (eng)",
+  options = {"off","plants", "midi", "plants + midi"},
   default = 2,
 }
 
 -- midi
 
-  params:add_group("midi",14)
+  params:add_group("midi",12)
+  
+  --[[
+  params:add{type = "option", id = "midi_engine_control", name = "midi engine control",
+    options = {"off","on"},
+    default = 2,
+    -- action = function(value)
+    -- end
+  }
+  ]]
+
+  
   params:add_separator("midi in")
   
   midi_in_device = {}
-  params:add{type = "number", id = "midi_device", name = "midi in device", min = 1, max = 16, default = 1, action = function(value)
-    midi_in_device.event = nil
-    midi_in_device = midi.connect(value)
-    midi_in_device.event = midi_event
+  params:add{type = "number", id = "midi_device", name = "midi in device", min = 1, max = 16, default = 1, 
+    action = function(value)
+      midi_in_device.event = nil
+      midi_in_device = midi.connect(value)
+      midi_in_device.event = midi_event
     end
   }
-    
   
   params:add{
     type = "number", id = "plant1_cc_channel", name = "plant 1:midi in channel",
@@ -240,7 +251,7 @@ flora_params.add_params = function(plants)
   params:add_separator("midi out")
 
   params:add{type = "option", id = "output_midi", name = "midi out",
-    options = {"off","on"},
+    options = {"off","plants", "midi", "plants + midi"},
     default = 1,
   }
   
@@ -267,8 +278,9 @@ flora_params.add_params = function(plants)
     end
   }
 
+  --[[
   params:add_separator("midi thru")
-  
+
   params:add{type = "option", id = "midi_thru_jf", name = "midi thru jf",
     options = {"off","on"},
     default = 1,
@@ -277,71 +289,110 @@ flora_params.add_params = function(plants)
         -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
         crow.ii.pullup(true)
         crow.ii.jf.mode(1)
-      else 
+      elseif params:get("output_jf") == 1 then
+ 
         crow.ii.jf.mode(0)
         -- crow.ii.pullup(false)
       end
     end
   }
 
+  params:add{type = "option", id = "midi_thru_wsyn", name = "midi thru wsyn",
+    options = {"off","on"},
+    default = 1,
+    action = function(val)
+      params:set("output_wsyn", val)
+      -- if val == 2 then 
+        -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
+        -- crow.ii.pullup(true)
+        -- crow.ii.jf.mode(1)
+      -- end
+    end
+  }
+
+  params:add{type = "option", id = "midi_thru_wdel_ks", name = "midi thru wdel ks",
+  options = {"off","on"},
+  default = 1,
+  action = function(val)
+    local value = val == 2 and 4 or 1
+    params:set("output_wdel_ks", value)
+    -- if val == 2 then 
+      -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
+      -- crow.ii.pullup(true)
+      -- crow.ii.jf.mode(1)
+    -- end
+  end
+}
+]]
+
 -- crow
   params:add_group("crow",4)
 
-  params:add{type = "option", id = "crow_clock", name = "crow clock out",
-  options = {"off","on"},
-  action = function(value)
-    if value == 2 then
-      crow.output[1].action = "{to(5,0),to(5,0.05),to(0,0)}"
-    end
-  end}
+  -- params:add{type = "option", id = "crow_clock", name = "crow clock out",
+  -- options = {"off","on"},
+  -- action = function(value)
+  --   if value == 2 then
+  --     crow.output[1].action = "{to(5,0),to(5,0.05),to(0,0)}"
+  --   end
+  -- end}
 
-
-  params:add{type = "option", id = "output_crow", name = "crow",
-    options = {"off","on"},
+  params:add{type = "option", id = "output_crow1", name = "crow out1 mode",
+    -- options = {"off","on"},
+    options = {"off","plants", "midi", "plants + midi", "clock"},
     default = 2,
     action = function(value)
-      if value == 2 then 
-        crow.output[2].action = "{to(5,0),to(0,0.25)}"
-        -- crow.ii.pullup(true)
-        -- crow.ii.jf.mode(1)
+      if value == 5 then 
+        crow.output[1].action = "{to(5,0),to(5,0.05),to(0,0)}"
       end
     end
   }
 
-  params:add{type = "option", id = "output_crow2", name = "  crow 2 mode",
-    options = {"envelope","trigger","gate"},
-    default = 1,
+  params:add{type = "option", id = "output_crow2", name = "crow out2 mode",
+    options = {"off","envelope","trigger","gate","clock"},
+    default = 2,
     action = function(value)
-      -- if value == 2 then 
-        -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
-        -- crow.ii.pullup(true)
-        -- crow.ii.jf.mode(1)
-      -- end
+      if value == 3 then 
+        crow.output[2].action = "{to(5,0),to(0,0.25)}"
+      elseif value == 5 then
+        crow.output[2].action = "{to(5,0),to(5,0.05),to(0,0)}"
+      end
     end
   }
 
-  params:add{type = "option", id = "output_crow4", name = "  crow 4 mode",
-    options = {"envelope","trigger","gate"},
-    default = 1,
+  params:add{type = "option", id = "output_crow3", name = "crow out3 mode",
+    -- options = {"off","on"},
+    options = {"off","plants", "midi", "plants + midi", "clock"},
+    default = 2,
     action = function(value)
-      -- if value == 2 then 
-        -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
-        -- crow.ii.pullup(true)
-        -- crow.ii.jf.mode(1)
-      -- end
+      if value == 5 then 
+        crow.output[3].action = "{to(5,0),to(5,0.05),to(0,0)}"
+      end
+    end
+  }
+
+  params:add{type = "option", id = "output_crow4", name = "crow out4 mode",
+    options = {"off","envelope","trigger","gate", "clock"},
+    default = 2,
+    action = function(value)
+      if value == 3 then 
+        crow.output[4].action = "{to(5,0),to(0,0.25)}"
+      elseif value == 5 then 
+        crow.output[4].action = "{to(5,0),to(5,0.05),to(0,0)}"
+      end
     end
   }
 
 -- just friends
+params:add_group("just friends",2)
   params:add{type = "option", id = "output_jf", name = "just friends",
-    options = {"off","on"},
+    options = {"off","plants", "midi", "plants + midi"},
     default = 1,
     action = function(value)
-      if value == 2 then 
+      if value > 1 then 
         -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
         crow.ii.pullup(true)
         crow.ii.jf.mode(1)
-      else 
+      else
         crow.ii.jf.mode(0)
         -- crow.ii.pullup(false)
       end
@@ -350,7 +401,7 @@ flora_params.add_params = function(plants)
 
   params:add{type = "option", id = "jf_mode", name = "just friends mode",
     options = {"mono","poly"},
-    default = 1,
+    default = 2,
     action = function(value)
       -- if value == 2 then 
       --   -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
@@ -576,7 +627,7 @@ flora_params.add_params = function(plants)
     end
   end
 
-  params:add_number("num_plow1_controls", "num_plow1_controls", 3, MAX_ENVELOPE_NODES, 5)
+  params:add_number("num_plow1_controls", "num plow1 controls", 3, MAX_ENVELOPE_NODES, 5)
   -- params:hide("num_plow1_controls")
 
   params:set_action("num_plow1_controls", 
@@ -587,7 +638,7 @@ flora_params.add_params = function(plants)
     end
   )
 
-  params:add_number("num_plow2_controls", "num_plow2_controls", 3, MAX_ENVELOPE_NODES, 5)
+  params:add_number("num_plow2_controls", "num plow2 controls", 3, MAX_ENVELOPE_NODES, 5)
   -- params:hide("num_plow2_controls")
 
   params:set_action("num_plow2_controls", 

@@ -104,6 +104,7 @@ local key = function (n,z)
       elseif pages.index == 4 then
         -- clock.run(set_dirty)
         envelopes[active_plant].key(n, delta)
+        -- set_dirty()
         -- clock.run(envelopes[active_plant].update_engine, envelopes[active_plant].graph_nodes)
       elseif pages.index == 5 then
         water.key(n, delta, alt_key_active)
@@ -118,6 +119,7 @@ local key = function (n,z)
       elseif pages.index == 4 then
         -- clock.run(set_dirty)
         envelopes[active_plant].key(n, delta)
+        -- set_dirty()
         -- clock.run(envelopes[active_plant].update_engine, envelopes[active_plant].graph_nodes)
       elseif pages.index == 5 then
         water.key(n, delta, alt_key_active)

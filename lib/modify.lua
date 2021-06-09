@@ -174,22 +174,25 @@ modify.remove_letter = function()
       return
     elseif #successor > 1 then
       successor = modify.modify_sentence(successor, cursor_index, nil,"remove")
+      local active_control = modify.instruction_cursor_indices[active_plant][modify.active_control] - 1
+      if active_control > 1 then
+        modify.instruction_cursor_indices[active_plant][modify.active_control] = active_control
+      end
     end
     
     modify.update_ruleset(ruleset_id, predecessor, successor)
   elseif modify.active_control - (modify.num_rulesets * 2) + 1 == 3 then
-  local axiom = modify.get_axiom()
-  if #axiom > 1 then
-    axiom = modify.modify_sentence(axiom, cursor_index, new_letter,"remove")
-    modify.update_axiom(axiom)
-    -- plants[active_plant].setup(
-    --   plants[active_plant].current_instruction,
-    --   nil, 
-    --   true
-    -- )
+    local axiom = modify.get_axiom()
+    if #axiom > 1 then
+      axiom = modify.modify_sentence(axiom, cursor_index, new_letter,"remove")
+      modify.update_axiom(axiom)
+      -- plants[active_plant].setup(
+      --   plants[active_plant].current_instruction,
+      --   nil, 
+      --   true
+      -- )
+    end
   end
-end
-
 end
 
 --

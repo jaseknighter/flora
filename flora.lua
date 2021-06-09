@@ -48,6 +48,16 @@
 
 include "flora/lib/includes"
 
+-- crow input (testing)
+-- function process_stream(v)
+--   crow_in_note_num = math.floor(v*12)
+--   crow_in_freq = MusicUtil.note_num_to_freq(crow_in_note_num)
+--   print("input stream: ",v,crow_in_note_num,crow_in_freq)
+-- end
+
+-- crow.input[1].stream = process_stream
+-- crow.input[1].mode("stream", 0.25)
+
 ------------------------------
 -- init
 ------------------------------
@@ -178,6 +188,7 @@ end
 function set_redraw_timer()
   redrawtimer = metro.init(function() 
     local status = norns.menu.status()
+
     if status == false and menu_status == false and initializing == false then
       if screen_dirty then
         flora_pages.draw_pages()

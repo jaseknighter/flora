@@ -79,18 +79,15 @@ function plant_sounds:new(parent)
           -- local output_param = params:get("output")
           local output_bandsaw = params:get("output_bandsaw")
     
-          if output_bandsaw == 2 then
-            
+          if output_bandsaw == 2 or output_bandsaw == 4 then
             ps.engine_note_on(note_to_play, freq, random_note_frequency)
-            local midi_out_channel = parent.id == 1 and midi_out_channel1 or midi_out_channel2
-            if parent.id == 1 then 
-              ps.externals1.note_on(parent.id, note_to_play, freq, random_note_frequency)
-              -- externals1.note_on(parent.id, note_to_play, freq, random_note_frequency)
-            else
-              ps.externals2.note_on(parent.id, note_to_play, freq, random_note_frequency)
-              -- externals2.note_on(parent.id, note_to_play, freq, random_note_frequency)
-            end 
           end
+          local midi_out_channel = parent.id == 1 and midi_out_channel1 or midi_out_channel2
+          if parent.id == 1 and (output_bandsaw > 1) then 
+            clock.run(ps.externals1.note_on,parent.id, note_to_play, freq, random_note_frequency,nil,"flora")
+          elseif parent.id == 2 and (output_bandsaw > 1) then 
+            clock.run(ps.externals2.note_on,parent.id, note_to_play, freq, random_note_frequency,nil,"flora")
+          end 
         elseif (node_obj.rest and parent.initializing == false) then
           clock.sync(node_obj.duration)
           -- clock.sleep(node_obj.duration)
