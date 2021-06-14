@@ -29,14 +29,7 @@ function plant_sounds_externals:new(active_notes)
  
   pse.note_on = function(plant_id, note_to_play, pitch_frequency, beat_frequency, envelope_time_remaining, note_source)
     local output_bandsaw = params:get("output_bandsaw")
-    -- if note_source == "flora" and output_bandsaw ~= 1 and output_bandsaw ~= 3 then 
-    -- if note_source == "flora" and output_bandsaw < 2 then 
-    --   print('no ext')
-    --   return 
-    -- end
-    -- print(plant_id, note_to_play, pitch_frequency, beat_frequency, envelope_time_remaining)
-    -- local output_midi = params:get("output_midi")
-    local midi_output_bandsaw = params:get("output_bandsaw")
+    local output_midi = params:get("output_midi")
 
     local output_crow1 = params:get("output_crow1")
     local output_crow3 = params:get("output_crow3")
@@ -54,7 +47,9 @@ function plant_sounds_externals:new(active_notes)
     local envelope_length = envelopes[plant_id].get_env_time()
 
     -- MIDI out
-    if midi_output_bandsaw == 3 or midi_output_bandsaw == 4 then
+    -- if (note_source == "flora" and output_bandsaw == 4) or output_midi > 1 then
+    if (note_source == "flora" and (output_midi == 2 or output_midi == 4)) or
+      (note_source == "midi" and (output_midi == 3 or output_midi == 4))  then
       midi_out_device:note_on(note_to_play, 96, midi_out_channel)
       table.insert(active_notes, note_to_play)
       -- Note off timeout
@@ -166,13 +161,12 @@ function plant_sounds_externals:new(active_notes)
     -- just friends out
     if (note_source == "flora" and (output_jf == 2 or output_jf == 4)) or
       (note_source == "midi" and (output_jf == 3 or output_jf == 4)) then
-      if jf_mode == 1 then
+        if jf_mode == 1 then
         if plant_id == 1 then
           local level = params:get("plow1_max_level") 
-          print("level",level)
           crow.ii.jf.play_voice(1,(note_to_play-60)/12,level)
         else
-          local level = params:get("plow1_max_level") 
+          local level = params:get("plow2_max_level") 
           crow.ii.jf.play_voice(2,(note_to_play-60)/12,level)
         end
       else

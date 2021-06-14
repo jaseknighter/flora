@@ -37,7 +37,7 @@ function w_slash.wdel_add_params()
     params:set("wdel_time_short",0)
     crow.ii.wdel.time(0)
     params:set("wdel_feedback",99)
-    params:set("wdel_mix",50)
+    params:set("wdel_mix",10)
   end
 
   params:add{type = "option", id = "output_wdel_ks", name = "Karplus-Strong",

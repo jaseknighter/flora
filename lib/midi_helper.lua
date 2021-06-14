@@ -163,36 +163,40 @@ midi_event = function(data)
       receiving_configs_from_16n = true
     else
       -- handle other message types
-      local midi_output_bandsaw = params:get("output_bandsaw")
-      
-    local note_to_play = data[2]
-    -- set a random scalar for the note about to play
-    local num_active_cf_scalars = params:get("num_active_cf_scalars")
-    local random_cf_scalars_index = params:get(cf_scalars[math.random(num_active_cf_scalars)])
-    local cf_scalar = cf_scalars_map[random_cf_scalars_index]
+      local output_bandsaw = params:get("output_bandsaw")
+      local output_midi = params:get("output_midi")
 
-    -- set a random note_frequency for the note about to play
-    local num_note_freq_index = math.random(#tempo_offset_note_frequencies)
-    local random_note_frequency = tempo_offset_note_frequencies[num_note_freq_index]
-      
-    local freq = MusicUtil.note_num_to_freq(note_to_play) * cf_scalar
-    if data[1] == midi_in_command1 then -- plant 1 engine note on
-        -- print("note_on", data[2])
-        envelopes[1].update_envelope()
-        if midi_output_bandsaw == 3 or midi_output_bandsaw == 4 then
-          plants[1].sounds.engine_note_on(note_to_play, freq, random_note_frequency)
+
+      local note_to_play = data[2]
+      if note_to_play then
+        -- set a random scalar for the note about to play
+        local num_active_cf_scalars = params:get("num_active_cf_scalars")
+        local random_cf_scalars_index = params:get(cf_scalars[math.random(num_active_cf_scalars)])
+        local cf_scalar = cf_scalars_map[random_cf_scalars_index]
+
+        -- set a random note_frequency for the note about to play
+        local num_note_freq_index = math.random(#tempo_offset_note_frequencies)
+        local random_note_frequency = tempo_offset_note_frequencies[num_note_freq_index]
+        local freq = MusicUtil.note_num_to_freq(note_to_play) * cf_scalar
+        note_to_play = MusicUtil.freq_to_note_num(freq)
+        if data[1] == midi_in_command1 then -- plant 1 engine note on
+          envelopes[1].update_envelope()
+          -- if output_midi == 3 or output_midi == 4 then
+          if output_bandsaw == 3 or output_bandsaw == 4 or output_midi == 3 or output_midi == 4 then
+            plants[1].sounds.engine_note_on(note_to_play, freq, random_note_frequency)
+          end
+          clock.run(plants[1].sounds.externals1.note_on,1, note_to_play, freq, random_note_frequency, nil,"midi")
         end
-        clock.run(plants[1].sounds.externals1.note_on,1, note_to_play, freq, random_note_frequency, nil,"midi")
-      elseif data[1] == midi_in_command2 then -- plant 2 engine note on
-        envelopes[2].update_envelope()
-        if midi_output_bandsaw == 2 or midi_output_bandsaw == 4 then
-          plants[2].sounds.engine_note_on(note_to_play, freq, random_cf_scalars_index) 
+        if data[1] == midi_in_command2 then -- plant 2 engine note on
+          envelopes[2].update_envelope()
+          -- if output_midi == 3 or output_midi == 4 then
+          if output_bandsaw == 3 or output_bandsaw == 4 or output_midi == 3 or output_midi == 4 then
+            plants[2].sounds.engine_note_on(note_to_play, freq, random_note_frequency)
+          end
+          clock.run(plants[2].sounds.externals2.note_on,2, note_to_play, freq, random_note_frequency, nil,"midi")
+        elseif data[1] == 128 then -- note off
+          -- todo: figure out how to implement note off
         end
-        if midi_output_bandsaw == 3 or midi_output_bandsaw == 4 then
-          clock.run(plants[2].sounds.externals2.note_on,2, note_to_play, freq, random_note_frequency,nil,"midi")
-        end
-      elseif data[1] == 128 then -- note off
-        -- todo: figure out how to implement note off
       end
     end
   end

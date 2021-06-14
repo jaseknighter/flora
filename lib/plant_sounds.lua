@@ -83,9 +83,11 @@ function plant_sounds:new(parent)
             ps.engine_note_on(note_to_play, freq, random_note_frequency)
           end
           local midi_out_channel = parent.id == 1 and midi_out_channel1 or midi_out_channel2
-          if parent.id == 1 and (output_bandsaw > 1) then 
+          -- if parent.id == 1 and (output_bandsaw > 1) then 
+          if parent.id == 1 then 
             clock.run(ps.externals1.note_on,parent.id, note_to_play, freq, random_note_frequency,nil,"flora")
-          elseif parent.id == 2 and (output_bandsaw > 1) then 
+          -- elseif parent.id == 2 and (output_bandsaw > 1) then 
+          elseif parent.id == 2 then 
             clock.run(ps.externals2.note_on,parent.id, note_to_play, freq, random_note_frequency,nil,"flora")
           end 
         elseif (node_obj.rest and parent.initializing == false) then
