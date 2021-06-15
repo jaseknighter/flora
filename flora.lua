@@ -1,5 +1,5 @@
 ---flora - beta
--- v0.4.1-beta @jaseknighter
+-- v0.4.5-beta @jaseknighter
 -- lines: llllllll.co/t/40261
 --
 -- k1+k2: show/hide instructions
@@ -130,7 +130,7 @@ function init()
   local pset_param_exclusions_plant = {"plant1_instructions","plant2_instructions","plant1_angle","plant2_angle"}
   
   -- plow exclusion group
-  local pset_param_exclusions_plow = {"num_plow1_controls","num_plow2_controls","plow1_max_level","plow1_max_time","randomize_env_probability1","time_probability1","level_probability1","curve_probability1","time_modulation1","level_modulation1","curve_modulation1","randomize_env_probability2","time_probability2","level_probability2","curve_probability2","time_modulation2","level_modulation2","curve_modulation2"}
+  local pset_param_exclusions_plow = {"num_plow1_controls","num_plow2_controls","plow1_max_level","plow1_max_time","plow2_max_level","plow2_max_time","randomize_env_probability1","time_probability1","level_probability1","curve_probability1","time_modulation1","level_modulation1","curve_modulation1","randomize_env_probability2","time_probability2","level_probability2","curve_probability2","time_modulation2","level_modulation2","curve_modulation2"}
   
   for i=1, MAX_ENVELOPE_NODES, 1
   do
@@ -150,12 +150,15 @@ function init()
   
   -- nav exclusion group
   local pset_param_exclusions_nav = {"page_turner", "active_plant_switcher"}
+
+  -- nav exclusion group
+  local pset_param_exclusions_inputs_outputs = {"page_turner", "active_plant_switcher"}
   
   -- table for exclusion group table names
   local pset_exclusion_tables = {pset_param_exclusions_plant,pset_param_exclusions_plow,pset_param_exclusions_plow_modulation,pset_param_exclusions_water,pset_param_exclusions_nav}
   
   -- table for exclusion group labels 
-  local pset_exclusion_table_labels = {"plant psets","plow psets","plow mod psets","water psets", "nav psets"}
+  local pset_exclusion_table_labels = {"plant psets","plow psets","plow mod psets","water psets", "nav psets", "input/output psets"}
   
   -- call pset sequencer to initialize and setup exclusion groups
   pset_seq.pset_seq_timer_init(pset_exclusion_tables, pset_exclusion_table_labels)

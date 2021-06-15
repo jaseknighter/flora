@@ -539,7 +539,6 @@ params:add_group("just friends",2)
     return envelopes[env_id].get_envelope_arrays().curves[node_id]
   end
 
-  -- reset_plow_control_params = function(plow_id, x)
   reset_plow_control_params = function(plow_id, delay)
     -- if delay == true then clock.sleep(0.1) end
     local env_nodes = envelopes[plow_id].graph_nodes
@@ -675,9 +674,6 @@ params:add_group("just friends",2)
     local num_plow_controls = plow_id == 1 and "num_plow1_controls" or "num_plow2_controls"
     local num_env_nodes = #envelopes[plow_id].graph_nodes
     params:set(num_plow_controls,num_env_nodes)
-
-    -- reset_plow_control_params(plow_id)
-    -- clock.run(reset_plow_control_params,plow_id, true)
   end
 
   specs.PLOW_LEVEL = cs.new(0.0,MAX_AMPLITUDE,'lin',0,AMPLITUDE_DEFAULT,'')

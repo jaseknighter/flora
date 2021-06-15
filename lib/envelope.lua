@@ -250,7 +250,7 @@ function Envelope:new(id, num_plants, env_nodes)
       for i=1, #e.graph_nodes, 1
         do
         local node_level = e.graph_nodes[i].level
-        e.graph_nodes[i].level = node_level * (e.env_level_max / old_level_max)
+        e.graph_nodes[i].level = node_level * (e.env_level_max / old_level_max) < 10 and node_level * (e.env_level_max / old_level_max) or 10
       end
       e.graph:edit_graph(e.graph_nodes)
       e.graph:set_y_max(e.env_level_max)  
@@ -263,10 +263,10 @@ function Envelope:new(id, num_plants, env_nodes)
   end
   
   e.update_envelope = function()
+
     engine.set_numSegs(#e.graph_nodes)
     
     local env_arrays = e.get_envelope_arrays()
-    
     -- note: to prevent warning messages when changing the number of envelope segments 
     --        (warnings like: "warning: wrong count of arguments for command 'set_env_levels'")
     --        the envelope arrays are filled in  with zeros.

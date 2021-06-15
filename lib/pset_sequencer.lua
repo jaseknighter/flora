@@ -197,7 +197,9 @@ pset_seq.pset_seq_timer_init = function (pset_exclusion_tables, pset_exclusion_t
   params:add_number("pset_seq_beats_per_bar", "pset seq beats per bar", 1, 4, 1)
   params:set_action("pset_seq_beats_per_bar", function() set_ticks_per_seq_cycle() end )
   
-  -- set default exclusions
+  -- set default exclusions 
+  -- INCLUDES HACK till envelope PSET bug is fixed
+  -- local default_exclusions = {"pset_seq_enabled","pset_seq_mode","load_pset", "pset_seq_beats","pset_seq_beats_per_bar","plow1_max_level","plow1_max_time","plow2_max_level","plow2_max_time"}
   local default_exclusions = {"pset_seq_enabled","pset_seq_mode","load_pset", "pset_seq_beats","pset_seq_beats_per_bar"}
   pset_seq.set_save_paramlist(default_exclusions, false)
 
