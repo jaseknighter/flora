@@ -28,7 +28,7 @@
 ------------------------------
 
 local fields = {}
-local screen_dirty = false
+-- local screen_dirty = false
 
 local num_fields_default = 6
   
@@ -239,7 +239,8 @@ fields.init = function(num_fields)
 end    
 
 fields.display = function()
-  screen_dirty = true
+  -- screen_dirty = true
+  -- print("sd")
 end
 
 function fields:redraw (note_frequency_index,note_frequency_menu_index, active_field_menu_area, active_control)
@@ -250,13 +251,13 @@ function fields:redraw (note_frequency_index,note_frequency_menu_index, active_f
   -- draw the fields if they are screen_dirty
   if fields.note_frequency_index ~= fields.prior_note_frequency_index or 
     fields.note_frequency_menu_index ~= fields.prior_note_frequency_menu_index then
-    screen_dirty = true
+    -- screen_dirty = true
   end
   fields.prior_note_frequency_index = fields.note_frequency_index
   fields.prior_note_frequency_menu_index = fields.note_frequency_menu_index
   
   if screen_dirty then
-    screen_dirty = false
+    -- screen_dirty = false
     field_layout:set_layout_params()
     num_active_fields = self.get_active_fields()
     
