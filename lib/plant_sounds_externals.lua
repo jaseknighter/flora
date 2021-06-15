@@ -45,12 +45,14 @@ function plant_sounds_externals:new(active_notes)
     
     local midi_out_channel = plant_id == 1 and midi_out_channel1 or midi_out_channel2
     local envelope_length = envelopes[plant_id].get_env_time()
-
+    
     -- MIDI out
     -- if (note_source == "flora" and output_bandsaw == 4) or output_midi > 1 then
     if (note_source == "flora" and (output_midi == 2 or output_midi == 4)) or
       (note_source == "midi" and (output_midi == 3 or output_midi == 4))  then
-      midi_out_device:note_on(note_to_play, 96, midi_out_channel)
+      local level = plant_id == 1 and params:get("plow1_max_level") or params:get("plow2_max_level")
+      level = math.floor(util.linlin(0,10,0,127,level))
+      midi_out_device:note_on(note_to_play, level, midi_out_channel)
       table.insert(active_notes, note_to_play)
       -- Note off timeout
       local note_duration_param = plant_id == 1 and "plant_1_note_duration" or "plant_2_note_duration"
@@ -121,13 +123,11 @@ function plant_sounds_externals:new(active_notes)
         local num_plow_controls = params:get("num_plow1_controls")
         local time = envelopes[1].get_envelope_arrays().times[num_plow_controls]
         -- local time = params:get("plow1_max_time")
-        print(time)
         local level = params:get("plow1_max_level")
         local polarity = 1
-        print(time,level)
         crow.output[2].action = "pulse(" .. time ..",".. level .. "," .. polarity .. ")"
       end
-      crow.output[2]()
+      if output_param > 1 then crow.output[2]() end
     end
 
     
@@ -154,7 +154,7 @@ function plant_sounds_externals:new(active_notes)
         local polarity = 1
         crow.output[4].action = "pulse(" .. time ..",".. level .. "," .. polarity .. ")"
       end
-      crow.output[4]()
+      if output_param > 1 then crow.output[4]() end
     end
 
 

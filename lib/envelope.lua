@@ -199,20 +199,14 @@ function Envelope:new(id, num_plants, env_nodes)
     e.cursor_location_y = (e.env_level_max/e.y_max) * e.y_max
 
     local graph_x = 10 + screen_size.x/num_plants*(e.id-1)
-    local graph_y = 15
+    local graph_y = 10
     local graph_width = screen_size.x/num_plants - 10
     local graph_height = 35
 
     e.graph:set_position_and_size(graph_x, graph_y, graph_width, graph_height)
     e.graph:set_active(false)
-    
-    -- for some reason this a default env length needs to be set here at the end of init
-    -- e.set_env_time(ENV_LENGTH_DEFAULT)
   end
   
-  e.get_env_time = function()
-    return e.env_time_max
-  end
   
   e.get_num_nodes = function()
     return #e.graph_nodes
