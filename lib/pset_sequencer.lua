@@ -70,7 +70,7 @@ local function set_pset_param_exclusions(pset_exclusion_tables, pset_exclusion_t
         options = {"false", "true"}, default = 1,
           action = function(x) 
             local setting
-            if x==1 then setting = false else setting = true end
+            if x==1 then setting = true else setting = false end
             pset_seq.set_save_paramlist(pset_exclusion_tables[i], setting)  
           end
         }
@@ -156,7 +156,7 @@ pset_seq.set_save_paramlist = function(paramlist, state)
     for i=1,#paramlist,1
     do
       if paramlist[i] then
-        -- print("paramlist[i]",paramlist[i], state)
+        -- print(paramlist[i],state)
         params:set_save(paramlist[i],state)
       end
     end
