@@ -85,7 +85,7 @@ The above axiom and rulesets will result in the following sentences when run six
 | +          | Rotate the turtle counterclockwise by the current angle | Increase the active note's pitch (see *Changes in pitch* below) |
 | -          | Rotate the turtle clockwise by the current angle        | Decrease the active note's pitch (see *Changes in pitch* below) |
 | \|         | Rotate the turtle 180 degrees                           | No sound behavior                                               |
-| r          | Randomly increase or decrease the angle                 | Increase or decrease the active note's pitch (see *Changes in pitch* below) |
+| r          | Randomly increase or decrease the angle                 | Randomly increase or decrease the active note's pitch (see *Changes in pitch* below) |
 | other      | Other characters are ignored by the turtle              | No sound behavior                                               |
 
 ##### Changes in pitch
