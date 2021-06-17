@@ -340,7 +340,7 @@ Flora's code to integrate with W/2 may be relatively easily dropped into another
 2. At the start of the norns script add the following two lines of code:
 ```
 cs = require 'controlspec'
-w_slash = include("flora/lib/w_slash")
+w_slash = include("floramx/lib/w_slash")
 ```
 3. At the end of the script's init function add the following six lines of code:
 ```

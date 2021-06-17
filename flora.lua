@@ -46,7 +46,7 @@
 --  source code and documentation: https://github.com/jaseknighter/flora 
 ------------------------------
 
-include "flora/lib/includes"
+include "floramx/lib/includes"
 
 -- crow input (testing)
 -- function process_stream(v)

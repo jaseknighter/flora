@@ -25,14 +25,14 @@
 --
 -- (basic example) code for steps 1, 2 and 4 that goes to the end of the target script's init function:
 --
---    pset_seq = include "flora/lib/pset_sequencer"
+--    pset_seq = include "floramx/lib/pset_sequencer"
 --    pset_seq.set_pset_path ("flora/")
 --    pset_seq.pset_seq_timer_init(pset_exclusion_tables, pset_exclusion_table_labels)
 
 
 -- (example with pset exclusions) code for steps 1-4 that goes to the end of the target script's init function:
 --
---    pset_seq = include "flora/lib/pset_sequencer"
+--    pset_seq = include "floramx/lib/pset_sequencer"
 --    pset_seq.set_pset_path ("flora/")
 --    local pset_param_exclusions_plant = {"plant1_instructions","plant2_instructions","plant1_angle","plant2_angle"}
 --    local pset_param_exclusions_nav = {"page_turner", "active_plant_switcher"}

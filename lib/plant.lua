@@ -5,11 +5,11 @@
 --
 -- includes: 
 --  plant_sounds = include("lib/plant_sounds") 
---  garden = include("flora/lib/garden/garden.lua")
---  l_system = include("flora/lib/l_system")
---  turtle_class = include("flora/lib/turtle")
---  matrix_stack = include("flora/lib/matrix_stack")
---  rule = include("flora/lib/rule")
+--  garden = include("floramx/lib/garden/garden.lua")
+--  l_system = include("floramx/lib/l_system")
+--  turtle_class = include("floramx/lib/turtle")
+--  matrix_stack = include("floramx/lib/matrix_stack")
+--  rule = include("floramx/lib/rule")
 
 -- todo list: 
 --  should resetting the garden reset the plant notes to start at the root note?
