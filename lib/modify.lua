@@ -174,22 +174,25 @@ modify.remove_letter = function()
       return
     elseif #successor > 1 then
       successor = modify.modify_sentence(successor, cursor_index, nil,"remove")
+      local active_control = modify.instruction_cursor_indices[active_plant][modify.active_control] - 1
+      if active_control > 1 then
+        modify.instruction_cursor_indices[active_plant][modify.active_control] = active_control
+      end
     end
     
     modify.update_ruleset(ruleset_id, predecessor, successor)
   elseif modify.active_control - (modify.num_rulesets * 2) + 1 == 3 then
-  local axiom = modify.get_axiom()
-  if #axiom > 1 then
-    axiom = modify.modify_sentence(axiom, cursor_index, new_letter,"remove")
-    modify.update_axiom(axiom)
-    -- plants[active_plant].setup(
-    --   plants[active_plant].current_instruction,
-    --   nil, 
-    --   true
-    -- )
+    local axiom = modify.get_axiom()
+    if #axiom > 1 then
+      axiom = modify.modify_sentence(axiom, cursor_index, new_letter,"remove")
+      modify.update_axiom(axiom)
+      -- plants[active_plant].setup(
+      --   plants[active_plant].current_instruction,
+      --   nil, 
+      --   true
+      -- )
+    end
   end
-end
-
 end
 
 --
@@ -205,7 +208,7 @@ modify.set_param_labels = function()
     "init angle",
     "x start",
     "y start",
-    "save"
+    -- "save"
   }
 end
 
@@ -221,7 +224,7 @@ modify.set_param_ids = function()
     "init_angle",
     "start_x",
     "start_y",
-    "save"
+    -- "save"
 
   }
 end
@@ -528,7 +531,8 @@ modify.enc = function(n, delta, alt_key_active)
     -- do nothing here
   elseif n == 2 then 
     local incr = util.clamp(delta, -1, 1)
-    modify.active_control = util.clamp(incr + modify.active_control, 1, #param_ids+(modify.num_rulesets*2) + #filesystem_param_ids)
+    modify.active_control = util.clamp(incr + modify.active_control, 1, #param_ids+(modify.num_rulesets*2) )
+    -- modify.active_control = util.clamp(incr + modify.active_control, 1, #param_ids+(modify.num_rulesets*2) + #filesystem_param_ids)
   elseif n == 3 and alt_key_active then 
     local incr = util.clamp(delta, -1, 1)
     if modify.active_control > 1 and modify.active_control <= modify.num_rulesets * 2 + 2 then

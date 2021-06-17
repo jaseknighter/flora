@@ -7,7 +7,13 @@ midi_out_device = midi.connect(1)
 
 set_midi_channels = function()
   -- print("set midi channels")
-  if pages.index == 4 then
+  if pages.index < 4 then
+    if active_plant == 1 then
+      if device_16n then set_16n_channel_and_cc_values(plant1_cc_channel) end
+    else
+      if device_16n then set_16n_channel_and_cc_values(plant2_cc_channel) end
+    end
+  elseif pages.index == 4 then
     if active_plant == 1 then
       if device_16n then set_16n_channel_and_cc_values(plow1_cc_channel) end
     else
@@ -93,7 +99,6 @@ end
 update16n = function()
   local data_table = {0x7d,0x00,0x00,0x0c}
   local m = midi
-
   for i=1,16,1
   do
     local hex_val = i<15 and "0x"..string.format("%x",channel_vals_16n[i]) or "0x01"
@@ -158,10 +163,12 @@ midi_event = function(data)
       receiving_configs_from_16n = true
     else
       -- handle other message types
-      if data[1] == midi_in_command1 then -- plant 1 engine note on
-        -- print("note_on", data[2])
-        envelopes[1].update_envelope()
-        local note_to_play = data[2]
+      local output_bandsaw = params:get("output_bandsaw")
+      local output_midi = params:get("output_midi")
+
+
+      local note_to_play = data[2]
+      if note_to_play then
         -- set a random scalar for the note about to play
         local num_active_cf_scalars = params:get("num_active_cf_scalars")
         local random_cf_scalars_index = params:get(cf_scalars[math.random(num_active_cf_scalars)])
@@ -170,25 +177,26 @@ midi_event = function(data)
         -- set a random note_frequency for the note about to play
         local num_note_freq_index = math.random(#tempo_offset_note_frequencies)
         local random_note_frequency = tempo_offset_note_frequencies[num_note_freq_index]
-          
         local freq = MusicUtil.note_num_to_freq(note_to_play) * cf_scalar
-        plants[1].sounds.engine_note_on(note_to_play, freq, random_note_frequency)
-      elseif data[1] == midi_in_command2 then -- plant 1 engine note on
-        envelopes[2].update_envelope()
-        local note_to_play = data[2]
-        -- set a random scalar for the note about to play
-        local num_active_cf_scalars = params:get("num_active_cf_scalars")
-        local random_cf_scalars_index = params:get(cf_scalars[math.random(num_active_cf_scalars)])
-        local cf_scalar = cf_scalars_map[random_cf_scalars_index]
-
-        -- set a random note_frequency for the note about to play
-        local num_note_freq_index = math.random(#tempo_offset_note_frequencies)
-        local random_note_frequency = tempo_offset_note_frequencies[num_note_freq_index]
-        
-        local freq = MusicUtil.note_num_to_freq(note_to_play) * cf_scalar
-        plants[2].sounds.engine_note_on(note_to_play, freq, random_cf_scalars_index)
-      elseif data[1] == 128 then -- note off
-        -- todo: figure out how to implement note off
+        note_to_play = MusicUtil.freq_to_note_num(freq)
+        if data[1] == midi_in_command1 then -- plant 1 engine note on
+          envelopes[1].update_envelope()
+          -- if output_midi == 3 or output_midi == 4 then
+          if output_bandsaw == 3 or output_bandsaw == 4 or output_midi == 3 or output_midi == 4 then
+            plants[1].sounds.engine_note_on(note_to_play, freq, random_note_frequency)
+          end
+          clock.run(plants[1].sounds.externals1.note_on,1, note_to_play, freq, random_note_frequency, nil,"midi")
+        end
+        if data[1] == midi_in_command2 then -- plant 2 engine note on
+          envelopes[2].update_envelope()
+          -- if output_midi == 3 or output_midi == 4 then
+          if output_bandsaw == 3 or output_bandsaw == 4 or output_midi == 3 or output_midi == 4 then
+            plants[2].sounds.engine_note_on(note_to_play, freq, random_note_frequency)
+          end
+          clock.run(plants[2].sounds.externals2.note_on,2, note_to_play, freq, random_note_frequency, nil,"midi")
+        elseif data[1] == 128 then -- note off
+          -- todo: figure out how to implement note off
+        end
       end
     end
   end

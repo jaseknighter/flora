@@ -9,14 +9,14 @@ function os.time2()
 end
 
 set_dirty = function()
-  clock.sleep(0.1)
+  -- clock.sleep(0.1)
   -- clock.sleep(0.05)
   if (pages.index == 4) then
     screen.clear()
   end
 
-  screen_dirty = true
-  clock.sleep(0.5)
+  -- screen_dirty = true
+  -- clock.sleep(0.5)
   -- clock.sleep(0.1)
   screen_dirty = true
 end
@@ -122,7 +122,7 @@ DEFAULT_GRAPH_NODES_P1[1].level = 0.00
 DEFAULT_GRAPH_NODES_P1[1].curve = 0.00
 DEFAULT_GRAPH_NODES_P1[2] = {}
 DEFAULT_GRAPH_NODES_P1[2].time = 0.00
-DEFAULT_GRAPH_NODES_P1[2].level = 1.0
+DEFAULT_GRAPH_NODES_P1[2].level = 4.0
 DEFAULT_GRAPH_NODES_P1[2].curve = -10
 DEFAULT_GRAPH_NODES_P1[3] = {}
 DEFAULT_GRAPH_NODES_P1[3].time = 0.50
@@ -248,9 +248,9 @@ midi_out_channel1 = 1
 midi_out_channel2 = 1
 midi_out_envelope_override1 = nil
 midi_out_envelope_override2 = nil
-midi_in_channel1_default = 1
-midi_in_channel2_default = 2
 
+plant1_cc_channel = 1
+plant2_cc_channel = 1
 plow1_cc_channel = 1
 plow2_cc_channel = 1
 water_cc_channel = 1

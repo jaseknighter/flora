@@ -82,9 +82,10 @@ The above axiom and rulesets will result in the following sentences when run six
 | G          | Move the turtle forward and draw a line                 | Resting note (silence)                                          |
 | \[         | Save the current position                               | Save the current note                                           |
 | ]          | Restore the last saved position                         | Restore the last saved note                                     |
-| +          | Rotate the turtle counterclockwise by the current angle | Increase the active note's pitch (see *Changes in pitch* below)   |
+| +          | Rotate the turtle counterclockwise by the current angle | Increase the active note's pitch (see *Changes in pitch* below) |
 | -          | Rotate the turtle clockwise by the current angle        | Decrease the active note's pitch (see *Changes in pitch* below) |
 | \|         | Rotate the turtle 180 degrees                           | No sound behavior                                               |
+| r          | Randomly increase or decrease the angle                 | Randomly increase or decrease the active note's pitch (see *Changes in pitch* below) |
 | other      | Other characters are ignored by the turtle              | No sound behavior                                               |
 
 ##### Changes in pitch
@@ -327,10 +328,10 @@ As of v0.4.0, Flora provides i2c integration with Whimsical Raps' W/2 eurorack m
 Flora's integration with W/2 is accessed via the PARAMETERS>EDIT menu. Prior to accessing the parameters for a particular mode, W/2 must first be put into the proper mode.
 
 ### W Syn sequencing
-W/Syn can be sequenced with Flora via i2c by setting the *wsyn* parameter to `on` in the *parameters>edit>w/syn* menu. When setting the *wsyn* parameter to `on`, each of Flora's plant sequences is sent to a separate W/Syn voice.
+W/Syn can be sequenced with Flora via i2c by setting the *wsyn output* parameter in the *parameters>edit>w/syn* menu. 
 
 ### Karplus-Strong sequencing
-W/Del supports Karplus-Strong style string synthesis, which can be sequenced with Flora via i2c by setting the *Karplus-Strong* parameter to `on` in the *parameters>edit>w/del* menu.
+W/Del supports Karplus-Strong style string synthesis, which can be sequenced with Flora via i2c by setting the *Karplus-Strong* parameter in the *parameters>edit>w/del* menu.
 
 ### Integration with other norns scripts
 Flora's code to integrate with W/2 may be relatively easily dropped into another norns script:

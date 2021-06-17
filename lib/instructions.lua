@@ -32,16 +32,20 @@ instructions.display = function ()
         else
           -- "post"
           screen.move(5, 44)
-          screen.text("e3: select letter")
+          screen.text("e3: select character")
           screen.move(5, 52)
           screen.text("k1 + e3: change letter value")
+          screen.move(5, 60)
+          screen.text("k2/k3: delete/add letter")
         end
       elseif modify.active_control <= modify.num_rulesets * 2 + 2 then
         -- "axiom"
         screen.move(5, 44)
-        screen.text("e3: select letter")
+        screen.text("e3: select character")
         screen.move(5, 52)
         screen.text("k1 + e3: change letter value")
+        screen.move(5, 60)
+        screen.text("k2/k3: delete/add letter")
       end
     else 
       screen.move(5, 44)

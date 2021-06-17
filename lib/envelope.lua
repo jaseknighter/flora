@@ -199,20 +199,14 @@ function Envelope:new(id, num_plants, env_nodes)
     e.cursor_location_y = (e.env_level_max/e.y_max) * e.y_max
 
     local graph_x = 10 + screen_size.x/num_plants*(e.id-1)
-    local graph_y = 15
+    local graph_y = 10
     local graph_width = screen_size.x/num_plants - 10
     local graph_height = 35
 
     e.graph:set_position_and_size(graph_x, graph_y, graph_width, graph_height)
     e.graph:set_active(false)
-    
-    -- for some reason this a default env length needs to be set here at the end of init
-    -- e.set_env_time(ENV_LENGTH_DEFAULT)
   end
   
-  e.get_env_time = function()
-    return e.env_time_max
-  end
   
   e.get_num_nodes = function()
     return #e.graph_nodes
@@ -250,7 +244,7 @@ function Envelope:new(id, num_plants, env_nodes)
       for i=1, #e.graph_nodes, 1
         do
         local node_level = e.graph_nodes[i].level
-        e.graph_nodes[i].level = node_level * (e.env_level_max / old_level_max)
+        e.graph_nodes[i].level = node_level * (e.env_level_max / old_level_max) < 10 and node_level * (e.env_level_max / old_level_max) or 10
       end
       e.graph:edit_graph(e.graph_nodes)
       e.graph:set_y_max(e.env_level_max)  
@@ -266,7 +260,6 @@ function Envelope:new(id, num_plants, env_nodes)
     -- engine.set_numSegs(#e.graph_nodes)
     
     local env_arrays = e.get_envelope_arrays()
-    
     -- note: to prevent warning messages when changing the number of envelope segments 
     --        (warnings like: "warning: wrong count of arguments for command 'set_env_levels'")
     --        the envelope arrays are filled in  with zeros.
@@ -281,7 +274,8 @@ function Envelope:new(id, num_plants, env_nodes)
     -- clock.run(reset_plow_control_params,e.id)
     
     -- reset_plow_control_params(e.id)
-    clock.run(set_dirty)
+    -- clock.run(set_dirty)
+    set_dirty()
 
   end
 
