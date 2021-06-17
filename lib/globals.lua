@@ -66,6 +66,8 @@ instruments_adjust={0,0,-12,-24}
 -- for community gardening
 nursery_path = norns.state.data .. "nursery/" 
 planted_plants_path = norns.state.data .. "planted_plants.tbl"
+nursery_path = _path.data .."flora/nursery/" 
+planted_plants_path = _path.data .. "flora/planted_plants.tbl"
   
 -- for params.lua
 WOBBLE_DEFAULT = 0.05

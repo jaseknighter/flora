@@ -133,10 +133,10 @@ function save_load.init()
   params:set_action("save_plant_to_nursery", function(x) textentry.enter(save_load.save_plant_to_nursery) end)
 
   params:add_trigger("remove_plant_from_nursery", "< REMOVE PLANT FROM NURSERY")
-  params:set_action("remove_plant_from_nursery", function(x) fileselect.enter(norns.state.data .. 'nursery/', save_load.remove_plant_from_nursery) end)
+  params:set_action("remove_plant_from_nursery", function(x) fileselect.enter(_path.data .. "flora/" .. 'nursery/', save_load.remove_plant_from_nursery) end)
 
   params:add_trigger("add_plant_to_garden", "> ADD PLANT TO GARDEN" )
-  params:set_action("add_plant_to_garden", function(x) fileselect.enter(norns.state.data .. 'nursery/', save_load.add_plant_to_garden) end)
+  params:set_action("add_plant_to_garden", function(x) fileselect.enter(_path.data .. "flora/" .. 'nursery/', save_load.add_plant_to_garden) end)
 
   params:add_trigger("remove_plant_from_garden", "< REMOVE PLANT FROM GARDEN" )
 
@@ -145,7 +145,7 @@ function save_load.init()
     listselect.enter(planted_plants, save_load.remove_plant_from_garden) 
   end)
 
-  -- params:set_action("remove_plant", function(x) fileselect.enter(norns.state.data .. 'nursery/', save_load.remove_plant) end)
+  -- params:set_action("remove_plant", function(x) fileselect.enter(_path.data .. "flora/" .. 'nursery/', save_load.remove_plant) end)
 end
 
 return save_load
