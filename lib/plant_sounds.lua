@@ -31,7 +31,10 @@ function plant_sounds:new(parent)
 
   ps.engine_note_on = function(note_to_play, freq, random_note_frequency)
     envelopes[parent.id].update_envelope()
-    engine.note_on(note_to_play, freq, random_note_frequency)
+    --engine.note_on(note_to_play, freq, random_note_frequency)
+    local ins=math.random(#instruments)
+    note_to_play=note_to_play+instruments_adjust[ins]
+    skeys:on({name=instruments[ins],pan=instruments_pan[ins],midi=note_to_play,velocity=120})
   end
     
   ps.play = function(node_obj)

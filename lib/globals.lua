@@ -55,7 +55,13 @@ end
 -------------------------------------------
 -- global variables
 -------------------------------------------
-engine.name = 'BandSaw'
+--engine.name = 'BandSaw'
+mxsamples=include("mx.samples/lib/mx.samples")
+engine.name="MxSamples"
+skeys=mxsamples:new()
+instruments={"ghost piano","ghost piano","ghost piano","ghost piano"}
+instruments_pan={-0.5,0,0.5,0}
+instruments_adjust={0,0,-12,-24}
 
 -- for community gardening
 nursery_path = norns.state.data .. "nursery/" 
