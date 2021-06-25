@@ -97,7 +97,8 @@ function init()
   end
 
   parameters.add_params(plants)
-  
+  params:set("mxsamples_scale_velocity",2)
+
   build_scale()
 
   for i=1,num_plants,1
