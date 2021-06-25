@@ -255,9 +255,9 @@ flora_params.add_params = function(plants)
     default = 1,
   }
   
-    params:add{
+  params:add{
     type = "number", id = "midi_out_device", name = "  midi out device",
-    min = 1, max = 4, default = 1,
+    min = 1, max = 16, default = 1,
     action = function(value) midi_out_device = midi.connect(value) end
   }
   

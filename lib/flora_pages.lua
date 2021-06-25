@@ -158,51 +158,58 @@ local draw_notes_on_plants = function()
   end  
 end
 
+
+local observe_screen = false
+local nav_off = false
+
+local set_observe_nav_timer = function()
+  clock.sleep(2)
+  if observe_screen == true then
+    nav_off = true 
+  end
+end
+
+
 local draw_top_nav = function()
-  screen.level(15)
-  screen.stroke()
-  screen.rect(0,0,screen_size.x,10)
-  screen.fill()
-  screen.level(0)
+  if nav_off == false then
+    screen.level(15)
+    screen.stroke()
+    screen.rect(0,0,screen_size.x,10)
+    screen.fill()
+    screen.level(0)
+  end
   screen.move(4,7)
+  
+  if (pages.index ~= 3 or show_instructions == true) and observe_screen == true then 
+    observe_screen = false 
+    nav_off = false
+  end
+
   if pages.index == 1 then
     local plant_info = show_instructions == true and "instructions" or plants[active_plant].get_plant_info()
     screen.text("plant " .. plant_info)
   elseif pages.index == 2 then
 		if show_instructions == true then
       screen.text("modify instructions")
-      
 		elseif menu_status == false then 
-      -- label = modify.get_control_labels()
-      -- label = "mod " .. modify.get_control_labels()
-      -- print("label",label)
-      -- screen.text(label)
   		modify.draw_modify_nav()
   		modify.redraw()
 		end
-    --[[
-    old code
-    local instruction_details = plants[active_plant].get_instructions_to_display()
-    local instructions = show_instructions == true and "instructions" or instruction_details[1]
-    local cursor_location = instruction_details[2]
-    cursor_location = cursor_location - screen.text_extents(instructions) - 1
-    screen.text("modify " .. instructions)
-    if show_instructions == false then
-      screen.move_rel(cursor_location , 2)
-      screen.text('_')
-    end
-    ]]
-    
   elseif pages.index == 3 then
     if show_instructions == true then
       screen.text("observe instructions")
     else 
-      screen.text("observe")
+      if nav_off == false then
+        screen.text("observe")
+      end
+      if observe_screen == false then
+        observe_screen = true
+        clock.run(set_observe_nav_timer)
+      end
     end
   elseif pages.index == 4 then
     local graph_active_node = envelopes[active_plant].active_node
     local env_nav_text = ''
-    
     if graph_active_node == -1 then 
       local env_level_text = envelopes[active_plant].get_env_level() 
       local mult = 10^2
@@ -228,7 +235,6 @@ local draw_top_nav = function()
     elseif show_env_mod_params then
       env_nav_text = envelopes[active_plant].get_control_label()
     end
-
     screen.text("plow " .. env_nav_text)
   elseif pages.index == 5 then
     if show_instructions == true then
@@ -276,9 +282,9 @@ local draw_top_nav = function()
       end
       water.draw_water_nav()
       water.redraw()
-      
     end
   end
+
   -- navigation marks
   screen.level(0)
   screen.rect(0,(pages.index-1)/5*10,2,2)

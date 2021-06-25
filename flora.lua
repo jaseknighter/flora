@@ -109,7 +109,7 @@ function init()
   water.init()
   garden.init()
   
-  set_redraw_timer()
+  redraw_timer()
   page_scroll(1)
   -- polls.init()
   for i=1,#midi.vports,1 
@@ -121,10 +121,7 @@ function init()
   end
   
   
-  --------------------------
-  -- setup pset sequencer and pset exclusions
-  --------------------------
-  pset_seq.set_pset_path ("flora/")
+  ----------- pset sequencer code starts here -------------
   
   -- plant modulation exclusion group
   local pset_param_exclusions_plant = {"plant1_instructions","plant2_instructions","plant1_angle","plant2_angle"}
@@ -151,18 +148,23 @@ function init()
   -- nav exclusion group
   local pset_param_exclusions_nav = {"page_turner", "active_plant_switcher"}
 
-  -- nav exclusion group
+  -- i/o exclusion group
   local pset_param_exclusions_inputs_outputs = {"output_bandsaw", "midi_device","plant1_cc_channel","plant2_cc_channel","plow1_cc_channel","plow2_cc_channel","water_cc_channel","output_midi","midi_out_device","midi_out_channel1","midi_out_channel2","output_crow1","output_crow2","output_crow3","output_crow4","output_jf","jf_mode","output_wdel_ks","wdel_mix","wdel_time_short","wdel_time_long","wdel_feedback","wdel_filter","wdel_clock","wdel_clock_ratio_div","wdel_clock_ratio_mul","wdel_freeze","wdel_frequency","wdel_mod_rate","wdel_mod_amount","wdel_freeze","output_wsyn","wsyn_ar_mode","wsyn_vel","wsyn_curve","wsyn_ramp","wsyn_fm_index","wsyn_fm_env","wsyn_fm_ratio_num","wsyn_fm_ratio_den","wsyn_lpg_time","wsyn_lpg_symmetry","wsyn_pluckylog","wsyn_randomize","wsyn_init","wtape_timestamp","wtape_seek","wtape_record","wtape_play","wtape_reverse","wtape_loop_active","wtape_echo_mode","wtape_loop_start","wtape_loop_end","wtape_loop_next","wtape_loop_next_trigger","wtape_loop_scale_mult","wtape_speed","wtape_freq","wtape_erase_strength","wtape_monitor_level","wtape_rec_level"}
-  
+
+  -- root note & scale exclusion group
+  local pset_param_exclusions_root_note_scale = {"scale_mode", "root_note"}
+
   -- table for exclusion group table names
-  local pset_exclusion_tables = {pset_param_exclusions_plant,pset_param_exclusions_plow,pset_param_exclusions_plow_modulation,pset_param_exclusions_water,pset_param_exclusions_nav,pset_param_exclusions_inputs_outputs}
+  local pset_exclusion_tables = {pset_param_exclusions_plant,pset_param_exclusions_plow,pset_param_exclusions_plow_modulation,pset_param_exclusions_water,pset_param_exclusions_nav,pset_param_exclusions_inputs_outputs, pset_param_exclusions_root_note_scale}
   
   -- table for exclusion group labels 
-  local pset_exclusion_table_labels = {"plant psets","plow psets","plow mod psets","water psets", "nav psets", "i/o psets"}
+  local pset_exclusion_table_labels = {"plant","plow","plow mod","water", "nav", "i/o", "root note/scale"}
   
-  -- call pset sequencer to initialize and setup exclusion groups
-  pset_seq.pset_seq_timer_init(pset_exclusion_tables, pset_exclusion_table_labels)
+  -- init the pset sequencer passing pset exclusion info
+  pset_seq.init(pset_exclusion_tables, pset_exclusion_table_labels)
   
+  ----------- pset sequencer code ends here -------------
+
   save_load.init()
   sharer:new()
   sharer:init()
@@ -188,10 +190,10 @@ end
 --------------------------
 -- redraw 
 --------------------------
-function set_redraw_timer()
+function redraw_timer()
   redrawtimer = metro.init(function() 
     local status = norns.menu.status()
-
+    -- local menu_status = true
     if status == false and menu_status == false and initializing == false then
       if screen_dirty then
         flora_pages.draw_pages()
