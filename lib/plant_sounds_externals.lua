@@ -46,6 +46,17 @@ function plant_sounds_externals:new(active_notes)
     local midi_out_channel = plant_id == 1 and midi_out_channel1 or midi_out_channel2
     local envelope_length = envelopes[plant_id].get_env_time()
     
+    -- mxsamples out
+    if (note_source == "flora" and (output_bandsaw == 2 or output_bandsaw == 4)) or
+      (note_source == "midi" and (output_bandsaw == 3 or output_bandsaw == 4))  then
+      local level = plant_id == 1 and params:get("plow1_max_level") or params:get("plow2_max_level")
+      local velocity = util.linlin(0,10,0,127,level)
+      local ins=math.random(#instruments)
+      note_to_play=note_to_play+instruments_adjust[ins]
+      skeys:on({name=instruments[ins],pan=instruments_pan[ins],midi=note_to_play,velocity=velocity})
+    end
+  
+
     -- MIDI out
     -- if (note_source == "flora" and output_bandsaw == 4) or output_midi > 1 then
     if (note_source == "flora" and (output_midi == 2 or output_midi == 4)) or
