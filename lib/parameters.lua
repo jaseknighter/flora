@@ -171,11 +171,31 @@ flora_params.add_params = function(plants)
   }
   ]]
 
-  
+  local midi_devices = {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
+
+  function params.get_midi_devices()
+    local devices = {}
+    for i=1,#midi.vports,1
+    do
+      table.insert(devices, i .. ". " .. midi.vports[i].name)
+    end
+    midi_devices = devices
+    local midi_in = params:lookup_param("midi_device")
+    midi_in.options = midi_devices
+    local midi_out = params:lookup_param("midi_out_device")
+    midi_out.options = midi_devices
+    
+    -- tab.print(midi_devices)
+  end
+
+
   params:add_separator("midi in")
   
   midi_in_device = {}
-  params:add{type = "number", id = "midi_device", name = "midi in device", min = 1, max = 16, default = 1, 
+
+  params:add{
+    type = "option", id = "midi_device", name = "device", options = midi_devices, 
+    min = 1, max = 16, default = 1, 
     action = function(value)
       midi_in_device.event = nil
       midi_in_device = midi.connect(value)
@@ -227,27 +247,6 @@ flora_params.add_params = function(plants)
     end
   }
 
-
-
-  -- params:add_separator("outputs")
-  
-  -- params:add{type = "option", id = "output", name = "output",
-  --   options = options.OUTPUT,
-  --   default = OUTPUT_DEFAULT,
-  --   action = function(value)
-  --     -- all_notes_off()
-  --     if value == 4 or value == 5 then 
-  --       crow.output[2].action = "{to(5,0),to(0,0.25)}"
-  --       crow.ii.pullup(true)
-  --       crow.ii.jf.mode(1)
-  --     -- elseif value == 5 then
-  --     --   crow.ii.pullup(true)
-  --     --   crow.ii.jf.mode(1)
-  --     end
-  --   end}
-  
-  -- options.OUTPUT = {"audio (a)", "midi (m)", "a + m", "a, m, c ii JF, c out 1+2", "c ii JF"}
-  
   params:add_separator("midi out")
 
   params:add{type = "option", id = "output_midi", name = "midi out",
@@ -256,13 +255,15 @@ flora_params.add_params = function(plants)
   }
   
   params:add{
-    type = "number", id = "midi_out_device", name = "  midi out device",
+    type = "option", id = "midi_out_device", name = "device", options = midi_devices,
     min = 1, max = 16, default = 1,
-    action = function(value) midi_out_device = midi.connect(value) end
+    action = function(value) 
+      midi_out_device = midi.connect(value) 
+    end
   }
   
   params:add{
-    type = "number", id = "midi_out_channel1", name = "  plant 1:midi out channel",
+    type = "number", id = "midi_out_channel1", name = "plant 1:midi out channel",
     min = 1, max = 16, default = midi_out_channel1,
     action = function(value)
       -- all_notes_off()
@@ -270,7 +271,7 @@ flora_params.add_params = function(plants)
     end
   }
     
-  params:add{type = "number", id = "midi_out_channel2", name = "  plant 2:midi out channel",
+  params:add{type = "number", id = "midi_out_channel2", name = "plant 2:midi out channel",
     min = 1, max = 16, default = midi_out_channel2,
     action = function(value)
       -- all_notes_off()
@@ -278,52 +279,7 @@ flora_params.add_params = function(plants)
     end
   }
 
-  --[[
-  params:add_separator("midi thru")
-
-  params:add{type = "option", id = "midi_thru_jf", name = "midi thru jf",
-    options = {"off","on"},
-    default = 1,
-    action = function(value)
-      if value == 2 then 
-        -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
-        crow.ii.pullup(true)
-        crow.ii.jf.mode(1)
-      elseif params:get("output_jf") == 1 then
- 
-        crow.ii.jf.mode(0)
-        -- crow.ii.pullup(false)
-      end
-    end
-  }
-
-  params:add{type = "option", id = "midi_thru_wsyn", name = "midi thru wsyn",
-    options = {"off","on"},
-    default = 1,
-    action = function(val)
-      params:set("output_wsyn", val)
-      -- if val == 2 then 
-        -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
-        -- crow.ii.pullup(true)
-        -- crow.ii.jf.mode(1)
-      -- end
-    end
-  }
-
-  params:add{type = "option", id = "midi_thru_wdel_ks", name = "midi thru wdel ks",
-  options = {"off","on"},
-  default = 1,
-  action = function(val)
-    local value = val == 2 and 4 or 1
-    params:set("output_wdel_ks", value)
-    -- if val == 2 then 
-      -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
-      -- crow.ii.pullup(true)
-      -- crow.ii.jf.mode(1)
-    -- end
-  end
-}
-]]
+  params.get_midi_devices()
 
 -- crow
   params:add_group("crow",4)

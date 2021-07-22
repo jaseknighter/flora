@@ -65,7 +65,6 @@ planted_plants_path = norns.state.data .. "planted_plants.tbl"
 WOBBLE_DEFAULT = 0.05
 FLUTTER_DEFAULT = 0.02
 updating_controls = false
--- OUTPUT_DEFAULT = 4
 SCREEN_FRAMERATE = 1/15
 INITIAL_PLANT_INSTRUCTIONS_1 = 3 
 INITIAL_PLANT_INSTRUCTIONS_2 = 3

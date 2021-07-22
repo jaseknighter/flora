@@ -202,8 +202,9 @@ midi_event = function(data)
   end
 end
 
-
 midi.add = function(device)
+  params.get_midi_devices()
+
 -- print("midi device add ", device.id, device.name)
  if device.name == "16n" then 
     device_16n = device 
