@@ -209,6 +209,7 @@ function redraw_timer()
       screen_dirty = true
     elseif menu_status == false and status == true then
       menu_status = true
+      params:get_midi_devices()
       _menu.rebuild_params()
     end
   end, SCREEN_FRAMERATE, -1)
