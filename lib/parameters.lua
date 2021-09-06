@@ -1211,7 +1211,7 @@ end
     end
   }
   
-     params:add{type = "control", id = "ldb", name = "ldb",  controlspec=cs.def{
+  params:add{type = "control", id = "ldb", name = "ldb",  controlspec=cs.def{
       min=0,
       max=500,
       warp='lin',
