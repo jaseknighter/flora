@@ -40,7 +40,7 @@ Engine_BandSaw : CroneEngine {
   var flutter_amp=0.03;
   var flutter_fixedfreq=6;
   var flutter_variationfreq=2;  
-  
+  var effect_pitchshift=0.5,pitchshift_note1=1,pitchshift_note2=3,pitchshift_note3=5;
   *new { arg context, doneCallback;
     ^super.new(context, doneCallback);
   }
@@ -61,7 +61,9 @@ Engine_BandSaw : CroneEngine {
       cf=500, rqmin=0.005, rqmax=0.008,
 //    cfmin=500, cfmax=2000, rqmin=0.005, rqmax=0.008,
       lsf=200, ldb=0, amp=1, out=0,
-      wobble_rpm=33, wobble_amp=0.05, wobble_exp=39, flutter_amp=0.03, flutter_fixedfreq=6, flutter_variationfreq=2;
+      wobble_rpm=33, wobble_amp=0.05, wobble_exp=39, flutter_amp=0.03, flutter_fixedfreq=6, flutter_variationfreq=2,
+      effect_pitchshift=0.5, pitchshift_midi_offset=0, 
+      pitchshift_note1=1,pitchshift_note2=3,pitchshift_note3=5;
   		
       var sig, env, envctl;
 
@@ -69,7 +71,8 @@ Engine_BandSaw : CroneEngine {
       var wow = Select.kr(signed_wobble > 0, signed_wobble, 0);
       var flutter = flutter_amp*SinOsc.kr(flutter_fixedfreq+LFNoise2.kr(flutter_variationfreq));
       var combined_defects = 1 + wow + flutter;
-      
+      var pshift_freq, trig,hasFreq,pitchshift_notes;
+
       env = Env.newClear(maxsegments);
       envctl = \env.kr(env.asArray);
       
@@ -84,6 +87,23 @@ Engine_BandSaw : CroneEngine {
       
       //Low Shelf Filter
       sig = BLowShelf.ar(sig, lsf, 0.5, ldb);
+
+
+      // Pitchshifting
+      # pshift_freq, hasFreq = Tartini.kr(sig);
+      pshift_freq = Clip.ar(freq, 40.midicps, 70.midicps);
+      trig = Impulse.ar(4);
+      pitchshift_notes = Dseq([pitchshift_note1,pitchshift_note2,pitchshift_note3], inf);
+      sig = (sig*(1-effect_pitchshift))+(effect_pitchshift*PitchShift.ar(
+        sig,
+        0.1,
+        // ((Demand.ar(trig, 0, notes)).midicps / freq),
+        // ((Demand.ar(trig, 0, notes) + (54 * combined_defects)).midicps / freq),
+        ((Demand.ar(trig, 0, pitchshift_notes) + (freq.cpsmidi + pitchshift_midi_offset)).midicps / freq) * combined_defects,
+        0,
+        0.01
+      ));
+
       sig = Balance2.ar(sig[0], sig[1], pan);
       sig = sig * amp * EnvGen.kr(envctl, doneAction:2);
       
@@ -193,7 +213,11 @@ Engine_BandSaw : CroneEngine {
             \wobble_exp, wobble_exp, // best an odd power, higher values produce sharper, smaller peak
             \flutter_amp, flutter_amp,
             \flutter_fixedfreq, flutter_fixedfreq,
-            \flutter_variationfreq, flutter_variationfreq
+            \flutter_variationfreq, flutter_variationfreq,
+            \effect_pitchshift,effect_pitchshift,
+            \pitchshift_note1,pitchshift_note1,
+            \pitchshift_note2,pitchshift_note2,
+            \pitchshift_note3,pitchshift_note3,
           ], 
   	      
   	      target: voiceGroup).onFree({ 
@@ -296,7 +320,28 @@ Engine_BandSaw : CroneEngine {
     this.addCommand("flutter_variationfreq", "f", { arg msg;
       flutter_variationfreq = msg[1];
     });
-    
+
+
+    this.addCommand("effect_pitchshift", "f", { arg msg;
+      msg[1].postln;
+      effect_pitchshift = msg[1];
+    });
+
+    this.addCommand("pitchshift_note1", "f", { arg msg;
+      msg[1].postln;
+      pitchshift_note1 = msg[1];
+    });
+
+    this.addCommand("pitchshift_note2", "f", { arg msg;
+      msg[1].postln;
+      pitchshift_note2 = msg[1];
+    });
+
+    this.addCommand("pitchshift_note3", "f", { arg msg;
+      msg[1].postln;
+      pitchshift_note3 = msg[1];
+    });
+
   }
 
   free {

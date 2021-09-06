@@ -1018,10 +1018,31 @@ end
     params:hide(note_frequency_offsets[i])
   end
 
-  
-    
-  
-
+  params:add{type = "trigger", id = "basic_sequence", name = "load basic sequence",
+    action = function()
+      -- set minimal plant instructions
+      params:set("plant1_instructions",12)
+      params:set("plant2_instructions",12)
+      -- set minimal envelopes
+      params:set("num_plow1_controls",3)
+      params:set("plow1_time1",0)
+      params:set("plow1_time2",0)
+      params:set("plow1_level2",4)
+      params:set("plow1_curve3",-10)
+      params:set("plow1_max_time",2)
+      params:set("plow1_max_level",5)
+      params:set("num_plow2_controls",3)
+      params:set("plow2_time1",0)
+      params:set("plow2_time2",0)
+      params:set("plow2_level2",4)
+      params:set("plow2_curve3",-10)
+      params:set("plow2_max_time",2)
+      params:set("plow2_max_level",5)
+      -- set tempo/note scalar params
+      params:set("note_scalar",1)
+      params:set("tempo_scalar_offset",1)
+    end
+  }
   --------------------------------
   -- wow and flutter parameters
   --------------------------------
@@ -1107,6 +1128,39 @@ end
     type = "number", id = "flutter_variationfreq", name = "flutter variation freq", min=1, max=1000, default=6,
     action=function(x)
       engine.flutter_variationfreq(x) 
+    end
+  }
+
+  --------------------------------
+  -- pitchshift parameters
+  --------------------------------
+  params:add_group("pitchshift",4)
+
+  params:add{
+    type = "control", id = "effect_pitchshift", name = "pitchshift", controlspec = controlspec.AMP,
+    action=function(x)
+      engine.effect_pitchshift(x) 
+    end
+  }
+
+  params:add{
+    type = "number", id = "pitchshift_note1", name = "pitchshift note 1", min=-24, max=24, default=1,
+    action=function(x)
+      engine.pitchshift_note1(x) 
+    end
+  }
+
+  params:add{
+    type = "number", id = "pitchshift_note1", name = "pitchshift note 2", min=-24, max=24, default=3,
+    action=function(x)
+      engine.pitchshift_note2(x) 
+    end
+  }
+
+  params:add{
+    type = "number", id = "pitchshift_note1", name = "pitchshift note 3", min=-24, max=24, default=5,
+    action=function(x)
+      engine.pitchshift_note3(x) 
     end
   }
 

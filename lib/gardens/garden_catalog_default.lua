@@ -121,6 +121,16 @@ local instructions_default = {
     angle = 20,
     starting_generation = 1,
     initial_turtle_rotation = 90
+  },{
+    -- Minimal sequence,
+    start_from = vector:new(screen_size.x/2-3, screen_size.y - 5),
+    ruleset = {{"F","F+F"}},
+    axiom = "F",
+    max_generations = 10, --15,
+    length = screen_size.y/4,
+    angle = 0,
+    starting_generation = 1,
+    initial_turtle_rotation = 90
   }
 }
 

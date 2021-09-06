@@ -62,6 +62,9 @@ nursery_path = norns.state.data .. "nursery/"
 planted_plants_path = norns.state.data .. "planted_plants.tbl"
   
 -- for params.lua
+controlspec.PITCHSHIFT = controlspec.AMP
+controlspec.PITCHSHIFT.default = 0.5
+  
 WOBBLE_DEFAULT = 0.05
 FLUTTER_DEFAULT = 0.02
 updating_controls = false
