@@ -1,5 +1,4 @@
 local instructions_default = {
-  
   {
     -- daisy,
     start_from = vector:new(screen_size.x/2-10, screen_size.y - 10),

@@ -10,7 +10,6 @@ end
 
 set_dirty = function()
   -- clock.sleep(0.1)
-  -- clock.sleep(0.05)
   if (pages.index == 4) then
     screen.clear()
   end

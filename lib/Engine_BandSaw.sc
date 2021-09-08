@@ -4,6 +4,7 @@
 // voice management:
 //    based on Mark Wheeler's (@markeats) MollyThePoly engine: https://github.com/markwheeler/molly_the_poly
 
+
 //////////////////////////////////////
 // notes and todo list:
 //    notes: 
@@ -17,6 +18,8 @@
 
 Engine_BandSaw : CroneEngine {
   classvar maxNumVoices = 10;
+  var maxCPU = 50;
+  var checkCPU=1;
   var voiceGroup;
   var voiceList;
   var amp=1;
@@ -40,7 +43,7 @@ Engine_BandSaw : CroneEngine {
   var flutter_amp=0.03;
   var flutter_fixedfreq=6;
   var flutter_variationfreq=2;  
-  var effect_pitchshift=0.5,pitchshift_note1=1,pitchshift_note2=3,pitchshift_note3=5;
+  var effect_pitchshift=0.5, pitchshift_offset=0, pitchshift_note1=1, pitchshift_note2=3, pitchshift_note3=5;
   *new { arg context, doneCallback;
     ^super.new(context, doneCallback);
   }
@@ -49,7 +52,19 @@ Engine_BandSaw : CroneEngine {
   
     voiceGroup = Group.new(context.xg);
     voiceList = List.new();
-    
+
+    fork { 
+      loop { 
+        if (context.server.peakCPU < maxCPU){
+          checkCPU = 1;
+        }{
+          checkCPU = 0;
+          ["peakCPU not ok, maxCPU limit exceeded", context.server.peakCPU].postln; 
+        };
+        0.01.wait; 
+      } 
+    };
+
     // default set of sawtoothwave frequencies
     //frequencies = [1/8,1/4,1/2,2/3,1,4/3,2,5/2,3,4];
 
@@ -62,7 +77,7 @@ Engine_BandSaw : CroneEngine {
 //    cfmin=500, cfmax=2000, rqmin=0.005, rqmax=0.008,
       lsf=200, ldb=0, amp=1, out=0,
       wobble_rpm=33, wobble_amp=0.05, wobble_exp=39, flutter_amp=0.03, flutter_fixedfreq=6, flutter_variationfreq=2,
-      effect_pitchshift=0.5, pitchshift_midi_offset=0, 
+      effect_pitchshift=0.5, pitchshift_offset=0, 
       pitchshift_note1=1,pitchshift_note2=3,pitchshift_note3=5;
   		
       var sig, env, envctl;
@@ -71,8 +86,9 @@ Engine_BandSaw : CroneEngine {
       var wow = Select.kr(signed_wobble > 0, signed_wobble, 0);
       var flutter = flutter_amp*SinOsc.kr(flutter_fixedfreq+LFNoise2.kr(flutter_variationfreq));
       var combined_defects = 1 + wow + flutter;
-      var pshift_freq, trig,hasFreq,pitchshift_notes;
-
+      var pshift_freq, pitchshift_notes, pitchshift_trig;
+      // Server.avgCPU.poll;
+      // context.server.avgCPU.poll;
       env = Env.newClear(maxsegments);
       envctl = \env.kr(env.asArray);
       
@@ -90,58 +106,25 @@ Engine_BandSaw : CroneEngine {
 
 
       // Pitchshifting
-      # pshift_freq, hasFreq = Tartini.kr(sig);
-      pshift_freq = Clip.ar(freq, 40.midicps, 70.midicps);
-      trig = Impulse.ar(4);
+      pshift_freq = cf * combined_defects;
+      pitchshift_trig = Impulse.ar(freq);
       pitchshift_notes = Dseq([pitchshift_note1,pitchshift_note2,pitchshift_note3], inf);
+      // checkCPU = context.server.peakCPU < maxCPU && context.server.avgCPU < maxCPU;
+      // checkCPU.poll;
+      effect_pitchshift = effect_pitchshift * checkCPU;
       sig = (sig*(1-effect_pitchshift))+(effect_pitchshift*PitchShift.ar(
         sig,
         0.1,
-        // ((Demand.ar(trig, 0, notes)).midicps / freq),
-        // ((Demand.ar(trig, 0, notes) + (54 * combined_defects)).midicps / freq),
-        ((Demand.ar(trig, 0, pitchshift_notes) + (freq.cpsmidi + pitchshift_midi_offset)).midicps / freq) * combined_defects,
+        ((Demand.ar(pitchshift_trig, 0, pitchshift_notes) + (pshift_freq.cpsmidi + pitchshift_offset)).midicps / pshift_freq),
         0,
         0.01
       ));
 
       sig = Balance2.ar(sig[0], sig[1], pan);
       sig = sig * amp * EnvGen.kr(envctl, doneAction:2);
-      
       Out.ar(out, sig);
     }).add;
       
-    ////////////////////////
-    // moved code into lua
-    ///////////////////////
-    /*
-    this.addCommand("set_numCFScalars", "f", { arg msg;
-      numCFScalars = msg[1];
-    });
-
-    //see note above regarding this command
-    this.addCommand("set_cfScalars", "ffff", { arg msg;
-      var cfScalarsMap;
-      cfScalarsMap = [0.5,1,2,4];
-      cfScalars = Array.new(numCFScalars);
-      for (0, numCFScalars-1, { arg i; 
-        var val = msg[i+1];
-        cfScalars.insert(i,cfScalarsMap[val-1]);
-      }); 
-    });
-    
-    this.addCommand("set_numFrequencies", "f", { arg msg;
-      numFrequencies = msg[1];
-    });
-
-    this.addCommand("set_frequencies", "ffffff", { arg msg;
-      frequencies = Array.new(numFrequencies);
-      for (0, numFrequencies-1, { arg i; 
-        var val = msg[i+1];
-        frequencies.insert(i,val);
-      }); 
-    });
-    */
-    
     this.addCommand("set_frequency", "f", { arg msg;
       frequency = msg[1];
     });

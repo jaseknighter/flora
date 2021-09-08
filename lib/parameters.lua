@@ -66,27 +66,7 @@ specs.TEMPO_SCALAR_OFFSET = cs.def{
                       -- quantum=1,
                       wrap=false,
                     }
---[[
-specs.CFHZMIN = cs.def{
-                  min=0.1,
-                  max=30,
-                  warp='lin',
-                  step=0.01,
-                  default=0.1,
-                  -- quantum=1,
-                  wrap=false,
-                }                 
-
-specs.CFHZMAX = cs.def{
-                  min=0.1,
-                  max=30,
-                  warp='lin',
-                  step=0.01,
-                  default=0.3,
-                  -- quantum=1,
-                  wrap=false,
-                }               
-]]
+                    
 specs.RQMIN = cs.def{
                 min=0.1,
                 max=30,
@@ -446,34 +426,6 @@ params:add_group("just friends",2)
       end
     end
   }
-
-
-  -- params:add{
-  --   type = "text", id = "plant1_sentence", name = "plant 1 sentence",
-  --   action = function(value)
-  --     if value ~= nil and initializing == false and value ~= plants[1].get_sentence() then
-  --       -- clock.run(set_sentence_param, 1, value)
-  --       plants[1].set_sentence(value)
-  --     end
-  --   end
-  -- }
-  -- params:hide("plant1_sentence")
-  
-  -- params:add{
-  --   type = "text", id = "plant2_sentence", name = "plant 2 sentence",
-  --   action = function(value)
-  --     if value ~= nil and initializing == false and value ~= plants[2].get_sentence() then
-  --       -- clock.run(set_sentence_param, 2, value)
-  --       plants[2].set_sentence(value)
-  --     end
-  --   end
-  -- }
-  -- params:hide("plant2_sentence")
-
-  -- set_sentence_param = function(plant_id, value)
-  --   clock.sleep(0.2)
-  --   plants[plant_id].set_sentence(value)
-  -- end
 
   --------------------------------
   -- plow (envelope) parameters
@@ -1169,62 +1121,8 @@ end
   
   params:bang()
   params:set("wsyn_init",1)
-  -- params:set("wsyn_v2_init",1)
 
   reset_note_frequencies()
-  
-  
---[[
-  params:add{
-    type = "control", 
-    id = "cfhzmin", 
-    name = "cfhzmin",  
-    controlspec = specs.CFHZMIN,
-    action=function(x)
-      engine.cfhzmin(x) 
-    end
-  }
-
-  params:add{
-    type = "control", 
-    id = "cfhzmax", 
-    name = "cfhzmax",  
-    controlspec=specs.CFHZMAX,
-    action=function(x)
-      engine.cfhzmax(x) 
-    end
-  }
-]]
-  
---[[
-   params:add{type = "control", id = "lsf", name = "lsf",  controlspec=cs.def{
-      min=0,
-      max=500,
-      warp='lin',
-      step=1,
-      default=0,
-      -- quantum=1,
-      wrap=false,
-    },
-    action=function(x)
-      engine.lsf(x) 
-    end
-  }
-  
-     params:add{type = "control", id = "ldb", name = "ldb",  controlspec=cs.def{
-      min=0,
-      max=500,
-      warp='lin',
-      step=1,
-      default=100,
-      -- quantum=1,
-      wrap=false,
-    },
-    action=function(x)
-      engine.ldb(x) 
-    end
-  }
-]]
 
 end
 
