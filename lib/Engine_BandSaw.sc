@@ -44,6 +44,8 @@ Engine_BandSaw : CroneEngine {
   var flutter_fixedfreq=6;
   var flutter_variationfreq=2;  
   var effect_pitchshift=0.5, pitchshift_offset=0, pitchshift_note1=1, pitchshift_note2=3, pitchshift_note3=5;
+  var notes, numNotes=24, scale;
+
   *new { arg context, doneCallback;
     ^super.new(context, doneCallback);
   }
@@ -52,13 +54,11 @@ Engine_BandSaw : CroneEngine {
   
     voiceGroup = Group.new(context.xg);
     voiceList = List.new();
+    notes = List.new();
 
     fork { 
       loop { 
-        if (context.server.peakCPU < maxCPU){
-          checkCPU = 1;
-        }{
-          checkCPU = 0;
+        if (context.server.peakCPU > maxCPU){
           ["peakCPU not ok, maxCPU limit exceeded", context.server.peakCPU].postln; 
         };
         0.01.wait; 
@@ -106,6 +106,12 @@ Engine_BandSaw : CroneEngine {
 
 
       // Pitchshifting
+      if (context.server.peakCPU < maxCPU){
+        checkCPU = 1;
+      }{
+        checkCPU = 0; //maxCPU exceeded: skip pitchshifting to prevent glitches
+      };
+
       pshift_freq = cf * combined_defects;
       pitchshift_trig = Impulse.ar(freq);
       pitchshift_notes = Dseq([pitchshift_note1,pitchshift_note2,pitchshift_note3], inf);
@@ -323,6 +329,16 @@ Engine_BandSaw : CroneEngine {
     this.addCommand("pitchshift_note3", "f", { arg msg;
       msg[1].postln;
       pitchshift_note3 = msg[1];
+    });
+
+    this.addCommand("update_scale", "ffffffffffffffffffffffff", { arg msg;
+      notes = Array.new(numNotes);
+      for (0, numNotes-1, { arg i;
+        var val = msg[i+1];
+        notes.insert(i,val);
+      }); 
+      // notes.postln;
+      scale = Buffer.loadCollection(context.server, notes);
     });
 
   }
