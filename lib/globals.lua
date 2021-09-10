@@ -8,6 +8,15 @@ function os.time2()
   return clock.get_beats()*clock.get_beat_sec()
 end
 
+-- from: https://stackoverflow.com/questions/640642/how-do-you-copy-a-lua-table-by-value
+function shallow_copy(t)
+  local t2 = {}
+  for k,v in pairs(t) do
+    t2[k] = v
+  end
+  return t2
+end
+
 set_dirty = function()
   -- clock.sleep(0.1)
   if (pages.index == 4) then
@@ -220,6 +229,7 @@ build_scale = function()
   for i = 1, num_to_add do
     table.insert(notes, notes[scale_length - num_to_add])
   end
+  engine.update_scale(table.unpack(notes))
 end
 
 set_scale_length = function()

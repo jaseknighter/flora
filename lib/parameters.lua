@@ -1086,12 +1086,35 @@ end
   --------------------------------
   -- pitchshift parameters
   --------------------------------
-  params:add_group("pitchshift",4)
+  params:add_group("pitchshift",6)
 
   params:add{
     type = "control", id = "effect_pitchshift", name = "pitchshift", controlspec = controlspec.AMP,
     action=function(x)
       engine.effect_pitchshift(x) 
+    end
+  }
+
+  -- WORK IN PROGRESS
+  -- params:add{
+  --   type = "option", id = "quantize_pitchshift", name = "quantize pitchshift", 
+  --   options = {"off","on"},default=2,
+  --   action=function(x)
+  --     engine.quantize_pitchshift(x-1) 
+  --   end
+  -- }
+
+  params:add{
+    type = "taper", id = "grain_size", name = "grain size", min=0.01, max=1, default = 0.1,
+    action=function(x)
+      engine.grain_size(x) 
+    end
+  }
+  
+  params:add{
+    type = "taper", id = "time_dispersion", name = "time dispersion", min=0.001, max=0.2, default = 0.01,
+    action=function(x)
+      engine.time_dispersion(x) 
     end
   }
 

@@ -48,7 +48,8 @@ Engine_BandSaw : CroneEngine {
   var flutter_fixedfreq=6;
   var flutter_variationfreq=2;  
   var effect_pitchshift=0.5, pitchshift_offset=0, pitchshift_note1=1, pitchshift_note2=3, pitchshift_note3=5;
-  var notes, scale_length=24, scale;
+  // var notes, scale_length=24, scale;
+  var scale_length=24;
   var trigger_frequency=1, base_note=0;
 
   *new { arg context, doneCallback;
@@ -69,8 +70,7 @@ Engine_BandSaw : CroneEngine {
     // voiceGroup = Group.new(context.xg);
     voiceGroup = ParGroup.head(context.xg);
     voices = Array.new();
-    notes = Array.new();
-
+    
     effectsBus = Bus.audio(context.server, 1);
 
     SynthDef(\BandSaw, {
@@ -83,7 +83,6 @@ Engine_BandSaw : CroneEngine {
       wobble_rpm=33, wobble_amp=0.05, wobble_exp=39, flutter_amp=0.03, flutter_fixedfreq=6, flutter_variationfreq=2;
   		
       var sig, env, envctl;
-
       var signed_wobble = wobble_amp*(SinOsc.kr(wobble_rpm/60)**wobble_exp);
       var wow = Select.kr(signed_wobble > 0, signed_wobble, 0);
       var flutter = flutter_amp*SinOsc.kr(flutter_fixedfreq+LFNoise2.kr(flutter_variationfreq));
@@ -104,22 +103,9 @@ Engine_BandSaw : CroneEngine {
       
       //Low Shelf Filter
       sig = BLowShelf.ar(sig, lsf, 0.5, ldb);
-
-
-      
-      if (context.server.avgCPU > maxCPU){
-        checkCPU = 1;
-      }{
-        checkCPU = 0; //maxCPU exceeded: skip pitchshifting to prevent glitches
-      };
-
-
       sig = Balance2.ar(sig[0], sig[1], pan);
       sig = sig * amp * EnvGen.kr(envctl, doneAction:2);
       Out.ar(out, sig);
-      // Out.ar(effectsBus, sig);
-      // Out.ar(0, sig);
-
     }).add;
       
 
@@ -127,24 +113,27 @@ Engine_BandSaw : CroneEngine {
     effects = SynthDef(\effects, {
 
       //pitschshift
-      // arg in, out, effect_pitchshift=0.5, pitchshift_offset=0, 
       arg in, out, trigger_frequency=1, effect_pitchshift=0.5, pitchshift_offset=0, base_note = 24,
-      pitchshift_note1=1,pitchshift_note2=3,pitchshift_note3=5;
+      pitchshift_note1=1,pitchshift_note2=3,pitchshift_note3=5,
+      scale, quantize=1, grain_size=0.1, time_dispersion=0.01;
       
       var pitchshift_notes, trigger;
-      var sig = In.ar(in, 1);
+      var sig = In.ar(in, 1), pitch_ratio;
       
-      // base_note
-      
+      // quantize notes::: WORK IN PROGRESS
+      // pitchshift_note1 = (quantize * (DegreeToKey.kr(scale,pitchshift_note1) - base_note.cpsmidi))+((1-quantize)*(pitchshift_note1));
+      // pitchshift_note2 = (quantize * (DegreeToKey.kr(scale,pitchshift_note2) - base_note.cpsmidi))+((1-quantize)*(pitchshift_note2));
+      // pitchshift_note3 = (quantize * (DegreeToKey.kr(scale,pitchshift_note3) - base_note.cpsmidi))+((1-quantize)*(pitchshift_note3));
+
       trigger = Impulse.ar(trigger_frequency);
       pitchshift_notes = Dseq([pitchshift_note1,pitchshift_note2,pitchshift_note3], inf);
-
+      pitch_ratio = ((Demand.ar(trigger, 0, pitchshift_notes) + (base_note.cpsmidi + pitchshift_offset)).midicps / base_note);
       sig = (sig*(1-effect_pitchshift))+(effect_pitchshift*PitchShift.ar(
         sig,
-        0.1,
-        ((Demand.ar(trigger, 0, pitchshift_notes) + (base_note.cpsmidi + pitchshift_offset)).midicps / base_note),
+        grain_size,
+        pitch_ratio,
         0,
-        0.01
+        time_dispersion
       ));
 
       Out.ar(out, sig);
@@ -199,7 +188,8 @@ Engine_BandSaw : CroneEngine {
 
       // set the effects's trigger frequency and base note
       effects.set(\trigger_frequency, frequency);
-      effects.set(\base_note, cfval);
+      // ["cfval.cpsmidi",cfval.cpsmidi].postln;
+      effects.set(\base_note, cfval.cpsmidi);
 
       // Add new voice 
       context.server.makeBundle(nil, {
@@ -343,12 +333,28 @@ Engine_BandSaw : CroneEngine {
     });
 
     this.addCommand("update_scale", "ffffffffffffffffffffffff", { arg msg;
-      notes = Array.new(scale_length);
+      var notes = Array.new(scale_length);
+      var scale;
       for (0, scale_length-1, { arg i;
         var val = msg[i+1];
         notes.insert(i,val);
       }); 
-      // scale = Buffer.loadCollection(context.server, notes);
+      (["update scale",notes]).postln;
+      scale = Buffer.loadCollection(context.server, notes);
+      effects.set(\scale, scale);
+    });
+
+    this.addCommand("quantize_pitchshift", "f", { arg msg;
+      msg[1].postln;
+      effects.set(\quantize, msg[1]);
+    });
+
+    this.addCommand("grain_size", "f", { arg msg;
+      effects.set(\grain_size, msg[1]);
+    });
+
+    this.addCommand("time_dispersion", "f", { arg msg;
+      effects.set(\time_dispersion, msg[1]);
     });
 
   }
