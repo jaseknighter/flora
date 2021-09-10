@@ -18,15 +18,20 @@
 
 Engine_BandSaw : CroneEngine {
   classvar maxNumVoices = 10;
+
   var maxCPU = 50;
-  var checkCPU=1;
+  
   var voiceGroup;
-  var voiceList;
+  var <voices;
+  var effects;
+  var effectsBus;
+  var controlBus;
+
   var amp=1;
   var gain=1;
   var pan = 0;
   var maxsegments = 20;
-  var env_levels, env_times, env_curves;
+  var num_env_segments, env_levels, env_times, env_curves;
   var detune=0.2;
   var cfhzmin=0.1;
   var cfhzmax=0.3;
@@ -35,7 +40,6 @@ Engine_BandSaw : CroneEngine {
   var lsf=200;
   var ldb=0;
   var frequency = 1;
-  var bandsaw;
   
   var wobble_rpm=33;
   var wobble_amp=0.05; 
@@ -44,41 +48,39 @@ Engine_BandSaw : CroneEngine {
   var flutter_fixedfreq=6;
   var flutter_variationfreq=2;  
   var effect_pitchshift=0.5, pitchshift_offset=0, pitchshift_note1=1, pitchshift_note2=3, pitchshift_note3=5;
-  var notes, numNotes=24, scale;
+  var notes, scale_length=24, scale;
+  var trigger_frequency=1, base_note=0;
 
   *new { arg context, doneCallback;
     ^super.new(context, doneCallback);
   }
   
   alloc {
-  
-    voiceGroup = Group.new(context.xg);
-    voiceList = List.new();
-    notes = List.new();
 
-    fork { 
-      loop { 
-        if (context.server.peakCPU > maxCPU){
-          ["peakCPU not ok, maxCPU limit exceeded", context.server.peakCPU].postln; 
-        };
-        0.01.wait; 
-      } 
-    };
+    // fork { 
+    //   loop { 
+    //     if ((context.server.peakCPU > maxCPU) && (context.server.avgCPU > maxCPU)){
+    //       ["peakCPU/avgCPU not ok, maxCPU limit exceeded", context.server.peakCPU].postln; 
+    //     };
+    //     0.01.wait; 
+    //   } 
+    // };
 
-    // default set of sawtoothwave frequencies
-    //frequencies = [1/8,1/4,1/2,2/3,1,4/3,2,5/2,3,4];
+    // voiceGroup = Group.new(context.xg);
+    voiceGroup = ParGroup.head(context.xg);
+    voices = Array.new();
+    notes = Array.new();
 
-    //bandpass filtered sawtooth wave
-    bandsaw = SynthDef(\BandSaw, {
-      arg c1=1, c2=(-1),
+    effectsBus = Bus.audio(context.server, 1);
+
+    SynthDef(\BandSaw, {
+      // arg out, effectsBus,
+      arg out,
       freq=1/2, 
       detune=0.2, pan=0, cfhzmin=0.1,cfhzmax=0.3,
       cf=500, rqmin=0.005, rqmax=0.008,
-//    cfmin=500, cfmax=2000, rqmin=0.005, rqmax=0.008,
-      lsf=200, ldb=0, amp=1, out=0,
-      wobble_rpm=33, wobble_amp=0.05, wobble_exp=39, flutter_amp=0.03, flutter_fixedfreq=6, flutter_variationfreq=2,
-      effect_pitchshift=0.5, pitchshift_offset=0, 
-      pitchshift_note1=1,pitchshift_note2=3,pitchshift_note3=5;
+      lsf=200, ldb=0, amp=1, 
+      wobble_rpm=33, wobble_amp=0.05, wobble_exp=39, flutter_amp=0.03, flutter_fixedfreq=6, flutter_variationfreq=2;
   		
       var sig, env, envctl;
 
@@ -86,9 +88,8 @@ Engine_BandSaw : CroneEngine {
       var wow = Select.kr(signed_wobble > 0, signed_wobble, 0);
       var flutter = flutter_amp*SinOsc.kr(flutter_fixedfreq+LFNoise2.kr(flutter_variationfreq));
       var combined_defects = 1 + wow + flutter;
-      var pshift_freq, pitchshift_notes, pitchshift_trig;
-      // Server.avgCPU.poll;
-      // context.server.avgCPU.poll;
+      var checkCPU;
+
       env = Env.newClear(maxsegments);
       envctl = \env.kr(env.asArray);
       
@@ -105,32 +106,59 @@ Engine_BandSaw : CroneEngine {
       sig = BLowShelf.ar(sig, lsf, 0.5, ldb);
 
 
-      // Pitchshifting
-      if (context.server.peakCPU < maxCPU){
+      
+      if (context.server.avgCPU > maxCPU){
         checkCPU = 1;
       }{
         checkCPU = 0; //maxCPU exceeded: skip pitchshifting to prevent glitches
       };
 
-      pshift_freq = cf * combined_defects;
-      pitchshift_trig = Impulse.ar(freq);
-      pitchshift_notes = Dseq([pitchshift_note1,pitchshift_note2,pitchshift_note3], inf);
-      // checkCPU = context.server.peakCPU < maxCPU && context.server.avgCPU < maxCPU;
-      // checkCPU.poll;
-      effect_pitchshift = effect_pitchshift * checkCPU;
-      sig = (sig*(1-effect_pitchshift))+(effect_pitchshift*PitchShift.ar(
-        sig,
-        0.1,
-        ((Demand.ar(pitchshift_trig, 0, pitchshift_notes) + (pshift_freq.cpsmidi + pitchshift_offset)).midicps / pshift_freq),
-        0,
-        0.01
-      ));
 
       sig = Balance2.ar(sig[0], sig[1], pan);
       sig = sig * amp * EnvGen.kr(envctl, doneAction:2);
       Out.ar(out, sig);
+      // Out.ar(effectsBus, sig);
+      // Out.ar(0, sig);
+
     }).add;
       
+
+    //effects
+    effects = SynthDef(\effects, {
+
+      //pitschshift
+      // arg in, out, effect_pitchshift=0.5, pitchshift_offset=0, 
+      arg in, out, trigger_frequency=1, effect_pitchshift=0.5, pitchshift_offset=0, base_note = 24,
+      pitchshift_note1=1,pitchshift_note2=3,pitchshift_note3=5;
+      
+      var pitchshift_notes, trigger;
+      var sig = In.ar(in, 1);
+      
+      // base_note
+      
+      trigger = Impulse.ar(trigger_frequency);
+      pitchshift_notes = Dseq([pitchshift_note1,pitchshift_note2,pitchshift_note3], inf);
+
+      sig = (sig*(1-effect_pitchshift))+(effect_pitchshift*PitchShift.ar(
+        sig,
+        0.1,
+        ((Demand.ar(trigger, 0, pitchshift_notes) + (base_note.cpsmidi + pitchshift_offset)).midicps / base_note),
+        0,
+        0.01
+      ));
+
+
+      // [base_note].poll;
+      [sig,trigger_frequency,pitchshift_note1,pitchshift_note2,pitchshift_note3].poll;
+      
+      Out.ar(out, sig);
+    }).play(target: context.xg, args: [\in, effectsBus, \out, context.out_b], addAction: \addToTail);
+
+
+
+    context.server.sync;
+    ("postsync2").postln;
+
     this.addCommand("set_frequency", "f", { arg msg;
       frequency = msg[1];
     });
@@ -138,20 +166,34 @@ Engine_BandSaw : CroneEngine {
     
     this.addCommand(\note_on, "fff", { arg msg;
       var voiceToRemove, newVoice;
-      //var freqStream = Prand(frequencies,1).asStream.next;
       var id = msg[1];
       var cfval = msg[2];
       var frequency = msg[3];
-      //var cfval = val;
-      var c1=1, c2=(-1);
-      //var cfScalarStream = Prand(cfScalars,1).asStream.next;
-      var env = Array.new(~numSegs-1);
+      var env = Array.new(num_env_segments-1);
+
       if (frequency < 0.2) {
         frequency = 0.2;
         ("frequency too low!!!!").postln;
       };
-        
-      for (0, ~numSegs-1, { arg i;
+
+      // Remove voice if ID matches or there are too many
+      voiceToRemove = voices.detect{arg item; item.id == id};
+      // ([voices.size, maxNumVoices,voices.size >= maxNumVoices]).postln;
+      if(voiceToRemove.isNil && (voices.size >= maxNumVoices), {
+        voiceToRemove = voices.detect{arg v; v.gate == 0};
+      	if(voiceToRemove.isNil, {
+      	  voiceToRemove = voices.last;
+      	});
+      });
+      
+      if(voiceToRemove.notNil, {
+        voiceToRemove.theSynth.set(\gate, 0);
+        voiceToRemove.theSynth.set(\killGate, 0);
+        voices.remove(voiceToRemove);
+      });
+
+      // set the envelope
+      for (0, num_env_segments-1, { arg i;
         var xycSegment = Array.new(3);
         xycSegment.insert(0, env_times[i]);
         xycSegment.insert(1, env_levels[i]);
@@ -159,42 +201,28 @@ Engine_BandSaw : CroneEngine {
         env.insert(i,xycSegment);
       });
 
-      // Remove voice if ID matches or there are too many
-      voiceToRemove = voiceList.detect{arg item; item.id == id};
-      //(voiceList.size >= maxNumVoices).postln;
-      if(voiceToRemove.isNil && (voiceList.size >= maxNumVoices), {
-        voiceToRemove = voiceList.detect{arg v; v.gate == 0};
-      	if(voiceToRemove.isNil, {
-      	  voiceToRemove = voiceList.last;
-      	});
-      });
-      
-      if(voiceToRemove.notNil, {
-        voiceToRemove.theSynth.set(\gate, 0);
-        voiceToRemove.theSynth.set(\killGate, 0);
-        voiceList.remove(voiceToRemove);
-      });
-  			
       env = Env.xyc(env);
+
+      // set the effects's trigger frequency and base note
+      // (["set effects",frequency,cfval]).postln;
+      
+      effects.set(\trigger_frequency, frequency);
+      effects.set(\base_note, cfval);
 
       // Add new voice 
       context.server.makeBundle(nil, {
         newVoice = (id: id, theSynth: Synth("BandSaw",
           [
+            \out, effectsBus,
             \amp, amp,
             \env, env,
-            //\freq, freqStream,
             \freq, frequency,
             \detune, Pwhite(0,0.1).asStream.next,
             \cfhzmin, cfhzmin,
             \cfhzmax, cfhzmax,
-            \rqmin, rqmin, //0.005, //0.0001, 
-            \rqmax, rqmax, //0.008, //1, 
+            \rqmin, rqmin, 
+            \rqmax, rqmax, 
             \cf, cfval,
-//          \cfmin, cfval * cfScalarStream, 
-//
-//          \cfmax, cfval * cfScalarStream,
-//          \cfmax, cfval * cfScalarStream * Pwhite(1.008,1.025).asStream.next,
             \lsf, lsf,
             \ldb, ldb,
             \wobble_rpm, wobble_rpm,
@@ -203,47 +231,41 @@ Engine_BandSaw : CroneEngine {
             \flutter_amp, flutter_amp,
             \flutter_fixedfreq, flutter_fixedfreq,
             \flutter_variationfreq, flutter_variationfreq,
-            \effect_pitchshift,effect_pitchshift,
-            \pitchshift_note1,pitchshift_note1,
-            \pitchshift_note2,pitchshift_note2,
-            \pitchshift_note3,pitchshift_note3,
           ], 
-  	      
   	      target: voiceGroup).onFree({ 
-            //("free").postln;
-            voiceList.remove(newVoice); 
+            // ("free").postln;
+            voices.remove(newVoice); 
           })
         );
-        
-        voiceList.addFirst(newVoice);
+        voices.addFirst(newVoice);
       });
     });
 		
 		
 		
     this.addCommand("set_numSegs", "f", { arg msg;
-    	~numSegs = msg[1];
+    	num_env_segments = msg[1];
     });
     
     this.addCommand("set_env_levels", "ffffffffffffffffffff", { arg msg;
-      env_levels = Array.new(~numSegs);
-      for (0, ~numSegs-1, { arg i;
+      env_levels = Array.new(num_env_segments);
+      for (0, num_env_segments-1, { arg i;
         var val = msg[i+1];
         env_levels.insert(i,val);
       }); 
     });
     
     this.addCommand("set_env_times", "ffffffffffffffffffff", { arg msg;
-      env_times = Array.new(~numSegs);
-      for (0, ~numSegs-1, { arg i; 
+      env_times = Array.new(num_env_segments);
+      for (0, num_env_segments-1, { arg i; 
         var val = msg[i+1];
         env_times.insert(i,val);
       }); 
     });
     
     this.addCommand("set_env_curves", "ffffffffffffffffffff", { arg msg;
-      env_curves = Array.new(~numSegs);
-      for (0, ~numSegs-1, { arg i;
+      env_curves = Array.new(num_env_segments);
+      for (0, num_env_segments-1, { arg i;
         var val = msg[i+1];
         env_curves.insert(i,val);
       }); 
@@ -312,39 +334,40 @@ Engine_BandSaw : CroneEngine {
 
 
     this.addCommand("effect_pitchshift", "f", { arg msg;
-      msg[1].postln;
-      effect_pitchshift = msg[1];
+      effects.set(\effect_pitchshift, msg[1]);
+
     });
 
     this.addCommand("pitchshift_note1", "f", { arg msg;
-      msg[1].postln;
-      pitchshift_note1 = msg[1];
+      effects.set(\pitchshift_note1, msg[1]);
     });
 
     this.addCommand("pitchshift_note2", "f", { arg msg;
-      msg[1].postln;
-      pitchshift_note2 = msg[1];
+      effects.set(\pitchshift_note2, msg[1]);
     });
 
     this.addCommand("pitchshift_note3", "f", { arg msg;
-      msg[1].postln;
-      pitchshift_note3 = msg[1];
+      effects.set(\pitchshift_note3, msg[1]);
     });
 
     this.addCommand("update_scale", "ffffffffffffffffffffffff", { arg msg;
-      notes = Array.new(numNotes);
-      for (0, numNotes-1, { arg i;
+      notes = Array.new(scale_length);
+      for (0, scale_length-1, { arg i;
         var val = msg[i+1];
         notes.insert(i,val);
       }); 
       // notes.postln;
-      scale = Buffer.loadCollection(context.server, notes);
+      // scale = Buffer.loadCollection(context.server, notes);
     });
 
   }
 
   free {
     voiceGroup.free;
+    effects.free;
+    effectsBus.free;
+    controlBus.free;
 	  //replyFunc.free;
+    ("free flora objects").postln;
   }
 }
