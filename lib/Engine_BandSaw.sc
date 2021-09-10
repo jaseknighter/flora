@@ -147,17 +147,12 @@ Engine_BandSaw : CroneEngine {
         0.01
       ));
 
-
-      // [base_note].poll;
-      [sig,trigger_frequency,pitchshift_note1,pitchshift_note2,pitchshift_note3].poll;
-      
       Out.ar(out, sig);
     }).play(target: context.xg, args: [\in, effectsBus, \out, context.out_b], addAction: \addToTail);
 
 
 
     context.server.sync;
-    ("postsync2").postln;
 
     this.addCommand("set_frequency", "f", { arg msg;
       frequency = msg[1];
@@ -178,7 +173,6 @@ Engine_BandSaw : CroneEngine {
 
       // Remove voice if ID matches or there are too many
       voiceToRemove = voices.detect{arg item; item.id == id};
-      // ([voices.size, maxNumVoices,voices.size >= maxNumVoices]).postln;
       if(voiceToRemove.isNil && (voices.size >= maxNumVoices), {
         voiceToRemove = voices.detect{arg v; v.gate == 0};
       	if(voiceToRemove.isNil, {
@@ -204,8 +198,6 @@ Engine_BandSaw : CroneEngine {
       env = Env.xyc(env);
 
       // set the effects's trigger frequency and base note
-      // (["set effects",frequency,cfval]).postln;
-      
       effects.set(\trigger_frequency, frequency);
       effects.set(\base_note, cfval);
 
@@ -356,7 +348,6 @@ Engine_BandSaw : CroneEngine {
         var val = msg[i+1];
         notes.insert(i,val);
       }); 
-      // notes.postln;
       // scale = Buffer.loadCollection(context.server, notes);
     });
 
