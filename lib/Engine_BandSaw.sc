@@ -118,7 +118,7 @@ Engine_BandSaw : CroneEngine {
       scale, quantize=1, grain_size=0.1, time_dispersion=0.01;
       
       var pitchshift_notes, trigger;
-      var sig = In.ar(in, 1), pitch_ratio;
+      var sig = In.ar(in, 2), pitch_ratio;
       
       // quantize notes::: WORK IN PROGRESS
       // pitchshift_note1 = (quantize * (DegreeToKey.kr(scale,pitchshift_note1) - base_note.cpsmidi))+((1-quantize)*(pitchshift_note1));
