@@ -29,7 +29,6 @@ function plant:new(p_id, starting_instruction)
   local p = {}
   p.index = 1
   setmetatable(p, plant)
-
   p.sounds = plant_sounds:new(p)
   p.id = p_id and p_id or 1   
   p.note_position = vector:new(-10,-10)
@@ -54,7 +53,7 @@ function plant:new(p_id, starting_instruction)
   p.ruleset = {}
   p.initial_turtle_rotation = 90
 
-
+  
 
 
   p.update_ruleset = function(ruleset_id, predecessor, successor)
@@ -252,7 +251,6 @@ function plant:new(p_id, starting_instruction)
   p.setup = function(instruction_number, target_generation)
     initializing = true
     p.initializing = true
-    p.current_instruction = instruction_number
     p.current_generation = 0
     p.instr[instruction_number] = p.get_instructions(instruction_number)
     if p.id == 1 then
@@ -271,6 +269,7 @@ function plant:new(p_id, starting_instruction)
     p.ruleset = p.instr[instruction_number].ruleset
     p.axiom = p.instr[instruction_number].axiom
     p.max_generations = p.instr[instruction_number].max_generations
+      
     p.length = p.instr[instruction_number].length
 
     local p_instr_num = p.id == 1 and "plant1_instructions" or "plant2_instructions"
@@ -283,13 +282,22 @@ function plant:new(p_id, starting_instruction)
     p.initial_turtle_rotation = p.instr[instruction_number].initial_turtle_rotation
     target_generation = target_generation and target_generation or p.instr[instruction_number].starting_generation
     p.starting_generation = target_generation
-    p.lsys = l_system:new(p.axiom,p.ruleset)
+    -- p.lsys = l_system:new(p.axiom,p.ruleset)
+    if p.lsys == nil or p.current_instruction ~= instruction_number then
+      p.lsys = l_system:new(p.axiom,p.ruleset)
+      p.lsys.reset_random_angles()
+    else 
+      p.lsys.update(p.axiom,p.ruleset)
+    end
+    p.current_instruction = instruction_number
     
+
     p.sentence = p.get_sentence()
     p.turtle = turtle_class:new(
       p.sentence, 
       p.length or 35, 
-      math.rad(p.instr[instruction_number].angle or 0))
+      math.rad(p.instr[instruction_number].angle or 0)
+    )
     
     if (target_generation) then
       for i=1, target_generation, 1
@@ -314,18 +322,27 @@ function plant:new(p_id, starting_instruction)
       p.turtle.push()
       local previous_sentence = p.get_sentence()
       p.turtle.set_previous_todo(previous_sentence)
-      p.lsys.generate(direction)
+      p.lsys.generate(direction,p.random_angles)
       local new_sentence = p.get_sentence()
+      p.current_generation = p.current_generation + direction
       p.turtle.set_todo(new_sentence)
       p.turtle.pop()
-      p.current_generation = p.current_generation + direction
       p.restart_rendering = true
     end
   end
   
-  -- local render_percentage_completed = 0
-  -- local show_petal = false
-  -- local check_petal = 0
+  p.switch_active_plant = function()
+    active_plant = active_plant == 1 and 2 or 1
+    local inactive_plant = active_plant == 1 and 2 or 1
+    plant1_screen_level = active_plant == 1 and 3 or 1
+    plant2_screen_level = active_plant == 2 and 3 or 1
+    plants[active_plant].set_active(true)
+    plants[inactive_plant].set_active(false)
+    envelopes[active_plant].set_active(true)
+    envelopes[inactive_plant].set_active(false)
+    set_midi_channels()
+  end
+  
   
   p.reset_instructions = function()
     p.sentence_cursor_index = 1
@@ -343,9 +360,9 @@ function plant:new(p_id, starting_instruction)
     local next_instruction = p.current_instruction + rotate_by
     local next_generation = p.current_generation + increment_generation_by
     if (next_generation > 0 and 
-        next_generation <= p.max_generations and 
-        next_instruction > 0 and 
-        next_instruction <= num_instructions) then
+      next_generation <= p.max_generations and 
+      next_instruction > 0 and 
+      next_instruction <= num_instructions) then
       if (p.initializing == false and p.changing_instructions == false) then
         p.changing_instructions = true
         local target_generation = increment_generation_by ~= 0 and p.current_generation + increment_generation_by or 0
@@ -357,7 +374,6 @@ function plant:new(p_id, starting_instruction)
   end 
   
   p.change_instructions = function(next_instruction, target_generation)
-    -- clock.sleep(0.1)
     if (p.initializing == false) then
       -- print("CI", next_instruction, target_generation)
       p.setup(next_instruction, target_generation)

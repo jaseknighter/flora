@@ -13,6 +13,7 @@
 --    +: rotate forward (by t.theta)
 --    -: rotate backward (by -t.theta)
 --  extended symbols
+--    !: rotate by a random amount
 --    f: move forward without drawing
 --    |: turn around 180 degrees
 --    r: randomly increase or decrease angle by one degree
@@ -23,6 +24,9 @@ local matrix_stack = include("flora/lib/matrix_stack")
 local turtle = {}
 turtle.__index = turtle
 
+-- s: sentence
+-- l: length
+-- th: theta
 function turtle:new(s, l, th)
   local t = {}
   setmetatable(t, turtle)
@@ -55,10 +59,8 @@ function turtle:new(s, l, th)
   
   local render_amount = 10
   local render_start = 0
-  local render_complete = 0
-  
-  local rotation = 0
-  
+
+    
   t.render = function(restart)
     if (restart) then 
       render_start = 0
@@ -73,7 +75,6 @@ function turtle:new(s, l, th)
       render_end = #t.todo
     end
     
-    local first_angle_processed = false
     for i=1, #t.todo, 1
     do
       local c = string.sub(t.todo, i, i)
@@ -100,6 +101,19 @@ function turtle:new(s, l, th)
         end
         screen.stroke()
         t.translate(position_end.x, position_end.y)
+      elseif (c == '!') then
+        local random_angle
+        local check_polarity = string.sub(t.todo, i+1, i+1)
+        if check_polarity == "_" then
+          random_angle = tonumber(string.sub(t.todo, i+1, i+4))
+          -- print("randang neg",random_angle)
+        else
+          random_angle = tonumber(string.sub(t.todo, i+1, i+3))
+          -- print("randang pos",random_angle)
+        end
+        if random_angle then t.rotate(math.rad(random_angle)) end
+        -- string.sub(t.todo, i+1, i+1)
+        -- print("found !",string.sub(t.todo, i, i+30))
       elseif (c == '+') then
         t.rotate(t.theta)
       elseif (c == '-') then
@@ -144,8 +158,9 @@ function turtle:new(s, l, th)
     end
   end
   
-  t.set_todo = function(s)
+  t.set_todo = function(s,gen)
     t.todo = s
+    t.cgen = gen
     render_amount = 2
     render_start = 0
     render_complete = 0

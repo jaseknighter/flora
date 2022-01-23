@@ -107,7 +107,7 @@ flora_params.add_params = function(plants)
     -- encoders_and_keys.enc(1,x-pages.index)
     if initializing == false then
       if (x==1 and active_plant == 2) or (x==2 and active_plant == 1) then 
-        switch_active_plant() 
+        plants[active_plant].switch_active_plant() 
       end
     end
   end}

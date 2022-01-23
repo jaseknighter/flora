@@ -122,7 +122,7 @@ function plant_sounds:new(parent)
     ps.note = last_note and last_note or #notes/2
     local s_id = last_s_id and last_s_id or parent.current_sentence_id
     if (initializing == false and parent.changing_instructions == false and s_id == parent.current_sentence_id) then
-      i = last_index and last_index + 1 or 1
+      local i = last_index and last_index + 1 or 1
       local l = string.sub(s, i, i)
       local node_obj = {}
       node_obj.s_id = parent.current_sentence_id
@@ -148,11 +148,37 @@ function plant_sounds:new(parent)
       elseif l == "]" then
         ps.note = parent.sound_matrix.pop_matrix()
       elseif (l == "+" and ps.note) then
-        local new_note = ps.note + math.ceil(note_scalar * parent.turtle.theta) <= #notes and ps.note + math.ceil(note_scalar * parent.turtle.theta) or 1
+        local new_note = ps.note + math.ceil(note_scalar * parent.turtle.theta) 
+        new_note = new_note <= #notes and ps.note + math.ceil(note_scalar * parent.turtle.theta) or 1 + (new_note-#notes)
+        -- local new_note = ps.note + math.ceil(note_scalar * parent.turtle.theta) <= #notes and ps.note + math.ceil(note_scalar * parent.turtle.theta) or 1
         ps.note = new_note
-        -- if active_plant == 1 then print (new_note) end
       elseif (l == "-" and ps.note) then
-        local new_note = ps.note + math.ceil(note_scalar * -parent.turtle.theta) > 1 and ps.note + math.ceil(note_scalar * -parent.turtle.theta)  or #notes
+        local new_note = ps.note + math.ceil(note_scalar * -parent.turtle.theta) 
+        new_note = new_note > 1 and ps.note + math.ceil(note_scalar * -parent.turtle.theta)  or #notes - new_note
+        -- local new_note = ps.note + math.ceil(note_scalar * -parent.turtle.theta) > 1 and ps.note + math.ceil(note_scalar * -parent.turtle.theta)  or #notes
+        ps.note = new_note
+      elseif (l == "!" and ps.note) then
+        local random_angle
+        local check_polarity = string.sub(s, i+1, i+1)
+        if check_polarity == "_" then
+          random_angle = string.sub(s, i+2, i+4)
+          random_angle = tonumber("-" .. random_angle)
+          random_angle = math.rad(random_angle)
+        else
+          random_angle = tonumber(string.sub(s, i+1, i+3))
+          random_angle = random_angle and math.rad(random_angle) or math.rad(0)
+        end
+         
+        local new_note =  ps.note + math.ceil(note_scalar * random_angle)
+
+        if new_note > #notes then
+          new_note = 1 + (new_note-#notes)
+        elseif new_note < 1 then
+          new_note = #notes - new_note
+        else
+          new_note = ps.note + math.ceil(note_scalar * random_angle)  
+        end
+        
         ps.note = new_note
       end
       -- print("run",ps.play)

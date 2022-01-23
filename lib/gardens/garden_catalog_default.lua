@@ -130,6 +130,24 @@ local instructions_default = {
     angle = 0,
     starting_generation = 1,
     initial_turtle_rotation = 90
+  },{
+    -- staghorn coral, from: https://samuelllsvensson.github.io/files/Procedurella_projekt.pdf,
+    start_from = vector:new(screen_size.x/2-3, screen_size.y - 5),
+    ruleset = {
+      {"A","[TF!A[+AF[FB][FB]]]"},
+      {"B","[!FB][!FB]"}
+      -- {"A","[TF!A[+AF[FB][FFB][FFFB]]]"},
+      -- {"B","[!FFFB][!FFFB]"}
+    },
+    axiom = "F[!A][!A]",
+    -- axiom = "FF[!A][!A][!A][!A]",
+    -- axiom = "FF!FF[!A]",
+    -- axiom = "FF[!A!A][!A!A]",
+    max_generations = 2,
+    length = 5,
+    angle = 30,
+    starting_generation = 1,
+    initial_turtle_rotation = 90
   }
 }
 

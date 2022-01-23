@@ -24,7 +24,7 @@ local enc = function (n, delta)
       end
       if (alt_key_active == true) then
         if delta == 1 or delta == -1 then
-          switch_active_plant()
+          plants[active_plant].switch_active_plant()
         end
       end
     elseif n == 2 then 

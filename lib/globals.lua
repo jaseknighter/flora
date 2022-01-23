@@ -48,18 +48,6 @@ round_decimals = function (value_to_round, num_decimals, rounding_direction)
   return rounded_val
 end
 
-switch_active_plant = function()
-  active_plant = active_plant == 1 and 2 or 1
-  local inactive_plant = active_plant == 1 and 2 or 1
-  plant1_screen_level = active_plant == 1 and 3 or 1
-  plant2_screen_level = active_plant == 2 and 3 or 1
-  plants[active_plant].set_active(true)
-  plants[inactive_plant].set_active(false)
-  envelopes[active_plant].set_active(true)
-  envelopes[inactive_plant].set_active(false)
-  set_midi_channels()
-end
-
 -------------------------------------------
 -- global variables
 -------------------------------------------
@@ -71,14 +59,14 @@ planted_plants_path = norns.state.data .. "planted_plants.tbl"
   
 -- for params.lua
 controlspec.PITCHSHIFT = controlspec.AMP
-controlspec.PITCHSHIFT.default = 0.5
+controlspec.PITCHSHIFT.default = 0
   
-WOBBLE_DEFAULT = 0.05
-FLUTTER_DEFAULT = 0.02
+WOBBLE_DEFAULT = 0.01
+FLUTTER_DEFAULT = 0.00
 updating_controls = false
-SCREEN_FRAMERATE = 1/15
-INITIAL_PLANT_INSTRUCTIONS_1 = 3 
-INITIAL_PLANT_INSTRUCTIONS_2 = 3
+SCREEN_FRAMERATE = 1/10
+INITIAL_PLANT_INSTRUCTIONS_1 = 13 
+INITIAL_PLANT_INSTRUCTIONS_2 = 13
 menu_status = false
 pages = 0
 flora_params = {}
@@ -198,6 +186,7 @@ plants = {}
 num_plants = 2
 active_plant = 1
 initializing = true
+RANDOM_ANGLE_MAX = 90
 
 envelopes = {}
 crow_trigger_2 = 0.005
@@ -286,7 +275,7 @@ env_mod_param_ids = {
 }
 
 -- for l_system.lua
-MAX_SENTENCE_LENGTH = 150
+MAX_SENTENCE_LENGTH = 300
 
 -- fpr water.lua
 num_active_cf_scalars = 4
