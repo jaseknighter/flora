@@ -66,7 +66,7 @@ end
 -- sentence adjustment code 
 ---------------------------
 
-local alphabet = {'F','G','[',']','+','-','|', 'r','A','M','N','O','P','X','Y'}
+local alphabet = {'F','G','[',']','+','-','|', 'r','!','A','M','N','O','P','X','Y'}
 -- local max_visible_chars = 22
 
 local get_alphabet_index = function (letter)
