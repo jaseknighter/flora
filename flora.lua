@@ -173,6 +173,16 @@ end
 
 function init_done()
   clock.sleep(0.5)
+
+  -- function process_stream(v)
+  --   local x = math.abs(v)
+  --   -- print("input stream: "..v,x)
+  --   params:set("note_scalar",math.floor(x))
+  -- end
+  
+  -- crow.input[1].stream = process_stream
+  -- crow.input[1].mode("stream", 0.1)  
+
   initializing = false
 end
 

@@ -53,7 +53,7 @@ local function set_pset_param_exclusions(pset_exclusion_tables, pset_exclusion_t
   for i=1,#pset_exclusion_tables,1
   do
     if #pset_exclusion_table_labels > 0 then
-        params:add{type = "option", id = pset_exclusion_table_labels[i], name = pset_exclusion_table_labels[i],
+        params:add{type = "option", id = pset_exclusion_table_labels[i].."_excl", name = pset_exclusion_table_labels[i],
         options = {"false", "true"}, default = 1,
           action = function(x) 
             local setting

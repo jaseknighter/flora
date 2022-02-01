@@ -9,7 +9,7 @@ function plant_sounds_externals:new(active_notes)
   setmetatable(pse, plant_sounds_externals)
 
   
-
+  
 
   pse.midi_note_off = function(delay, note_num, channel, plant_id, note_location)
     local note_off_delay
