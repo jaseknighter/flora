@@ -1126,14 +1126,14 @@ end
   }
 
   params:add{
-    type = "number", id = "pitchshift_note1", name = "pitchshift note 2", min=-24, max=24, default=3,
+    type = "number", id = "pitchshift_note2", name = "pitchshift note 2", min=-24, max=24, default=3,
     action=function(x)
       engine.pitchshift_note2(x) 
     end
   }
 
   params:add{
-    type = "number", id = "pitchshift_note1", name = "pitchshift note 3", min=-24, max=24, default=5,
+    type = "number", id = "pitchshift_note3", name = "pitchshift note 3", min=-24, max=24, default=5,
     action=function(x)
       engine.pitchshift_note3(x) 
     end
