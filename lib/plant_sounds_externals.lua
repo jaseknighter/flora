@@ -66,9 +66,10 @@ function plant_sounds_externals:new(active_notes)
       for i=2, envelope_data.segments, 1
       do
         local to_shape 
-        if envelope_data.curves[i] > 0 then to_shape = 'exponential'
-        elseif envelope_data.curves[i] < 0 then to_shape = 'logarithmic'
-        else to_shape = 'linear'
+        if envelope_data.curves[i] > 0 then to_shape = '"expo"'
+        elseif envelope_data.curves[i] < 0 then to_shape = '"sine"'
+        -- elseif envelope_data.curves[i] < 0 then to_shape = '"logarithmic"'
+        else to_shape = '"lin"'
         end
         
         local to_string =  "to(" .. 
@@ -89,6 +90,7 @@ function plant_sounds_externals:new(active_notes)
       end
     
       asl_envelope = "{" .. asl_envelope .. "}"
+      -- print(plant_id,"{" .. asl_envelope .. "}")
       return asl_envelope 
     end
 

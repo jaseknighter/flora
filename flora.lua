@@ -48,16 +48,6 @@
 
 include "flora/lib/includes"
 
--- crow input (testing)
--- function process_stream(v)
---   crow_in_note_num = math.floor(v*12)
---   crow_in_freq = MusicUtil.note_num_to_freq(crow_in_note_num)
---   print("input stream: ",v,crow_in_note_num,crow_in_freq)
--- end
-
--- crow.input[1].stream = process_stream
--- crow.input[1].mode("stream", 0.25)
-
 ------------------------------
 -- init
 ------------------------------
@@ -174,14 +164,15 @@ end
 function init_done()
   clock.sleep(0.5)
 
-  -- function process_stream(v)
-  --   local x = math.abs(v)
-  --   -- print("input stream: "..v,x)
-  --   params:set("note_scalar",math.floor(x))
-  -- end
+  function process_crow_input_stream(v)
+    local x = math.abs(v)
+    if params:get("input_crow1") == 2 then
+      params:set("note_scalar",math.floor(x))
+    end
+  end
   
-  -- crow.input[1].stream = process_stream
-  -- crow.input[1].mode("stream", 0.1)  
+  crow.input[1].stream = process_crow_input_stream
+  crow.input[1].mode("stream", 0.1)  
 
   initializing = false
 end

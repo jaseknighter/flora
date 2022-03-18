@@ -262,15 +262,14 @@ flora_params.add_params = function(plants)
   params.get_midi_devices()
 
 -- crow
-  params:add_group("crow",4)
+  params:add_group("crow",5)
 
-  -- params:add{type = "option", id = "crow_clock", name = "crow clock out",
-  -- options = {"off","on"},
-  -- action = function(value)
-  --   if value == 2 then
-  --     crow.output[1].action = "{to(5,0),to(5,0.05),to(0,0)}"
-  --   end
-  -- end}
+  params:add{type = "option", id = "input_crow1", name = "process crow in1",
+    options = {"off","on"},
+    default = INPUT_CROW1_DEFAULT,
+    action = function(value)    
+    end
+  }
 
   params:add{type = "option", id = "output_crow1", name = "crow out1 mode",
     -- options = {"off","on"},
