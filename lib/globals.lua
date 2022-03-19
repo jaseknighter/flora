@@ -183,7 +183,7 @@ RANDOM_ANGLE_MAX = 90
 envelopes = {}
 crow_trigger_2 = 0.005
 crow_trigger_4 = 0.005
-INPUT_CROW1_DEFAULT = 1
+INPUT_CROW2_DEFAULT = 1
 
 screen_dirty = true
 show_instructions = false

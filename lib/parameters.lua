@@ -264,9 +264,9 @@ flora_params.add_params = function(plants)
 -- crow
   params:add_group("crow",5)
 
-  params:add{type = "option", id = "input_crow1", name = "process crow in1",
+  params:add{type = "option", id = "input_crow2", name = "process crow in2",
     options = {"off","on"},
-    default = INPUT_CROW1_DEFAULT,
+    default = INPUT_CROW2_DEFAULT,
     action = function(value)    
     end
   }

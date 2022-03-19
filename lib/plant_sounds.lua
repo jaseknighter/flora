@@ -20,7 +20,7 @@ function plant_sounds:new(parent)
   ps.externals2 = plant_sounds_externals:new(ps.active_notes)
   
   all_notes_off = function()
-    if (params:get("output") == 2 or params:get("output") == 3) then
+    if (params:get("output_midi") > 2) then
       for _, a in pairs(ps.active_notes) do
         midi_out_device:note_off(a, nil, midi_out_channel1)
         midi_out_device:note_off(a, nil, midi_out_channel2)

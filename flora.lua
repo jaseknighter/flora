@@ -1,5 +1,5 @@
 ---flora
--- v1.0
+-- v1.1.1
 -- lines: llllllll.co/t/40261
 --
 -- k1+k2: show/hide instructions
@@ -166,13 +166,13 @@ function init_done()
 
   function process_crow_input_stream(v)
     local x = math.abs(v)
-    if params:get("input_crow1") == 2 then
+    if params:get("input_crow2") == 2 then
       params:set("note_scalar",math.floor(x))
     end
   end
   
-  crow.input[1].stream = process_crow_input_stream
-  crow.input[1].mode("stream", 0.1)  
+  crow.input[2].stream = process_crow_input_stream
+  crow.input[2].mode("stream", 0.1)  
 
   initializing = false
 end
