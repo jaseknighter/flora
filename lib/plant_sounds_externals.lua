@@ -114,7 +114,6 @@ function plant_sounds_externals:new(active_notes)
       local output_param = params:get("output_crow2")
       if output_param == 2 then -- envelope
         local asl_envelope = asl_generator(envelopes[1].get_env_time())
-        -- print("2",asl_envelope)
         crow.output[2].action = tostring(asl_envelope)
       elseif output_param == 3 then -- trigger
         local time = crow_trigger_2
