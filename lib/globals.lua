@@ -104,7 +104,7 @@ ENV_TIME_MAX = 2 -- DO NOT CHANGE
 --      do not exceed the settings for AMPLITUDE_DEFAULT and ENV_LENGTH_DEFAULT
 -----------------------------------------
 
-AMPLITUDE_DEFAULT = 10
+AMPLITUDE_DEFAULT = 5
 ENV_LENGTH_DEFAULT = 1.5
 
 DEFAULT_GRAPH_NODES_P1 = {}
