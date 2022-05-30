@@ -140,7 +140,7 @@ flora_params.add_params = function(plants)
 
 -- midi
 
-  params:add_group("midi",12)
+  params:add_group("midi",13)
   
   --[[
   params:add{type = "option", id = "midi_engine_control", name = "midi engine control",
@@ -183,6 +183,11 @@ flora_params.add_params = function(plants)
     end
   }
   
+  params:add{type = "option", id = "use_midi_velocity", name = "use midi velocity",
+    options = {"no","yes"},
+    default = 1,
+  }
+
   params:add{
     type = "number", id = "plant1_cc_channel", name = "plant 1:midi in channel",
     min = 1, max = 16, default = plant1_cc_channel,
@@ -354,7 +359,7 @@ params:add_group("just friends",2)
   w_slash.wsyn_add_params()
   -- w_slash.wsyn_v2_add_params()
 
-  params:add_group("w/del",15)
+  params:add_group("w/del",16)
   w_slash.wdel_add_params()
 
   params:add_group("w/tape",17)

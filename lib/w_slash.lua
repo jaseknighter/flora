@@ -121,6 +121,50 @@ function w_slash.wdel_add_params()
     end
   }
 
+  params:add {
+    type = "option",
+    id = "wdel_freq_to_freq",
+    name = "Freq to del freq",
+    options = {"off","1x","2x","3x","4x","5x","6x"},
+    default=2,
+    action = function(val)       
+    end
+  }
+  
+
+  params:add {
+    type = "control",
+    id = "wdel_frequency",
+    name = "Del Frequency (V8)",
+    controlspec = controlspec.new(-5, 5, "lin", 0, -1.5),
+    action = function(val)       
+      crow.send("ii.wdel.freq(" .. val .. ")") 
+      pset_wdel_frequency = val
+    end
+  }
+
+  params:add {
+    type = "control",
+    id = "wdel_mod_rate",
+    name = "Mod Rate",
+    controlspec = controlspec.new(-5, 5, "lin", 0, 0),
+    action = function(val)       
+      crow.send("ii.wdel.mod_rate(" .. val .. ")") 
+      pset_wdel_mod_rate = val
+    end
+  }
+
+  params:add {
+    type = "control",
+    id = "wdel_mod_amount",
+    name = "Mod Amount",
+    controlspec = controlspec.new(-5, 5, "lin", 0, 0),
+    action = function(val)       
+      crow.send("ii.wdel.mod_amount(" .. val .. ")") 
+      pset_wdel_mod_amount = val
+    end
+  }
+
   --[[
   params:add {
     type = "control",
@@ -231,39 +275,6 @@ function w_slash.wdel_add_params()
       crow.send("ii.wdel.rate(" .. val .. ")") 
       pset_wdel_rate = val
       params:set("wdel_freeze",1)
-    end
-  }
-
-  params:add {
-    type = "control",
-    id = "wdel_frequency",
-    name = "Frequency (V8)",
-    controlspec = controlspec.new(-5, 5, "lin", 0, -1.5),
-    action = function(val)       
-      crow.send("ii.wdel.freq(" .. val .. ")") 
-      pset_wdel_frequency = val
-    end
-  }
-
-  params:add {
-    type = "control",
-    id = "wdel_mod_rate",
-    name = "Mod Rate",
-    controlspec = controlspec.new(-5, 5, "lin", 0, 0),
-    action = function(val)       
-      crow.send("ii.wdel.mod_rate(" .. val .. ")") 
-      pset_wdel_mod_rate = val
-    end
-  }
-
-  params:add {
-    type = "control",
-    id = "wdel_mod_amount",
-    name = "Mod Amount",
-    controlspec = controlspec.new(-5, 5, "lin", 0, 0),
-    action = function(val)       
-      crow.send("ii.wdel.mod_amount(" .. val .. ")") 
-      pset_wdel_mod_amount = val
     end
   }
 
