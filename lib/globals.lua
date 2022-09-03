@@ -198,6 +198,8 @@ scale_length = 24
 root_note_default = 45
 scale_names = {}
 notes = {}
+note_offset1 = 0
+note_offset2 = 0
 current_note_indices = {}
 
 for i= 1, #MusicUtil.SCALES do
@@ -207,6 +209,8 @@ end
 build_scale = function()
   notes = {}
   notes = MusicUtil.generate_scale_of_length(params:get("root_note"), params:get("scale_mode"), scale_length)
+  -- print('params:get("root_note_offset")',params:get("root_note_offset"))
+  notes = MusicUtil.generate_scale_of_length(notes[params:get("root_note_offset")], params:get("scale_mode"), scale_length)
   local num_to_add = scale_length - #notes
   for i = 1, num_to_add do
     table.insert(notes, notes[scale_length - num_to_add])
@@ -279,3 +283,7 @@ field_width = (screen_size.x-7)/3
 field_height = (screen_size.y-12)/2 - 6
 fields_origin = vector:new(3,15)
 field_row_spacing = 8
+
+-- for hnds.lua
+MIDI_LFO_CC_DEFAULT = 101 
+MIDI_LFO_CHANNEL_DEFAULT = 1

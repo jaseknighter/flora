@@ -17,6 +17,10 @@ if util.file_exists(_path.code.."norns.online") then
   share=include("norns.online/lib/share")
 end
 
+-- required for lfos
+Lattice = require 'lattice'
+
+
 -- required for parameters.lua
 cs = require 'controlspec'
 w_slash = include("flora/lib/w_slash")
@@ -29,6 +33,8 @@ parameters = include("flora/lib/parameters")
 save_load = include("flora/lib/save_load")
 sharer = include("flora/lib/cloud")
 instructions = include("flora/lib/instructions")
+lfo = include("flora/lib/hnds")
+
 
 -- required for flora.lua
 encoders_and_keys = include("flora/lib/encoders_and_keys")

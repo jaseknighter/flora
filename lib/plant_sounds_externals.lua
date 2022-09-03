@@ -233,6 +233,7 @@ function plant_sounds_externals:new(active_notes)
       end
     end
   end
+
   return pse
 end
 
