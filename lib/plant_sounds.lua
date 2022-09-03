@@ -9,6 +9,7 @@ plant_sounds.__index = plant_sounds
 
 function plant_sounds:new(parent)
   local ps = {}
+  ps.restart = false
   ps.index = 1
   setmetatable(ps, sounds)
   
@@ -43,7 +44,7 @@ function plant_sounds:new(parent)
         -- set clock.sync to 0.001 to prevent a stack overflow
         clock.sync(0.001)
       end
-      envelopes[parent.id].modulate_env()
+      -- envelopes[parent.id].modulate_env()
   
       if (node_obj.s_id == parent.current_sentence_id) then
         if (#node_obj.s == node_obj.i) then
@@ -67,9 +68,9 @@ function plant_sounds:new(parent)
           local num_note_freq_index = math.random(#tempo_offset_note_frequencies)
           local random_note_frequency = tempo_offset_note_frequencies[num_note_freq_index]
           
-          local note_to_play = node_obj.note
-          note_to_play = node_obj.note > 0 and node_obj.note or #notes
-          note_to_play = note_to_play <= #notes and note_to_play or 1
+          local note_to_play = parent.id == 1 and node_obj.note + note_offset1 or node_obj.note + note_offset2
+          note_to_play = note_to_play > 0 and note_to_play or #notes + note_to_play
+          note_to_play = note_to_play <= #notes and note_to_play or note_to_play - #notes
           note_to_play = notes[note_to_play]
 
           local freq = MusicUtil.note_num_to_freq(note_to_play)
@@ -95,10 +96,11 @@ function plant_sounds:new(parent)
           -- clock.sleep(node_obj.duration)
         end
 
-        if node_obj.restart then
-          node_obj.play_fn()
-        elseif (node_obj.s_id == parent.current_sentence_id) then
-            node_obj.play_fn(node_obj.i, ps.note, node_obj.s_id)
+        if ps.restart then
+          ps.set_note()
+        -- elseif (node_obj.s_id == parent.current_sentence_id) then
+        else
+          ps.set_note(node_obj.i, ps.note, node_obj.s_id)
         end
       end
     end
@@ -127,18 +129,15 @@ function plant_sounds:new(parent)
       local node_obj = {}
       node_obj.s_id = parent.current_sentence_id
       node_obj.duration = ps.get_note_duration()
-      -- print(parent.id, i, #s)
       if i == #s then
-        node_obj.restart = true
-        node_obj.s = s
-        node_obj.i = i
-        node_obj.play_fn = ps.set_note
+        ps.restart = true
       else
-        node_obj.restart = false
-        node_obj.s = s
-        node_obj.i = i
-        node_obj.play_fn = ps.set_note
+        if ps.restart == true then
+          ps.restart = false
+        end 
       end  
+      node_obj.s = s
+      node_obj.i = i
       if l == "F" then
         node_obj.note = ps.note
       elseif l == "G" then
@@ -150,12 +149,10 @@ function plant_sounds:new(parent)
       elseif (l == "+" and ps.note) then
         local new_note = ps.note + math.ceil(note_scalar * parent.turtle.theta) 
         new_note = new_note <= #notes and ps.note + math.ceil(note_scalar * parent.turtle.theta) or 1 + (new_note-#notes)
-        -- local new_note = ps.note + math.ceil(note_scalar * parent.turtle.theta) <= #notes and ps.note + math.ceil(note_scalar * parent.turtle.theta) or 1
         ps.note = new_note
       elseif (l == "-" and ps.note) then
         local new_note = ps.note + math.ceil(note_scalar * -parent.turtle.theta) 
         new_note = new_note > 1 and ps.note + math.ceil(note_scalar * -parent.turtle.theta)  or #notes - new_note
-        -- local new_note = ps.note + math.ceil(note_scalar * -parent.turtle.theta) > 1 and ps.note + math.ceil(note_scalar * -parent.turtle.theta)  or #notes
         ps.note = new_note
       elseif (l == "!" and ps.note) then
         local random_angle
@@ -181,9 +178,7 @@ function plant_sounds:new(parent)
         
         ps.note = new_note
       end
-      -- print("run",ps.play)
       clock.run(ps.play,node_obj)
-      -- ps.play(node_obj)
     else 
       parent.changing_instructions = false
       parent.current_sentence_id = parent.current_sentence_id + 1

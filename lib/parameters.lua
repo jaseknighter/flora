@@ -124,9 +124,40 @@ flora_params.add_params = function(plants)
   options = scale_names, default = 5,
   action = function() build_scale() end}
   
+
   params:add{type = "number", id = "root_note", name = "root note",
-  min = 0, max = 127, default = root_note_default, formatter = function(param) return MusicUtil.note_num_to_name(param:get(), true) end,
-  action = function() build_scale() end}
+  min = 0, max = 127, default = root_note_default, formatter = function(param) return MusicUtil.note_num_to_name(param:get(), true) end}
+
+
+  params:add{type = "number", id = "root_note_offset", name = "root note offset",
+  min = 1, max = scale_length, default = 1 }
+
+  params:add{type = "trigger", id = "set_root", name = "set root",
+  action = function() build_scale() end} 
+
+
+  params:add{type = "number", id = "note_offset1", name = "note offset 1",
+  min = -scale_length, max = scale_length, default = 0}
+
+  params:add{type = "number", id = "note_offset2", name = "note offset 2",
+  min = -scale_length, max = scale_length, default = 0}
+
+  function params.set_note_offsets()
+    note_offset1 = params:get("note_offset1")
+    note_offset2 = params:get("note_offset2")
+  end
+
+  params:add{type = "trigger", id = "set_note_offset", name = "set note offset",
+  action = function() params.set_note_offsets() end} 
+
+  params:add{type = "trigger", id = "reset_offsets", name = "reset offsets",
+  action = function() 
+    params:set("root_note_offset",1)
+    params:set("note_offset1",0)
+    params:set("note_offset2",0)
+    params.set_note_offsets() 
+    build_scale()
+  end} 
 
 --------------------------------
 -- inputs/outputs/midi params
@@ -278,8 +309,8 @@ flora_params.add_params = function(plants)
 
   params:add{type = "option", id = "output_crow1", name = "crow out1 mode",
     -- options = {"off","on"},
-    options = {"off","plants", "midi", "plants + midi", "clock"},
-    default = 2,
+    options = {"off","plants", "midi", "plants + midi", "clock", "1lfo", "2lfo"},
+    default = 6,
     action = function(value)
       if value == 5 then 
         crow.output[1].action = "{to(5,0),to(5,0.05),to(0,0)}"
@@ -288,7 +319,7 @@ flora_params.add_params = function(plants)
   }
 
   params:add{type = "option", id = "output_crow2", name = "crow out2 mode",
-    options = {"off","envelope","trigger","gate","clock"},
+    options = {"off","envelope","trigger","gate","clock", "1lfo", "2lfo"},
     default = 2,
     action = function(value)
       if value == 3 then 
@@ -301,7 +332,7 @@ flora_params.add_params = function(plants)
 
   params:add{type = "option", id = "output_crow3", name = "crow out3 mode",
     -- options = {"off","on"},
-    options = {"off","plants", "midi", "plants + midi", "clock"},
+    options = {"off","plants", "midi", "plants + midi", "clock", "1lfo", "2lfo"},
     default = 2,
     action = function(value)
       if value == 5 then 
@@ -311,7 +342,7 @@ flora_params.add_params = function(plants)
   }
 
   params:add{type = "option", id = "output_crow4", name = "crow out4 mode",
-    options = {"off","envelope","trigger","gate", "clock"},
+    options = {"off","envelope","trigger","gate", "clock", "1lfo", "2lfo"},
     default = 2,
     action = function(value)
       if value == 3 then 
@@ -326,7 +357,7 @@ flora_params.add_params = function(plants)
 params:add_group("just friends",2)
   params:add{type = "option", id = "output_jf", name = "just friends",
     options = {"off","plants", "midi", "plants + midi"},
-    default = 1,
+    default = 2,
     action = function(value)
       if value > 1 then 
         -- crow.output[2].action = "{to(5,0),to(0,0.25)}"
@@ -365,6 +396,7 @@ params:add_group("just friends",2)
   params:add_group("w/tape",17)
   w_slash.wtape_add_params()
 
+  lfo.setup_params()
 
   params:add_separator("plant/plow/water")
   --------------------------------

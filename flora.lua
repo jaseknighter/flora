@@ -49,6 +49,80 @@
 include "flora/lib/includes"
 
 ------------------------------
+-- lfo code
+------------------------------
+
+lfo_lattice = Lattice:new{
+  auto = true,
+  meter = 4,
+  ppqn = 96
+}
+
+lfo_pattern = lfo_lattice:new_pattern{
+  action = function(t) 
+    if initializing == false then
+      local lfo_slope1 = lfo[1].slope
+      local lfo_slope2 = lfo[2].slope
+
+      local lfo1_volts_min = params:get("1lfo_volts_min")
+      local lfo1_volts_max = params:get("1lfo_volts_max")
+      local lfo2_volts_min = params:get("2lfo_volts_min")
+      local lfo2_volts_max = params:get("2lfo_volts_max")
+
+      local lfo_val1 = util.linlin(-1,1,lfo1_volts_min,lfo1_volts_max,lfo_slope1)
+      local lfo_val2 = util.linlin(-1,1,lfo2_volts_min,lfo2_volts_max,lfo_slope2)
+      play_crow_lfos("1lfo", lfo_val1)
+      play_midi_cc_lfos("1lfo", lfo[1].slope)
+      play_crow_lfos("2lfo", lfo_val2)
+      play_midi_cc_lfos("2lfo", lfo[2].slope)
+    end
+  end,
+  division = 1/64,-- 1/256, --1/16,
+  enabled = true
+}
+
+play_crow_lfos = function(source,volts)
+  for i=1,4,1 do
+    local output_crow = params:get("output_crow"..i)
+    if source == "1lfo" and output_crow == 6 then -- lfo1 output
+      crow.output[i].slew = params:get("1lfo_slew")/1000
+      crow.output[i].volts = volts 
+      crow.output[i]() 
+    elseif source == "2lfo" and output_crow == 7 then -- lfo2 output
+      crow.output[i].slew = params:get("2lfo_slew")/1000
+      crow.output[i].volts = volts 
+      crow.output[i]() 
+    end
+  end
+end
+
+play_midi_cc_lfos = function(source,volts)
+  local play_midi_lfo1 = params:get("1play_midi_lfo_cc")
+  local play_midi_lfo2 = params:get("2play_midi_lfo_cc")
+  local cc_val = math.floor(util.linlin(-5,10,1,127,volts))
+  if source == "1lfo" and play_midi_lfo1 == 2 then 
+    -- local slew = params:get("lz_x_slew")/1000
+    local cc = params:get("1midi_lfo_cc")
+    local ch = params:get("1midi_lfo_chan")
+    ch = ch > 0 and ch or nil
+    if midi_out_device then  
+      midi_out_device:cc(cc, cc_val, ch)
+    end
+    -- print("x",cc_val)
+  end
+  
+  if source == "2lfo" and play_midi_lfo2 == 2 then 
+    -- local slew = params:get("lz_y_slew")/1000
+    local cc = params:get("2midi_lfo_cc")
+    local ch = params:get("2midi_lfo_chan")
+    ch = ch > 0 and ch or nil
+    if midi_out_device then
+      midi_out_device:cc(cc, cc_val, ch)
+    end
+  end
+end
+
+------------------------------
 -- init
 ------------------------------
 function init()
@@ -98,6 +172,12 @@ function init()
   modify.init()
   water.init()
   garden.init()
+
+  -- for lib/hnds
+  lfo_types = {"sine", "square", "s+h"}
+  lfo_index = nil
+
+
   
   redraw_timer()
   page_scroll(1)
@@ -173,7 +253,8 @@ function init_done()
   
   crow.input[2].stream = process_crow_input_stream
   crow.input[2].mode("stream", 0.1)  
-
+  lfo_lattice:start()
+  lfo.init()
   initializing = false
 end
 
