@@ -1,5 +1,5 @@
 ---flora
--- v1.1.1
+-- v1.3.0
 -- lines: llllllll.co/t/40261
 --
 -- k1+k2: show/hide instructions
