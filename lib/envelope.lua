@@ -141,7 +141,6 @@ function Envelope:new(id, num_plants, env_nodes)
     local curve_modulation_amount = curve_probability > math.random()*100 and params:get("curve_modulation"..e.id) or 0
     local randomize_env_probability = params:get("randomize_env_probability"..e.id) 
     local randomize_envelopes = math.random()*100<randomize_env_probability
-    
     if randomize_envelopes == true then
       local env_nodes = envelopes[e.id].graph_nodes
       for i=1,#env_nodes,1
@@ -151,7 +150,6 @@ function Envelope:new(id, num_plants, env_nodes)
         -- update times
         param_id_name = "plow".. e.id.."_time" .. i
         param_name = "plow".. e.id.."-control" .. i .. "-time"
-        
         local current_val = (env_nodes[1] and env_nodes[i].time) or 0
         local prev_val = (env_nodes[i-1] and env_nodes[i-1].time) or 0
         local next_val = env_nodes[i+1] and env_nodes[i+1].time or envelopes[e.id].env_time_max
@@ -163,6 +161,7 @@ function Envelope:new(id, num_plants, env_nodes)
           local param = params:lookup_param(param_id_name)
           param.controlspec = controlspec
           params:set(param.id, control_value) 
+          
         end
   
         -- update levels

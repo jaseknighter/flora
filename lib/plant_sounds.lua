@@ -44,7 +44,7 @@ function plant_sounds:new(parent)
         -- set clock.sync to 0.001 to prevent a stack overflow
         clock.sync(0.001)
       end
-      -- envelopes[parent.id].modulate_env()
+      envelopes[parent.id].modulate_env()
   
       if (node_obj.s_id == parent.current_sentence_id) then
         if (#node_obj.s == node_obj.i) then
