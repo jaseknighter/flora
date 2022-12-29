@@ -178,7 +178,9 @@ function plant_sounds:new(parent)
         
         ps.note = new_note
       end
-      clock.run(ps.play,node_obj)
+      if parent.initializing == false and parent.playing == true then
+        clock.run(ps.play,node_obj)
+      end
     else 
       parent.changing_instructions = false
       parent.current_sentence_id = parent.current_sentence_id + 1

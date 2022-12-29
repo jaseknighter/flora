@@ -52,6 +52,7 @@ function plant:new(p_id, starting_instruction)
   p.current_generation = 0
   p.ruleset = {}
   p.initial_turtle_rotation = 90
+  p.playing = true
 
   
 

@@ -150,9 +150,26 @@ local get_16n_data_table = {0x7d,0x00,0x00,0x1F}
 
 local midi_event_index = 0
 midi_event = function(data) 
-  -- tab.print(data)
+  local msg = midi.to_msg(data)
+  if msg.type == "stop" or msg.type == "start" then
+    print("stopping/starting:", msg.type)
+  end
   if message_from_16n and receiving_configs_from_16n then
     -- do something with 16n_data(data)
+  elseif msg.type == "start" then 
+    plants[1].playing = true
+    plants[2].playing = true
+    local ci1=plants[1].get_current_instruction()
+    local ci2=plants[2].get_current_instruction()
+    local gen1=plants[1].get_current_generation()
+    local gen2=plants[2].get_current_generation()
+    plants[1].reset_instructions()
+    plants[2].reset_instructions()
+    plants[1].setup(ci1,gen1)
+    plants[2].setup(ci2,gen2)
+  elseif msg.type == "stop" then 
+    plants[1].playing = false
+    plants[2].playing = false
   else
     if data[1] == 240 and data[2] == 125 then        --- this is the start byte with a a message from the 16n faderbank 
       midi_event_index = 2
