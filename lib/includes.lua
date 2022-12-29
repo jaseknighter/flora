@@ -76,5 +76,8 @@ field_layout = include("flora/lib/field_layout")
 -- required for field_layout.lua
 crop = include "flora/lib/field_crop"
 
+-- required for sequencing plant generations
+p_gen_seq = include "flora/lib/plant_gen_sequencer"
+
 -- required for sequencing psets
 pset_seq = include "flora/lib/pset_sequencer"

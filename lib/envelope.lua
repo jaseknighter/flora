@@ -148,34 +148,34 @@ function Envelope:new(id, num_plants, env_nodes)
         local param_id_name, param_name, get_control_value_fn, min_val, max_val
   
         -- update times
-        param_id_name = "plow".. e.id.."_time" .. i
-        param_name = "plow".. e.id.."-control" .. i .. "-time"
-        local current_val = (env_nodes[1] and env_nodes[i].time) or 0
-        local prev_val = (env_nodes[i-1] and env_nodes[i-1].time) or 0
-        local next_val = env_nodes[i+1] and env_nodes[i+1].time or envelopes[e.id].env_time_max
-        local control_range = next_val - prev_val
-        local control_value = control_range*math.random(-1,1) * time_modulation_amount + current_val
-        control_value = util.clamp(control_value,prev_val, next_val)
-        local controlspec = cs.new(prev_val,next_val,'lin',0,control_value,'')
-        if env_nodes[i] then
-          local param = params:lookup_param(param_id_name)
-          param.controlspec = controlspec
-          params:set(param.id, control_value) 
-          
+        if i > 1 then
+          param_id_name = "plow".. e.id.."_time" .. i
+          param_name = "plow".. e.id.."-control" .. i .. "-time"
+          local current_val = (env_nodes[1] and env_nodes[i].time) or 0
+          local prev_val = (env_nodes[i-1] and env_nodes[i-1].time) or 0
+          local next_val = env_nodes[i+1] and env_nodes[i+1].time or envelopes[e.id].env_time_max
+          local control_range = next_val - prev_val
+          local control_value = control_range*math.random(-1,1) * time_modulation_amount/10 + current_val
+          control_value = util.clamp(control_value,prev_val, next_val)
+          local controlspec = cs.new(prev_val,next_val,'lin',0,control_value,'')
+          if env_nodes[i] then
+            local param = params:lookup_param(param_id_name)
+            param.controlspec = controlspec
+            params:set(param.id, control_value) 
+          end
         end
   
         -- update levels
         if i > 1 and i < #env_nodes then
           local current_val = (env_nodes[1] and env_nodes[i].level) or 0
-          local new_value = current_val + (level_modulation_amount * math.random(-1,1))
+          local new_value = current_val + (level_modulation_amount/10 * math.random(-1,1))
           new_value = util.clamp(new_value, 0, MAX_AMPLITUDE)
           params:set("plow".. e.id .. "_level"..i, new_value)
         end        
   
         -- update curves
         if i > 1 then
-          
-          local new_value = params:get("plow".. e.id .. "_curve"..i) + (curve_modulation_amount* math.random()*math.random(-1,1)*10)
+          local new_value = params:get("plow".. e.id .. "_curve"..i) + (curve_modulation_amount/10 * math.random()*math.random(-1,1)*10)
           new_value = util.clamp(new_value, -10, 10)
           params:set("plow".. e.id .. "_curve"..i, new_value)
           -- params:set("plow".. e.id .. "_curve"..i, math.random()*math.random(-10,10))

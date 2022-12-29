@@ -1,5 +1,5 @@
 ---flora
--- v1.3.1
+-- v1.3.2
 -- lines: llllllll.co/t/40261
 --
 -- k1+k2: show/hide instructions
@@ -230,6 +230,9 @@ function init()
   -- table for exclusion group labels 
   local pset_exclusion_table_labels = {"plant","plow","plow mod","water", "nav", "i/o", "root note/scale"}
   
+  -- init the plant generation sequencer 
+  p_gen_seq.init()
+
   -- init the pset sequencer passing pset exclusion info
   pset_seq.init(pset_exclusion_tables, pset_exclusion_table_labels)
   
