@@ -48,6 +48,28 @@ round_decimals = function (value_to_round, num_decimals, rounding_direction)
   return rounded_val
 end
 
+quantize_note = function(note_num)
+  local new_note_num
+  for i=1,#notes-1,1 do
+    if note_num >= notes[i] and note_num <= notes[i+1] then
+      if note_num - notes[i] < notes[i+1] - note_num then
+        new_note_num = notes[i]
+      else
+        new_note_num = notes[i+1]
+      end
+      break
+    end
+  end
+  -- if new_note_num == nil then 
+  --   if note_num < notes[1] then 
+  --     new_note_num = notes[1]
+  --   else
+  --     new_note_num = notes[#notes]
+  --   end
+  -- end
+  return new_note_num
+end
+
 -------------------------------------------
 -- global variables
 -------------------------------------------

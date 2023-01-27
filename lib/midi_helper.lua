@@ -197,6 +197,11 @@ midi_event = function(data)
         local random_note_frequency = tempo_offset_note_frequencies[num_note_freq_index]
         local freq = MusicUtil.note_num_to_freq(note_to_play) * cf_scalar
         note_to_play = MusicUtil.freq_to_note_num(freq)
+        if params:get("quantize_midi") == 2 then
+          note_to_play = quantize_note(note_to_play)
+          freq = MusicUtil.note_num_to_freq(note_to_play)
+          print("quant")
+        end
         if data[1] == midi_in_command1 then -- plant 1 engine note on
           -- envelopes[1].update_envelope()
           -- if output_midi == 3 or output_midi == 4 then

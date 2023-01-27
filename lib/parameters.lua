@@ -219,6 +219,11 @@ flora_params.add_params = function(plants)
     default = 1,
   }
 
+  params:add{type = "option", id = "quantize_midi", name = "quantize midi",
+  options = {"no","yes"},
+  default = 2,
+}
+
   params:add{
     type = "number", id = "plant1_cc_channel", name = "plant 1:midi in channel",
     min = 1, max = 16, default = plant1_cc_channel,
