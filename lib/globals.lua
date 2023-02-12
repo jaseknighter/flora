@@ -60,13 +60,14 @@ quantize_note = function(note_num)
       break
     end
   end
-  -- if new_note_num == nil then 
-  --   if note_num < notes[1] then 
-  --     new_note_num = notes[1]
-  --   else
-  --     new_note_num = notes[#notes]
-  --   end
-  -- end
+
+  if new_note_num == nil then
+    if note_num < notes[1] then
+      new_note_num = notes[1]
+    else
+      new_note_num = notes[#notes]
+    end
+  end
   return new_note_num
 end
 

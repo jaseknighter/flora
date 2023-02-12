@@ -40,7 +40,6 @@ end
 -- current trs midi channel values: midi_event_index  table 12[3] - 17[3]
 -- current usb cc values: midi_event_index table 20[1] - 27[3]
 -- current usb channel/cc/value  midi_event_index table 29[1] - 43[3] QUESTION: why don't all 16 channels show up?
-
 --------------------------------
   
 local sysexDataFrame = {}
@@ -197,10 +196,10 @@ midi_event = function(data)
         local random_note_frequency = tempo_offset_note_frequencies[num_note_freq_index]
         local freq = MusicUtil.note_num_to_freq(note_to_play) * cf_scalar
         note_to_play = MusicUtil.freq_to_note_num(freq)
-        if params:get("quantize_midi") == 2 then
+        if params:get("quantize_midi") == 2 and note_to_play then
+          -- print("note_to_play:",note_to_play)
           note_to_play = quantize_note(note_to_play)
           freq = MusicUtil.note_num_to_freq(note_to_play)
-          print("quant")
         end
         if data[1] == midi_in_command1 then -- plant 1 engine note on
           -- envelopes[1].update_envelope()
