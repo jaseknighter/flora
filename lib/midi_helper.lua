@@ -179,7 +179,7 @@ midi_event = function(data)
       receiving_configs_from_16n = true
     else
       -- handle other message types
-      local output_bandsaw = params:get("output_bandsaw")
+      local output_engine = params:get("output_engine")
       local output_midi = params:get("output_midi")
 
 
@@ -204,7 +204,7 @@ midi_event = function(data)
         if data[1] == midi_in_command1 then -- plant 1 engine note on
           -- envelopes[1].update_envelope()
           -- if output_midi == 3 or output_midi == 4 then
-          if output_bandsaw == 3 or output_bandsaw == 4 or output_midi == 3 or output_midi == 4 then
+          if output_engine == 3 or output_engine == 4 or output_midi == 3 or output_midi == 4 then
             plants[1].sounds.engine_note_on(note_to_play, freq, random_note_frequency)
           end
           clock.run(plants[1].sounds.externals1.note_on,1, note_to_play, freq, random_note_frequency, nil,"midi",velocity)
@@ -212,7 +212,7 @@ midi_event = function(data)
         if data[1] == midi_in_command2 then -- plant 2 engine note on
           -- envelopes[2].update_envelope()
           -- if output_midi == 3 or output_midi == 4 then
-          if output_bandsaw == 3 or output_bandsaw == 4 or output_midi == 3 or output_midi == 4 then
+          if output_engine == 3 or output_engine == 4 or output_midi == 3 or output_midi == 4 then
             plants[2].sounds.engine_note_on(note_to_play, freq, random_note_frequency)
           end
           clock.run(plants[2].sounds.externals2.note_on,2, note_to_play, freq, random_note_frequency, nil,"midi",velocity)

@@ -28,7 +28,7 @@ function plant_sounds_externals:new(active_notes)
   end
  
   pse.note_on = function(plant_id, note_to_play, pitch_frequency, beat_frequency, envelope_time_remaining, note_source, velocity)
-    local output_bandsaw = params:get("output_bandsaw")
+    local output_engine = params:get("output_engine")
     local output_midi = params:get("output_midi")
 
     local output_crow1 = params:get("output_crow1")
@@ -50,7 +50,7 @@ function plant_sounds_externals:new(active_notes)
     -- check for velocity
     velocity = velocity and velocity or 1
     -- MIDI out
-    -- if (note_source == "flora" and output_bandsaw == 4) or output_midi > 1 then
+    -- if (note_source == "flora" and output_engine == 4) or output_midi > 1 then
     if (note_source == "flora" and (output_midi == 2 or output_midi == 4)) or
       (note_source == "midi" and (output_midi == 3 or output_midi == 4))  then
       local level = plant_id == 1 and velocity * params:get("plow1_max_level") or velocity * params:get("plow2_max_level")
@@ -108,7 +108,7 @@ function plant_sounds_externals:new(active_notes)
     --   crow.output[4]:execute() 
     -- end
 
-    -- note, trigger, envelope, gate check
+    -- crow note, trigger, envelope, gate check
     if (plant_id == 1 and (note_source == "flora" and (output_crow1 == 2 or output_crow1 == 4))) or
       (plant_id == 1 and note_source == "midi" and output_crow1 > 1 and output_crow1 < 5) then
       -- if output_crow > 1 then
@@ -222,7 +222,28 @@ function plant_sounds_externals:new(active_notes)
       end
     end
 
-    
+  -- nb out
+  if (note_source == "flora" and (output_engine == 5 or output_engine == 6)) or
+    (note_source == "midi" and (output_engine == 6)) then
+      local velocity = plant_id == 1 and velocity * params:get("plow1_max_level") or velocity * params:get("plow2_max_level") 
+      if plant_id == 1 then
+        -- Grab the chosen voice's player off your param
+        local player = params:lookup_param("nb_voice_id"):get_player()
+        -- Play a note at velocity 0.5 for 0.2 beats (according to the norns clock)
+        local num_plow_controls = params:get("num_plow1_controls")
+        local time = envelopes[1].get_envelope_arrays().times[num_plow_controls]
+        player:play_note(note_to_play, velocity, time)
+      else
+        -- local player = params:lookup_param("nb_voice_id2"):get_player()
+        local player = params:lookup_param("nb_voice_id"):get_player()
+        -- Play a note at velocity 0.5 for 0.2 beats (according to the norns clock)
+        local num_plow_controls = params:get("num_plow1_controls")
+        local time = envelopes[2].get_envelope_arrays().times[num_plow_controls]
+        player:play_note(note_to_play, velocity, time)
+        -- crow.send("ii.wsyn.play_voice(" .. voice .."," .. pitch .."," .. velocity .. ")")
+      end
+    end
+
     -- divide 1 over beat_frequency to translate from hertz (cycles per second) into beats per second
     if envelope_length > 1/beat_frequency then
       local time_remaining = envelope_time_remaining and envelope_time_remaining - 1/beat_frequency or envelope_length - 1/beat_frequency 

@@ -78,16 +78,16 @@ function plant_sounds:new(parent)
           note_to_play = MusicUtil.freq_to_note_num(freq)
           -- if parent.id == 1 then print("note_to_play", note_to_play) end
           -- local output_param = params:get("output")
-          local output_bandsaw = params:get("output_bandsaw")
+          local output_engine = params:get("output_engine")
     
-          if output_bandsaw == 2 or output_bandsaw == 4 then
+          if output_engine == 2 or output_engine == 4 then
             ps.engine_note_on(note_to_play, freq, random_note_frequency)
           end
           local midi_out_channel = parent.id == 1 and midi_out_channel1 or midi_out_channel2
-          -- if parent.id == 1 and (output_bandsaw > 1) then 
+          -- if parent.id == 1 and (output_engine > 1) then 
           if parent.id == 1 then 
             clock.run(ps.externals1.note_on,parent.id, note_to_play, freq, random_note_frequency,nil,"flora")
-          -- elseif parent.id == 2 and (output_bandsaw > 1) then 
+          -- elseif parent.id == 2 and (output_engine > 1) then 
           elseif parent.id == 2 then 
             clock.run(ps.externals2.note_on,parent.id, note_to_play, freq, random_note_frequency,nil,"flora")
           end 

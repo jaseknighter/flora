@@ -164,14 +164,14 @@ flora_params.add_params = function(plants)
 --------------------------------
   params:add_separator("inputs/outputs")
   -- params:add_group("inputs/outputs",17+14)
-  params:add{type = "option", id = "output_bandsaw", name = "bandsaw (eng)",
-  options = {"off","plants", "midi", "plants + midi"},
+  params:add{type = "option", id = "output_engine", name = "engine",
+  options = {"off","plants", "midi", "plants + midi", "nb", "nb + midi"},
   default = 2,
 }
 
 -- midi
 
-  params:add_group("midi",13)
+  params:add_group("midi",14)
   
   --[[
   params:add{type = "option", id = "midi_engine_control", name = "midi engine control",
@@ -400,6 +400,13 @@ params:add_group("just friends",2)
 
   params:add_group("w/tape",17)
   w_slash.wtape_add_params()
+
+  nb:add_param("nb_voice_id", "nb voice") -- adds a voice selector param to your script.
+  nb:add_player_params() -- Adds the parameters for the selected voices to your script.
+
+  -- nb:add_param("nb_voice_id2", "nb voice 2") -- adds a voice selector param to your script.
+  -- nb:add_player_params() -- Adds the parameters for the selected voices to your script.
+
 
   lfo.setup_params()
 
