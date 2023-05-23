@@ -58,6 +58,8 @@ rule = include("flora/lib/rule")
 -- required for plant_sounds.lua
 plant_sounds_externals = include("flora/lib/plant_sounds_externals") 
 
+-- required for nb
+nb =  include("flora/lib/nb/lib/nb") 
 -- required for modify.lua
 -- fileselect = require 'fileselect'
 -- textentry = require 'textentry'
