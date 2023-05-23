@@ -223,7 +223,7 @@ function plant_sounds_externals:new(active_notes)
     end
 
   -- nb out
-  if (note_source == "flora" and (output_engine == 5)) or
+  if (note_source == "flora" and (output_engine == 5 or output_engine == 6)) or
     (note_source == "midi" and (output_engine == 6)) then
       local velocity = plant_id == 1 and velocity * params:get("plow1_max_level") or velocity * params:get("plow2_max_level") 
       if plant_id == 1 then
