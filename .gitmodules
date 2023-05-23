@@ -1,0 +1,3 @@
+[submodule "lib/nb"]
+	path = lib/nb
+	url = https://github.com/sixolet/nb.git
