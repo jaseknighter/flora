@@ -32,9 +32,10 @@ local function add_midi_players()
                         conn = conn
                     }
                     function player:add_params()
-                        params:add_group("midi_voice_" .. i .. '_' .. j, "midi "..j..": " .. abbreviate(v.name), 2)
+                        params:add_group("midi_voice_" .. i .. '_' .. j, "midi " .. j .. ": " .. abbreviate(v.name), 3)
                         params:add_number("midi_chan_" .. i .. '_' .. j, "channel", 1, 16, 1)
                         params:add_number("midi_modulation_cc_" .. i .. '_' .. j, "modulation cc", 1, 127, 72)
+                        params:add_number("midi_bend_range_" .. i .. "_" .. j, "bend range", 1, 48, 12)
                         params:hide("midi_voice_" .. i .. '_' .. j)
                     end
 
@@ -61,8 +62,28 @@ local function add_midi_players()
                     end
 
                     function player:modulate(val)
-                        self.conn:cc(params:get("midi_modulation_cc_" .. i.. '_' .. j), util.clamp(math.floor(127 * val), 0, 127),
+                        self.conn:cc(params:get("midi_modulation_cc_" .. i .. '_' .. j),
+                            util.clamp(math.floor(127 * val), 0, 127),
                             self:ch())
+                    end
+
+                    function player:modulate_note(note, key, value)
+                        if key == "pressure" then
+                            self.conn:key_pressure(note, util.round(value * 127), self:ch())
+                        end
+                    end
+
+                    function player:pitch_bend(note, amount)
+                        local bend_range = params:get("midi_bend_range_" .. i .. '_' .. j)
+                        if amount < -bend_range then
+                            amount = -bend_range
+                        end
+                        if amount > bend_range then
+                            amount = bend_range
+                        end
+                        local normalized = amount / bend_range -- -1 to 1
+                        local send = util.round(((normalized + 1) / 2) * 16383)
+                        self.conn:pitchbend(send, self:ch())
                     end
 
                     function player:describe()
@@ -72,8 +93,9 @@ local function add_midi_players()
                         end
                         return {
                             name = "v.name",
-                            supports_bend = false,
+                            supports_bend = true,
                             supports_slew = false,
+                            note_mod_targets = { "pressure" },
                             modulate_description = mod_d
                         }
                     end
@@ -155,11 +177,13 @@ local function pairsByKeys(t, f)
     local a = {}
     for n in pairs(t) do table.insert(a, n) end
     table.sort(a, f)
-    local i = 0 -- iterator variable
+    local i = 0             -- iterator variable
     local iter = function() -- iterator function
         i = i + 1
-        if a[i] == nil then return nil
-        else return a[i], t[a[i]]
+        if a[i] == nil then
+            return nil
+        else
+            return a[i], t[a[i]]
         end
     end
     return iter

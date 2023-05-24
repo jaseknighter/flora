@@ -24,6 +24,8 @@ end
 -- "properties" is an optional table of note mod properties. It should
 -- contain only keys that the vocie says it can modulate in note_mod_targets
 -- in the description.
+-- The note should be interepereted as pitch mod 128. High-value notes may be sent
+-- in the case two note-ons happen for the same note; this is possible in MPE situations.
 function player:note_on(note, vel, properties)
 end
 
