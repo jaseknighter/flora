@@ -43,11 +43,18 @@ end
 function player:modulate(val)
 end
 
--- Optional. Set the slew time for the voice.
+-- Optional. Modulate the voice, in the way that corresponds to the key. Range 0-1.
+-- Implementations may choose to a param on the voice or send-and-forget.
+-- The `key` should be present in voice_mod_targets in the description.
+function player:modulate_voice(key, val)
+end
+
+-- Optional. Set the slew time for the voice. 
+-- May be an alias for `modulate_voice`, but accepts a slew time in _seconds_.
 function player:set_slew(slew)
 end
 
--- Optional. Modulate the note. `key` should be present in note_mod_targets
+-- Optional. Modulate a single note. `key` should be present in note_mod_targets
 -- in the description. `value` should be between -1 and 1.
 -- Depending on the parameter, the voice may interperet modulation as either
 -- additive to, multiplicative of, or replacing any timbral properties.
@@ -67,6 +74,8 @@ function player:describe()
         supports_bend = false,
         supports_slew = false,
         modulate_description = "unsupported",
+        note_mod_targets = {},
+        voice_mod_tarets = {},
     }
 end
 
