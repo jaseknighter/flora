@@ -234,7 +234,7 @@ The tinta interface provides control via external keyboard connected to the norn
 
 Keyboard commands
 
-| Command                | <div style="width:290px">Description                                                                                 </div>| 
+| Command                | <img width=300/>Description                             | 
 | ----------------------- | ------------------------------------------------------------------------------------------- |  
 | tin              | set the melody <br> format: `tin=s{1,3,5,s{4,2}}`                                                                          |
 | oct              | shift the octave <br>recommended range: +/- 2 <br> format: `oct=s{0,1}`                                                    |
