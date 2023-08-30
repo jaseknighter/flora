@@ -236,12 +236,12 @@ Keyboard commands
 
 | Command                | Description                                                                                 | 
 | ----------------------- | ------------------------------------------------------------------------------------------- |  
-| tin              | set the melody <br> format: `tin=s{1,3,5,s{4,2}}`                                     |
-| oct              | shift the octave <br>recommended range: +/- 2 <br> format: `oct=s{0,1}`               |
-| vel              | set the velocity of each note <br>recommended range: 0 - 10 <br> format: `vel=ss{0,1}`|
-| rhy              | set the rhythm of each note <br>recommended range: 0.1 - 2 <br> format: `vel=ss{0,1}` |
-| stop             | stop the melody <br> format: `stop` |
-| play             | play the melody <br> format: `play` |
+| tin              | set the melody <br> format: `tin=s{1,3,5,s{4,2}}`                                                                          |
+| oct              | shift the octave <br>recommended range: +/- 2 <br> format: `oct=s{0,1}`                                                    |
+| vel              | set the velocity of each note <br>recommended range: 0 - 10 <br> format: `vel=ss{0,1}`                                     |
+| rhy              | set the rhythm of each note <br>recommended range: 0.1 - 2 <br> format: `vel=ss{0,1}`                                      |
+| stop             | stop the melody <br> format: `stop`                                      |
+| play             | play the melody <br> format: `play`                                      |
 
 
 
