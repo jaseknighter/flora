@@ -27,6 +27,7 @@ Follow the discussion on lines: https://llllllll.co/t/40261
       - [Plow](#plow)
         * [Plow modulation](#plow-modulation)
       - [Water](#water)
+      - [Tinta](#tinta)
     + [PSET Sequencer](#pset-sequencer)
     + [Generating new L-system axioms and rulesets](#generating-new-l-system-axioms-and-rulesets)
       - [Advanced sequencing](#advanced-sequencing)
@@ -221,6 +222,29 @@ The water interface provides control for the output parameters:
 Fine grain controls: All of the controls in the above list with the characters '(fg)' attached to the control names allow for fine grain control using K1+E3.
 
 *Note*: Tempo scalar offset is a parameter that provides macro control over all active note frequencies. It is not yet available from the Water UI screen but can be adjusted from PARAMETERS->EDIT. The Tempo Scalar Offset’s default value of 1.5 can also be changed by updating the variable `tempo_scalar_offset_default` in the lib/globals.lua file.
+
+#### Tinta
+![](images/tinta_wide_inv.png)
+```
+e1: previous page  
+e2: select control  
+enter commands with external keyboard
+```
+The tinta interface provides control via external keyboard connected to the norns for the melody accompanying the plant melodies (inspired by Aarvo Pärt's method of [Tintinnabuli](https://en.wikipedia.org/wiki/Tintinnabuli)).
+
+Keyboard commands
+
+| Command                | Description                                                                                 | 
+| ----------------------- | ------------------------------------------------------------------------------------------- |  
+| tin              | set the melody <br> format: `tin=s{1,3,5,s{4,2}}`                                     |
+| oct              | shift the octave <br>recommended range: +/- 2 <br> format: `oct=s{0,1}`               |
+| vel              | set the velocity of each note <br>recommended range: 0 - 10 <br> format: `vel=ss{0,1}`|
+| rhy              | set the rhythm of each note <br>recommended range: 0.1 - 2 <br> format: `vel=ss{0,1}` |
+| stop             | stop the melody <br> format: `stop` |
+| play             | play the melody <br> format: `play` |
+
+
+
 
 ### PSET Sequencer
 As of version `v0.2.0-beta`, a PSET sequencer has been built into Flora. This feature allows PSETS saved in the PARAMETERS->PSET menu to be sequenced. The sequencer's parameters (accessed from the PARAMETERS->EDIT menu) include:
