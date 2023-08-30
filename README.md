@@ -185,6 +185,7 @@ Fine grain controls: All of the envelope controls allow for fine grain control u
 
 ##### Plow modulation
 ```
+e1: next/previous page 
 k1+k3: show/hide plow modulation menu
 k1+e1: select active plant  
 k2: select control
@@ -206,7 +207,7 @@ In addition, the `show env mod params` parameter makes the parameter modulation 
 #### Water 
 ![](images/water_wide_inv.png)
 ```
-e1: previous page  
+e1: next/previous page  
 e2: select control  
 e3: change control value  
 ```
@@ -227,14 +228,13 @@ Fine grain controls: All of the controls in the above list with the characters '
 ![](images/tinta_wide_inv.png)
 ```
 e1: previous page  
-e2: select control  
 enter commands with external keyboard
 ```
 The tinta interface provides control via external keyboard connected to the norns for the melody accompanying the plant melodies (inspired by Aarvo Pärt's method of [Tintinnabuli](https://en.wikipedia.org/wiki/Tintinnabuli)).
 
 Keyboard commands
 
-| Command                | Description                                                                                 | 
+| Command                | <div style="width:290px">Description                                                                                 | 
 | ----------------------- | ------------------------------------------------------------------------------------------- |  
 | tin              | set the melody <br> format: `tin=s{1,3,5,s{4,2}}`                                                                          |
 | oct              | shift the octave <br>recommended range: +/- 2 <br> format: `oct=s{0,1}`                                                    |
