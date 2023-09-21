@@ -162,16 +162,15 @@ flora_params.add_params = function(plants)
 --------------------------------
 -- inputs/outputs/midi params
 --------------------------------
-  params:add_separator("inputs/outputs")
-  -- params:add_group("inputs/outputs",17+14)
-  params:add{type = "option", id = "output_engine", name = "engine",
-  options = {"off","plants", "midi", "plants + midi", "nb", "nb + midi"},
-  default = 2,
+params:add_separator("inputs/outputs")
+
+params:add{type = "option", id = "output_tinta", name = "output tinta",
+  options = {"off","on"},
+  default = 1,
 }
 
 -- midi
-
-  params:add_group("midi",14)
+  params:add_group("midi",15)
   
   --[[
   params:add{type = "option", id = "midi_engine_control", name = "midi engine control",
@@ -269,11 +268,6 @@ flora_params.add_params = function(plants)
   }
 
   params:add_separator("midi out")
-
-  params:add{type = "option", id = "output_midi", name = "midi out",
-    options = {"off","plants", "midi", "plants + midi"},
-    default = 1,
-  }
   
   params:add{
     type = "option", id = "midi_out_device", name = "device", options = midi_devices,
@@ -283,6 +277,12 @@ flora_params.add_params = function(plants)
     end
   }
   
+
+  params:add{type = "option", id = "output_midi", name = "output midi",
+    options = {"off","plants", "tinta", "midi"},
+    default = 1,
+  }
+
   params:add{
     type = "number", id = "midi_out_channel1", name = "plant 1:midi out channel",
     min = 1, max = 16, default = midi_out_channel1,
@@ -300,6 +300,14 @@ flora_params.add_params = function(plants)
     end
   }
 
+  params:add{type = "number", id = "midi_out_channel_tt", name = "tinta:midi out channel",
+    min = 1, max = 16, default = midi_out_channel_tt,
+    action = function(value)
+      -- all_notes_off()
+      midi_out_channel_tt = value
+    end
+  }
+
   params.get_midi_devices()
 
 -- crow
@@ -314,7 +322,7 @@ flora_params.add_params = function(plants)
 
   params:add{type = "option", id = "output_crow1", name = "crow out1 mode",
     -- options = {"off","on"},
-    options = {"off","plants", "midi", "plants + midi", "clock", "1lfo", "2lfo"},
+    options = {"off","plants", "midi", "plants + midi", "tinta"},
     default = 6,
     action = function(value)
       if value == 5 then 
@@ -337,7 +345,7 @@ flora_params.add_params = function(plants)
 
   params:add{type = "option", id = "output_crow3", name = "crow out3 mode",
     -- options = {"off","on"},
-    options = {"off","plants", "midi", "plants + midi", "clock", "1lfo", "2lfo"},
+    options = {"off","plants", "midi", "plants + midi", "tinta"},
     default = 2,
     action = function(value)
       if value == 5 then 
@@ -361,7 +369,7 @@ flora_params.add_params = function(plants)
 -- just friends
 params:add_group("just friends",2)
   params:add{type = "option", id = "output_jf", name = "just friends",
-    options = {"off","plants", "midi", "plants + midi"},
+    options = {"off","plants", "midi", "plants + midi", "tinta"},
     default = 2,
     action = function(value)
       if value > 1 then 
@@ -370,7 +378,7 @@ params:add_group("just friends",2)
         crow.ii.jf.mode(1)
       else
         crow.ii.jf.mode(0)
-        -- crow.ii.pullup(false)
+        crow.ii.pullup(false)
       end
     end
   }
@@ -403,10 +411,6 @@ params:add_group("just friends",2)
 
   nb:add_param("nb_voice_id", "nb voice") -- adds a voice selector param to your script.
   nb:add_player_params() -- Adds the parameters for the selected voices to your script.
-
-  -- nb:add_param("nb_voice_id2", "nb voice 2") -- adds a voice selector param to your script.
-  -- nb:add_player_params() -- Adds the parameters for the selected voices to your script.
-
 
   lfo.setup_params()
 
@@ -905,7 +909,7 @@ end
       id = cf_scalars[i], 
       name = "cf scalar" .. i,
       options = options.SCALARS,
-      default = 2
+      default = 3
     }
     
     params:set_action(cf_scalars[i], 
@@ -1044,9 +1048,54 @@ end
     end
   }
   --------------------------------
+  -- tinta
+  --------------------------------
+  params:add_separator("tinta")
+
+  params:add{
+    type = "option", 
+    id = "tin_enabled", 
+    name = "tinta enabled",
+    options = {"off","on"},
+    default = TIN_ENABLED,
+    action = function(x)
+      if initializing == false and x==1 then
+        tt.pat:stop()     
+      elseif initializing == false and x==2 then
+        tt.pat:play()
+      end
+    end
+  } 
+
+
+  params:add{
+    type = "option", 
+    id = "tin_dancing_notes", 
+    name = "dancing notes",
+    options = {"off","on"},
+    default = TIN_DANCING_NOTES,
+  } 
+
+  params:add{
+    type = "option", 
+    id = "tin_target", 
+    name = "tinta target",
+    options = {"plant 1","plant 2","plant 1+2"},
+    default = 1,
+  } 
+
+  params:add{
+    type = "option", 
+    id = "tin_method", 
+    name = "tinta method",
+    options = {"cycle","closest","furthest"},
+    default = TIN_METHOD,
+  } 
+
+  --------------------------------
   -- wow and flutter parameters
   --------------------------------
-  params:add_separator("")
+  params:add_separator("effects")
 
   params:add_group("wow and flutter",7)
   
@@ -1134,7 +1183,7 @@ end
   --------------------------------
   -- pitchshift parameters
   --------------------------------
-  params:add_group("pitchshift",6)
+  params:add_group("pitchshift",7)
 
   params:add{
     type = "control", id = "effect_pitchshift", name = "pitchshift", controlspec = controlspec.AMP,
@@ -1153,37 +1202,44 @@ end
   -- }
 
   params:add{
-    type = "taper", id = "grain_size", name = "grain size", min=0.01, max=1, default = 0.1,
+    type = "taper", id = "grain_size", name = "grain size", min=0.01, max=1, default = 0.2,
     action=function(x)
       engine.grain_size(x) 
     end
   }
   
   params:add{
-    type = "taper", id = "time_dispersion", name = "time dispersion", min=0.001, max=0.2, default = 0.01,
+    type = "taper", id = "time_dispersion", name = "time dispersion", min=0, max=1, default = 0.1,
     action=function(x)
       engine.time_dispersion(x) 
     end
   }
 
   params:add{
-    type = "number", id = "pitchshift_note1", name = "pitchshift note 1", min=-24, max=24, default=1,
+    type = "taper", id = "trigger_frequency", name = "trigger frequency", min=1, max=250, default = 100,
     action=function(x)
-      engine.pitchshift_note1(x) 
+      engine.trigger_frequency(x) 
     end
   }
 
   params:add{
-    type = "number", id = "pitchshift_note2", name = "pitchshift note 2", min=-24, max=24, default=3,
+    type = "number", id = "pitchshift1", name = "pitchshift 1", min=1, max=4, default=1,
     action=function(x)
-      engine.pitchshift_note2(x) 
+      engine.pitchshift1(x) 
     end
   }
 
   params:add{
-    type = "number", id = "pitchshift_note3", name = "pitchshift note 3", min=-24, max=24, default=5,
+    type = "number", id = "pitchshift2", name = "pitchshift 2", min=1, max=4, default=1,
     action=function(x)
-      engine.pitchshift_note3(x) 
+      engine.pitchshift2(x) 
+    end
+  }
+
+  params:add{
+    type = "number", id = "pitchshift3", name = "pitchshift 3", min=1, max=4, default=1,
+    action=function(x)
+      engine.pitchshift3(x) 
     end
   }
 

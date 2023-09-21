@@ -41,7 +41,7 @@ function w_slash.wdel_add_params()
   end
 
   params:add{type = "option", id = "output_wdel_ks", name = "Karplus-Strong",
-    options = {"off","plant 1","plant 2","midi", "p1 + midi", "p2 + midi", },
+    options = {"off","plant 1","plant 2","midi", "p1 + midi", "p2 + midi", "tinta"},
     default = 1,
     action = function(value)
       if value > 1 then
@@ -126,7 +126,7 @@ function w_slash.wdel_add_params()
     id = "wdel_freq_to_freq",
     name = "Freq to del freq",
     options = {"off","1x","2x","3x","4x","5x","6x"},
-    default=2,
+    default=1,
     action = function(val)       
     end
   }
@@ -327,7 +327,7 @@ end
 
 function w_slash.wsyn_add_params()
   params:add{type = "option", id = "output_wsyn", name = "wsyn output",
-    options = {"off","plants","midi", "plants + midi"},
+    options = {"off","plants","midi", "plants + midi", "tinta"},
     default = 1,
     action = function(val)
       pset_wsyn_outut_wsyn = val

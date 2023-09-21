@@ -1,47 +1,13 @@
 ---flora
--- v1.4.1
+-- v2.0
 -- lines: llllllll.co/t/40261
 --
 -- k1+k2: show/hide instructions
 
 ------------------------------
--- includes (found in includes.lua), notes and todo list:
-
--- includes: 
---  globals (global variables, constants, and functions)
---  encoders_and_keys
---  parameters
---  flora_pages (code to decide which screen and top navigation to display)
---  plant (l-system code run on pages 1-3. also contains includes for sounds)
---  envelope (envelope code run on page 4)
---  water (engine and output parameter code run on page 5)
---
 -- todo list: 
---  improve the quality and portability of the code
--- increase and decrease the brightness of the circles that appear when each note plays
---    according to the level of the note's graph/envelope
---  improve screen drawing efficiency
---    then, the SCREEN_FRAMERATE value can be increased safely 
---    and more complex/lengthy sentences can be safely supported
---  address coding/nomenclature inconsistencies (reference coding guidelines: https://github.com/monome/norns/wiki/coding-style-(lua))
---    examples: 
---      'setup' vs 'init' vs 'new' 
-  --    inconsistent use of ALL CAPS for naming constant values
---      use of colon vs dot function syntax
 --  add keyboard control for updating sentences/rulesets
---  explore support for more than two plants at a time
---  investigate (seemingly non-consequential) error message at startup related to midi maps 
---    for controls not yet created (e.g. for note frequencies > 1):
---      lua: /home/we/norns/lua/core/paramset.lua:301: attempt to index a nil value (local 'param')
---      stack traceback:
---        /home/we/norns/lua/core/paramset.lua:301: in function 'core/paramset.t'
---        /home/we/norns/lua/core/menu/params.lua:589: in field 'menu_midi_event'
---        /home/we/norns/lua/core/midi.lua:404: in function </home/we/norns/lua/core/midi.lua:391>
---  prevent 'wrong count of arguments' warning (e.g. for command 'set_frequencies')
---  free up allocated sc server resources less abruptly when stopping the engine
---
--- notes: 
---  additional notes and todo lists may be found in the other lua and sc code files
+
 --  credits: Brian Crabtree (@tehn), Dan Derks(@dan_derks), Daniel Shiffman, Eli Fieldsteel, Mark Wheeler (@markwheeler), Tom Armitage (@infovore), Tyler Etters (@tyleretters)
 --  source code and documentation: https://github.com/jaseknighter/flora 
 ------------------------------
@@ -58,7 +24,7 @@ lfo_lattice = Lattice:new{
   ppqn = 96
 }
 
-lfo_pattern = lfo_lattice:new_pattern{
+lfo_pattern = lfo_lattice:new_sprocket{
   action = function(t) 
     if initializing == false then
       local lfo_slope1 = lfo[1].slope
@@ -77,7 +43,7 @@ lfo_pattern = lfo_lattice:new_pattern{
       play_midi_cc_lfos("2lfo", lfo[2].slope)
     end
   end,
-  division = 1/64,-- 1/256, --1/16,
+  division = 1/64,
   enabled = true
 }
 
@@ -127,6 +93,7 @@ end
 ------------------------------
 function init()
   -- set sensitivity of the encoders
+
   norns.enc.sens(1,6)
   norns.enc.sens(2,6)
   norns.enc.sens(3,6)
@@ -134,7 +101,7 @@ function init()
 
   nb:init()
   
-  pages = UI.Pages.new(0, 5)
+  pages = UI.Pages.new(0, num_pages)
   
   -- look for a 16n device
   for i=16, 1, -1
@@ -164,9 +131,8 @@ function init()
   end
 
   parameters.add_params(plants)
-  
-  build_scale()
 
+  build_scale()
   for i=1,num_plants,1
   do
     plants[i].setup(plants[i].get_current_instruction())
@@ -222,7 +188,7 @@ function init()
   local pset_param_exclusions_nav = {"page_turner", "active_plant_switcher"}
 
   -- i/o exclusion group
-  local pset_param_exclusions_inputs_outputs = {"output_engine", "midi_device","plant1_cc_channel","plant2_cc_channel","plow1_cc_channel","plow2_cc_channel","water_cc_channel","output_midi","midi_out_device","midi_out_channel1","midi_out_channel2","output_crow1","output_crow2","output_crow3","output_crow4","output_jf","jf_mode","output_wdel_ks","wdel_mix","wdel_time_short","wdel_time_long","wdel_feedback","wdel_filter","wdel_clock","wdel_clock_ratio_div","wdel_clock_ratio_mul","wdel_freeze","wdel_frequency","wdel_mod_rate","wdel_mod_amount","wdel_freeze","output_wsyn","wsyn_ar_mode","wsyn_vel","wsyn_curve","wsyn_ramp","wsyn_fm_index","wsyn_fm_env","wsyn_fm_ratio_num","wsyn_fm_ratio_den","wsyn_lpg_time","wsyn_lpg_symmetry","wsyn_pluckylog","wsyn_randomize","wsyn_init","wtape_timestamp","wtape_seek","wtape_record","wtape_play","wtape_reverse","wtape_loop_active","wtape_echo_mode","wtape_loop_start","wtape_loop_end","wtape_loop_next","wtape_loop_next_trigger","wtape_loop_scale_mult","wtape_speed","wtape_freq","wtape_erase_strength","wtape_monitor_level","wtape_rec_level"}
+  local pset_param_exclusions_inputs_outputs = {"midi_device","plant1_cc_channel","plant2_cc_channel","plow1_cc_channel","plow2_cc_channel","water_cc_channel","output_midi","midi_out_device","midi_out_channel1","midi_out_channel2","output_crow1","output_crow2","output_crow3","output_crow4","output_jf","jf_mode","output_wdel_ks","wdel_mix","wdel_time_short","wdel_time_long","wdel_feedback","wdel_filter","wdel_clock","wdel_clock_ratio_div","wdel_clock_ratio_mul","wdel_freeze","wdel_frequency","wdel_mod_rate","wdel_mod_amount","wdel_freeze","output_wsyn","wsyn_ar_mode","wsyn_vel","wsyn_curve","wsyn_ramp","wsyn_fm_index","wsyn_fm_env","wsyn_fm_ratio_num","wsyn_fm_ratio_den","wsyn_lpg_time","wsyn_lpg_symmetry","wsyn_pluckylog","wsyn_randomize","wsyn_init","wtape_timestamp","wtape_seek","wtape_record","wtape_play","wtape_reverse","wtape_loop_active","wtape_echo_mode","wtape_loop_start","wtape_loop_end","wtape_loop_next","wtape_loop_next_trigger","wtape_loop_scale_mult","wtape_speed","wtape_freq","wtape_erase_strength","wtape_monitor_level","wtape_rec_level"}
 
   -- root note & scale exclusion group
   local pset_param_exclusions_root_note_scale = {"scale_mode", "root_note"}
@@ -249,7 +215,6 @@ end
 
 function init_done()
   clock.sleep(0.5)
-
   function process_crow_input_stream(v)
     local x = math.abs(v)
     if params:get("input_crow2") == 2 then
@@ -257,10 +222,17 @@ function init_done()
     end
   end
   
+  midi_out_device = midi.connect(params:get("midi_out_device")) 
+  midi_out_channel1 = params:get("midi_out_channel1")
+  midi_out_channel2 = params:get("midi_out_channel2")
+  midi_out_channel_tt = params:get("midi_out_channel_tt")
+
   crow.input[2].stream = process_crow_input_stream
   crow.input[2].mode("stream", 0.1)  
   lfo_lattice:start()
   lfo.init()
+  tt.init()
+  screen.clear()
   initializing = false
 end
 

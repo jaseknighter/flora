@@ -83,3 +83,9 @@ p_gen_seq = include "flora/lib/plant_gen_sequencer"
 
 -- required for sequencing psets
 pset_seq = include "flora/lib/pset_sequencer"
+
+
+s = require('sequins')
+tl = require('timeline')
+
+tt = include "flora/lib/tinta"

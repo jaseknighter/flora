@@ -230,19 +230,48 @@ Fine grain controls: All of the controls in the above list with the characters '
 e1: previous page  
 enter commands with external keyboard
 ```
-The tinta interface provides control via external keyboard connected to the norns for the melody accompanying the plant melodies (inspired by Aarvo Pärt's method of [Tintinnabuli](https://en.wikipedia.org/wiki/Tintinnabuli)).
+As of flora v2.0, the tinta interface provides control for the melody accompanying the plant melodies via external keyboard or the Maiden REPL and was inspired by Aarvo Pärt's method of [Tintinnabuli](https://en.wikipedia.org/wiki/Tintinnabuli)).
 
-Keyboard commands
+Tinta makes extensive use of [sequins](https://monome.org/docs/norns/reference/lib/sequins).
 
-| Command                | <img width=300/>Description                             | 
-| ----------------------- | ------------------------------------------------------------------------------------------- |  
-| tin              | set the melody <br> format: `tin=s{1,3,5,s{4,2}}`                                                                          |
-| oct              | shift the octave <br>recommended range: +/- 2 <br> format: `oct=s{0,1}`                                                    |
-| vel              | set the velocity of each note <br>recommended range: 0 - 10 <br> format: `vel=ss{0,1}`                                     |
-| rhy              | set the rhythm of each note <br>recommended range: 0.1 - 2 <br> format: `vel=ss{0,1}`                                      |
+Options have been added to the PARAMETERS menu controls to output tinta notes to midi, crow, jf, and w/.
+
+Keyboard commands (using an external keyboard)
+
+| Command                | Description<img width=400/>                                       | 
+| ---------------------- | ----------------------------------------------------------------- |  
+| tin              | set the melody <br> format: `tin=s{1,3,5,s{4,2}}`                      |
+| oct              | shift the octave <br>recommended range: +/- 2 <br> format: `oct=s{0,1}`|
+| vel              | set the velocity of each note <br>recommended range: 0 - 10 <br> format: `vel=ss{0,5}` |
+| rhy              | set the rhythm of each note <br>recommended range: 0.1 - 2 <br> format: `rhy=ss{1,0.25}`  |
 | stop             | stop the melody <br> format: `stop`                                      |
 | play             | play the melody <br> format: `play`                                      |
+| offdance             | don't adjust melody relative to plant melody  <br> format: `offdance`                                      |
+| ondance             | adjust melody relative to plant melody <br> format: `ondance`                                      |
 
+Important note: when setting the rhythm (`rhy`), nested sequins will throw an error (e.g. `rhy=s{1,s{0.5,0.25}}`).
+
+REPL commands (using the Maiden REPL)
+
+Using the maiden REPL to control the tinta interface more complex [sequins](https://monome.org/docs/norns/reference/lib/sequins) functionality can be utilized such as flow-modifiers.
+
+| Command                | Description<img width=400/>                                       | 
+| ---------------------- | ----------------------------------------------------------------- |  
+| tin              | set the melody <br> format: `tt.tin=s{1,3,5,s{4,2}}`                      |
+| oct              | shift the octave <br>recommended range: +/- 2 <br> format: `tt.oct=s{0,1}`|
+| vel              | set the velocity of each note <br>recommended range: 0 - 10 <br> format: `tt.vel=s{0,5}` |
+| rhy              | set the rhythm of each note <br>recommended range: 0.1 - 2 <br> format: `tt.set_rhythm({1,0.25})`  |
+
+Important note: when setting the rhythm with the maiden repl, a table is passed to the method `tt.set_rhythm` instead of setting the rhythm sequins directly.
+
+
+Tinta params menu
+| Paramter               | Description<img width=400/>                                       | 
+| ---------------------- | ----------------------------------------------------------------- |  
+| tinta enabled            | turns the tinta melody generator on and off                       |
+| dancing notes          | if set to `on` the tinta melody is set relative to the notes played by the plant forms |
+| tinta target            | sets which plant to determine the tinta melody when the dancing notes parameter is set to "on"                       |
+| tinta method              | when `dancing notes` is turned on, one of three methods for setting  |
 
 
 

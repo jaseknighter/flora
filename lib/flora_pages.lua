@@ -80,7 +80,12 @@ local draw_plants = function()
   local plant1_randomized = string.find(plants[1].sentence, "r")
   local plant2_randomized = string.find(plants[2].sentence, "r")
   if notes_only ~= true or plant1_randomized or plant2_randomized then
-    screen.clear() 
+    -- screen.clear() 
+    screen.move(0,13)
+    screen.level(0)
+    screen.rect(0,13,128,51)
+    screen.fill()
+    screen.stroke()
     screen.level(plant1_screen_level)
     plants[1].redraw_fn()
     screen.level(plant2_screen_level)
@@ -283,17 +288,26 @@ local draw_top_nav = function()
       water.draw_water_nav()
       water.redraw()
     end
+  elseif pages.index == 6 then
+    if show_instructions == true then
+      screen.text("tinta instructions")
+    elseif menu_status == false then 
+      local label_obj = water.get_control_label()
+      label = "tinta"
+      screen.text(label)
+    end
   end
 
   -- navigation marks
   screen.level(0)
-  screen.rect(0,(pages.index-1)/5*10,2,2)
+  screen.rect(0,(pages.index-1)/num_pages*10,2,2)
   screen.fill()
   screen.update()
 end
 
 local draw_pages = function(notes_only)
   if initializing == false then
+
     if show_instructions == true then 
       screen.clear()
       instructions.display() 
@@ -310,6 +324,8 @@ local draw_pages = function(notes_only)
         end
       elseif pages.index == 5 then
         water.display()
+      elseif pages.index == 6 then
+        tt.redraw()
       end
     end
     draw_top_nav()

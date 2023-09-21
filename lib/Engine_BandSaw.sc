@@ -19,7 +19,6 @@
 Engine_BandSaw : CroneEngine {
   classvar maxNumVoices = 10;
 
-  var maxCPU = 50;
   
   var voiceGroup;
   var <voices;
@@ -39,7 +38,6 @@ Engine_BandSaw : CroneEngine {
   var rqmax=0.008;
   var lsf=200;
   var ldb=0;
-  var frequency = 1;
   
   var wobble_rpm=33;
   var wobble_amp=0.05; 
@@ -47,10 +45,8 @@ Engine_BandSaw : CroneEngine {
   var flutter_amp=0.03;
   var flutter_fixedfreq=6;
   var flutter_variationfreq=2;  
-  var effect_pitchshift=0.5, pitchshift_offset=0, pitchshift_note1=1, pitchshift_note2=3, pitchshift_note3=5;
-  // var notes, scale_length=24, scale;
-  var scale_length=24;
-  var trigger_frequency=1, base_note=0;
+  var effect_pitchshift=0.5, pitchshift_note1=1, pitchshift_note2=3, pitchshift_note3=5;
+  var trigger_frequency=1, current_note=0;
 
   *new { arg context, doneCallback;
     ^super.new(context, doneCallback);
@@ -58,27 +54,18 @@ Engine_BandSaw : CroneEngine {
   
   alloc {
 
-    // fork { 
-    //   loop { 
-    //     if ((context.server.peakCPU > maxCPU) && (context.server.avgCPU > maxCPU)){
-    //       ["peakCPU/avgCPU not ok, maxCPU limit exceeded", context.server.peakCPU].postln; 
-    //     };
-    //     0.01.wait; 
-    //   } 
-    // };
-
-    // voiceGroup = Group.new(context.xg);
     voiceGroup = ParGroup.head(context.xg);
     voices = Array.new();
     
     effectsBus = Bus.audio(context.server, 1);
 
     SynthDef(\BandSaw, {
-      // arg out, effectsBus,
       arg out,
       freq=1/2, 
       detune=0.2, pan=0, cfhzmin=0.1,cfhzmax=0.3,
-      cf=500, rqmin=0.005, rqmax=0.008,
+      cfmin=500, cfmax=2000, 
+      cf=500, 
+      rqmin=0.005, rqmax=0.008,
       lsf=200, ldb=0, amp=1, 
       wobble_rpm=33, wobble_amp=0.05, wobble_exp=39, flutter_amp=0.03, flutter_fixedfreq=6, flutter_variationfreq=2;
   		
@@ -92,12 +79,15 @@ Engine_BandSaw : CroneEngine {
       env = Env.newClear(maxsegments);
       envctl = \env.kr(env.asArray);
       
-      //sig = Saw.ar(freq * {LFNoise1.kr(0.5,detune).midiratio}!2);
-      sig = Saw.ar(freq);
+      sig = Saw.ar(freq * {LFNoise1.kr(0.5,0.2).midiratio}!2);
+      // sig = Saw.ar(freq);
       
       sig = BPF.ar(
         sig,
-        cf * combined_defects,
+        // cf * combined_defects,
+        {LFNoise1.kr(
+			    LFNoise1.kr(4).exprange(cfhzmin,cfhzmax)
+		    ).exprange(cfmin,cfmax)}!2 * combined_defects,
         {LFNoise1.kr(0.1).exprange(rqmin,rqmax)}!2
       );
       
@@ -111,27 +101,24 @@ Engine_BandSaw : CroneEngine {
 
     //effects
     effects = SynthDef(\effects, {
-
       //pitschshift
-      arg in, out, trigger_frequency=1, effect_pitchshift=0.5, pitchshift_offset=0, base_note = 24,
-      pitchshift_note1=1,pitchshift_note2=3,pitchshift_note3=5,
-      scale, quantize=1, grain_size=0.1, time_dispersion=0.01;
+      arg in, out, trigger_frequency=100, effect_pitchshift=0, current_note = 24,
+      pitchshift_note1=1,pitchshift_note2=3,pitchshift_note3=5, 
+      quantize=1, grain_size=0.1, time_dispersion=0.01,currentFreq=1;
       
       var pitchshift_notes, trigger;
-      var sig = In.ar(in, 2), pitch_ratio;
-      
-      // quantize notes::: WORK IN PROGRESS
-      // pitchshift_note1 = (quantize * (DegreeToKey.kr(scale,pitchshift_note1) - base_note.cpsmidi))+((1-quantize)*(pitchshift_note1));
-      // pitchshift_note2 = (quantize * (DegreeToKey.kr(scale,pitchshift_note2) - base_note.cpsmidi))+((1-quantize)*(pitchshift_note2));
-      // pitchshift_note3 = (quantize * (DegreeToKey.kr(scale,pitchshift_note3) - base_note.cpsmidi))+((1-quantize)*(pitchshift_note3));
+      var sig = In.ar(in, 2), shifted_pitch;
+      // var sig = In.ar(in, 2), pitch_ratio;
 
       trigger = Impulse.ar(trigger_frequency);
       pitchshift_notes = Dseq([pitchshift_note1,pitchshift_note2,pitchshift_note3], inf);
-      pitch_ratio = ((Demand.ar(trigger, 0, pitchshift_notes) + (base_note.cpsmidi + pitchshift_offset)).midicps / base_note);
+      // shifted_pitch = Demand.ar(trigger, 0, pitchshift_notes).midicps;
+      shifted_pitch = Demand.ar(trigger, 0, pitchshift_notes);
+      // shifted_pitch.poll;
       sig = (sig*(1-effect_pitchshift))+(effect_pitchshift*PitchShift.ar(
         sig,
         grain_size,
-        pitch_ratio,
+        shifted_pitch,
         0,
         time_dispersion
       ));
@@ -142,11 +129,6 @@ Engine_BandSaw : CroneEngine {
 
 
     context.server.sync;
-
-    this.addCommand("set_frequency", "f", { arg msg;
-      frequency = msg[1];
-    });
-    
     
     this.addCommand(\note_on, "fff", { arg msg;
       var voiceToRemove, newVoice;
@@ -159,6 +141,7 @@ Engine_BandSaw : CroneEngine {
         frequency = 0.2;
         ("frequency too low!!!!").postln;
       };
+
 
       // Remove voice if ID matches or there are too many
       voiceToRemove = voices.detect{arg item; item.id == id};
@@ -187,9 +170,8 @@ Engine_BandSaw : CroneEngine {
       env = Env.xyc(env);
 
       // set the effects's trigger frequency and base note
-      effects.set(\trigger_frequency, frequency);
-      // ["cfval.cpsmidi",cfval.cpsmidi].postln;
-      effects.set(\base_note, cfval.cpsmidi);
+      // effects.set(\trigger_frequency, frequency);
+      effects.set(\current_note, cfval);
 
       // Add new voice 
       context.server.makeBundle(nil, {
@@ -199,12 +181,17 @@ Engine_BandSaw : CroneEngine {
             \amp, amp,
             \env, env,
             \freq, frequency,
-            \detune, Pwhite(0,0.1).asStream.next,
+            \detune, 0,
+            // \detune, Pwhite(0,0.1).asStream.next,
+            \detune, Pexprand(0.05,0.2).asStream.next,
             \cfhzmin, cfhzmin,
             \cfhzmax, cfhzmax,
-            \rqmin, rqmin, 
+            \rqmin, rqmin * Pexprand(1.01,1.15).asStream.next, 
             \rqmax, rqmax, 
-            \cf, cfval,
+            // \cf, cfval,
+            \cfmin, cfval,
+	          //detune the center frequencies
+	          \cfmax, cfval * Pwhite(1.008,1.025,inf).asStream.next,
             \lsf, lsf,
             \ldb, ldb,
             \wobble_rpm, wobble_rpm,
@@ -320,33 +307,16 @@ Engine_BandSaw : CroneEngine {
 
     });
 
-    this.addCommand("pitchshift_note1", "f", { arg msg;
+    this.addCommand("pitchshift1", "f", { arg msg;
       effects.set(\pitchshift_note1, msg[1]);
     });
 
-    this.addCommand("pitchshift_note2", "f", { arg msg;
+    this.addCommand("pitchshift2", "f", { arg msg;
       effects.set(\pitchshift_note2, msg[1]);
     });
 
-    this.addCommand("pitchshift_note3", "f", { arg msg;
+    this.addCommand("pitchshift3", "f", { arg msg;
       effects.set(\pitchshift_note3, msg[1]);
-    });
-
-    this.addCommand("update_scale", "ffffffffffffffffffffffff", { arg msg;
-      var notes = Array.new(scale_length);
-      var scale;
-      for (0, scale_length-1, { arg i;
-        var val = msg[i+1];
-        notes.insert(i,val);
-      }); 
-      (["update scale",notes]).postln;
-      scale = Buffer.loadCollection(context.server, notes);
-      effects.set(\scale, scale);
-    });
-
-    this.addCommand("quantize_pitchshift", "f", { arg msg;
-      msg[1].postln;
-      effects.set(\quantize, msg[1]);
     });
 
     this.addCommand("grain_size", "f", { arg msg;
@@ -355,6 +325,10 @@ Engine_BandSaw : CroneEngine {
 
     this.addCommand("time_dispersion", "f", { arg msg;
       effects.set(\time_dispersion, msg[1]);
+    });
+
+    this.addCommand("trigger_frequency", "f", { arg msg;
+      effects.set(\trigger_frequency, msg[1]);
     });
 
   }

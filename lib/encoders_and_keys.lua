@@ -18,8 +18,8 @@ local enc = function (n, delta)
           page_scroll(page_increment)
           set_midi_channels()
         end
-        if (pages.index == 4) then
-          screen.clear()
+        screen.clear()
+        if (pages.index == 4 or pages.index == 6) then
         end
       end
       if (alt_key_active == true) then
@@ -28,6 +28,7 @@ local enc = function (n, delta)
         end
       end
     elseif n == 2 then 
+      screen.clear()
       if (pages.index == 1 and alt_key_active) then
         -- change instruction for active plant
         local rotate_by = util.clamp(delta, -1, 1)
@@ -45,6 +46,7 @@ local enc = function (n, delta)
         water.enc(n, delta, alt_key_active)     
       end
     elseif n == 3 then 
+      screen.clear()
       if pages.index == 1 then
         plants[active_plant].set_angle(util.clamp(delta, -1, 1))
       elseif pages.index == 2 then

@@ -87,7 +87,7 @@ controlspec.PITCHSHIFT.default = 0
 WOBBLE_DEFAULT = 0.01
 FLUTTER_DEFAULT = 0.00
 updating_controls = false
-SCREEN_FRAMERATE = 1/10
+SCREEN_FRAMERATE = 1/30
 INITIAL_PLANT_INSTRUCTIONS_1 = 13 
 INITIAL_PLANT_INSTRUCTIONS_2 = 13
 menu_status = false
@@ -112,8 +112,8 @@ tempo_scalar_offset_default = 1.5
 num_cf_scalars_max = 4
 num_cf_scalars_default = 1
 
-MAX_AMPLITUDE = 10
-MAX_ENV_LENGTH = 10
+MAX_AMPLITUDE = 8
+MAX_ENV_LENGTH = 3
 CURVE_MIN = -10 -- -50
 CURVE_MAX = 10 --50
 MAX_ENVELOPE_NODES = 20
@@ -191,7 +191,7 @@ screen_level_graphics = 16
 screen_size = vector:new(127,64)
 center = vector:new(screen_size.x/2, screen_size.y/2)
 pages = 1 -- WHAT IS THIS FOR?!?!?
-num_pages = 5
+num_pages = 6
 
 plant1_screen_level = 3
 plant2_screen_level = 1
@@ -238,7 +238,6 @@ build_scale = function()
   for i = 1, num_to_add do
     table.insert(notes, notes[scale_length - num_to_add])
   end
-  engine.update_scale(table.unpack(notes))
 end
 
 set_scale_length = function()
@@ -257,9 +256,11 @@ pset_wsyn_vel = 0
 
 
 -- for midi_helper.lua
+buchla208c = true
 midi_in_device = {}
 midi_out_channel1 = 1
 midi_out_channel2 = 1
+midi_out_channel_tt = 1
 midi_out_envelope_override1 = nil
 midi_out_envelope_override2 = nil
 
@@ -310,3 +311,8 @@ field_row_spacing = 8
 -- for hnds.lua
 MIDI_LFO_CC_DEFAULT = 101 
 MIDI_LFO_CHANNEL_DEFAULT = 1
+
+-- for tinta
+TIN_ENABLED = 2
+TIN_DANCING_NOTES = 2
+TIN_METHOD = 1

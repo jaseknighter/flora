@@ -198,7 +198,7 @@ function Envelope:new(id, num_plants, env_nodes)
     e.cursor_location_y = (e.env_level_max/e.y_max) * e.y_max
 
     local graph_x = 10 + screen_size.x/num_plants*(e.id-1)
-    local graph_y = 10
+    local graph_y = 15
     local graph_width = screen_size.x/num_plants - 10
     local graph_height = 35
 
@@ -477,7 +477,7 @@ function Envelope:new(id, num_plants, env_nodes)
       end
     end
     screen.fill()
-    end
+  end
 
   e.redraw = function ()
     if screen_dirty == true then

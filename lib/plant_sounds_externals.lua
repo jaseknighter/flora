@@ -28,8 +28,9 @@ function plant_sounds_externals:new(active_notes)
   end
  
   pse.note_on = function(plant_id, note_to_play, pitch_frequency, beat_frequency, envelope_time_remaining, note_source, velocity)
-    local output_engine = params:get("output_engine")
+    -- print(plant_id, note_to_play, pitch_frequency, beat_frequency, envelope_time_remaining, note_source, velocity)
     local output_midi = params:get("output_midi")
+    local output_tinta = params:get("output_tinta")
 
     local output_crow1 = params:get("output_crow1")
     local output_crow3 = params:get("output_crow3")
@@ -44,18 +45,32 @@ function plant_sounds_externals:new(active_notes)
     local output_wdel_ks = params:get("output_wdel_ks")
     local output_wdel_freq_to_freq = params:get("wdel_freq_to_freq")
     
-    local midi_out_channel = plant_id == 1 and midi_out_channel1 or midi_out_channel2
+
     local envelope_length = envelopes[plant_id].get_env_time()
     
     -- check for velocity
     velocity = velocity and velocity or 1
+    
     -- MIDI out
-    -- if (note_source == "flora" and output_engine == 4) or output_midi > 1 then
-    if (note_source == "flora" and (output_midi == 2 or output_midi == 4)) or
-      (note_source == "midi" and (output_midi == 3 or output_midi == 4))  then
-      local level = plant_id == 1 and velocity * params:get("plow1_max_level") or velocity * params:get("plow2_max_level")
-      level = math.floor(util.linlin(0,10,0,127,level))
+    if (note_source == "flora" and output_midi == 2) or
+      (note_source == "midi" and output_midi == 4) or
+      (note_source == "tt"  and output_midi == 3 and output_tinta == 2)  then
+      local midi_out_channel 
+      if note_source == "tt" then
+        midi_out_channel = midi_out_channel_tt
+      else
+        midi_out_channel = plant_id == 1 and midi_out_channel1 or midi_out_channel2
+      end
+      local max_level = plant_id == 1 and params:get("plow1_max_level") or params:get("plow2_max_level")
+      local level = velocity/max_level 
+      level = math.floor(util.linlin(0,max_level,0,127,level))
       midi_out_device:note_on(note_to_play, level, midi_out_channel)
+      
+      if buchla208c then
+        midi_out_device:note_on(note_to_play, level, 1)
+        midi_out_device:cc(14, level, 2)
+      end
+      
       table.insert(active_notes, note_to_play)
       -- Note off timeout
       local note_duration_param = plant_id == 1 and "plant_1_note_duration" or "plant_2_note_duration"
@@ -76,7 +91,7 @@ function plant_sounds_externals:new(active_notes)
         end
         
         local to_string =  "to(" .. 
-                           (velocity*envelope_data.levels[i]) .. "," ..
+                           (envelope_data.levels[i]) .. "," ..
                            (envelope_data.times[i]-envelope_data.times[i-1]) .. 
                            "," .. to_shape .. 
                            "),"
@@ -84,7 +99,7 @@ function plant_sounds_externals:new(active_notes)
 
         if i == envelope_data.segments then
           local to_string = "to(" .. 
-                            (velocity*envelope_data.levels[i]) .. "," ..
+                            (envelope_data.levels[i]) .. "," ..
                             (env_length-envelope_data.times[i]) .. 
                             "," .. to_shape .. 
                             "),"
@@ -110,7 +125,8 @@ function plant_sounds_externals:new(active_notes)
 
     -- crow note, trigger, envelope, gate check
     if (plant_id == 1 and (note_source == "flora" and (output_crow1 == 2 or output_crow1 == 4))) or
-      (plant_id == 1 and note_source == "midi" and output_crow1 > 1 and output_crow1 < 5) then
+       (plant_id == 1 and note_source == "midi" and output_crow1 > 1 and output_crow1 < 5 or 
+       plant_id == 1 and (note_source == "tt" and (output_crow1 == 5))) then
       -- if output_crow > 1 then
       local volts = (note_to_play-60)/12
       crow.output[1].volts = volts
@@ -118,26 +134,25 @@ function plant_sounds_externals:new(active_notes)
       if output_param == 2 then -- envelope
         local asl_envelope = asl_generator(envelopes[1].get_env_time())
         asl_envelope1 = asl_envelope
-
+        -- print(asl_envelope)
         crow.output[2].action = tostring(asl_envelope)
       elseif output_param == 3 then -- trigger
         local time = crow_trigger_2
-        local level = velocity * params:get("plow1_max_level")
+        local level = params:get("plow1_max_level")
         local polarity = 1
         crow.output[2].action = "pulse(" .. time ..",".. level .. "," .. polarity .. ")"
       elseif output_param == 4 then -- gate
         local num_plow_controls = params:get("num_plow1_controls")
         local time = envelopes[1].get_envelope_arrays().times[num_plow_controls]
         -- local time = params:get("plow1_max_time")
-        local level = velocity * params:get("plow1_max_level")
+        local level = params:get("plow1_max_level")
         local polarity = 1
         crow.output[2].action = "pulse(" .. time ..",".. level .. "," .. polarity .. ")"
       end
       if output_param > 1 then crow.output[2]() end
-    end
-
-    if (plant_id == 2 and (note_source == "flora" and (output_crow3 == 2 or output_crow3 == 4))) or
-    (plant_id == 2 and note_source == "midi" and output_crow3 > 1 and output_crow3 < 5) then
+    elseif (plant_id == 2 and (note_source == "flora" and (output_crow3 == 2 or output_crow3 == 4))) or
+      (plant_id == 2 and note_source == "midi" and output_crow3 > 1 and output_crow3 < 5) or 
+      (plant_id == 2 and (note_source == "tt" and (output_crow1 == 5))) then
       -- if output_crow > 1 then
       local volts = (note_to_play-60)/12
       crow.output[3].volts = volts
@@ -149,14 +164,14 @@ function plant_sounds_externals:new(active_notes)
         crow.output[4].action = tostring(asl_envelope)
       elseif output_param == 3 then -- trigger
         local time = crow_trigger_4
-        local level = velocity * params:get("plow2_max_level")
+        local level = params:get("plow2_max_level")
         local polarity = 1
         crow.output[4].action = "pulse(" .. time ..",".. level .. "," .. polarity .. ")"
       elseif output_param == 4 then -- gate
         -- local time = params:get("plow2_max_time")
         local num_plow_controls = params:get("num_plow2_controls")
         local time = envelopes[2].get_envelope_arrays().times[num_plow_controls]
-        local level = velocity * params:get("plow2_max_level")
+        local level = params:get("plow2_max_level")
         local polarity = 1
         crow.output[4].action = "pulse(" .. time ..",".. level .. "," .. polarity .. ")"
       end
@@ -166,25 +181,28 @@ function plant_sounds_externals:new(active_notes)
 
     -- just friends out
     if (note_source == "flora" and (output_jf == 2 or output_jf == 4)) or
-      (note_source == "midi" and (output_jf == 3 or output_jf == 4)) then
+      (note_source == "midi" and (output_jf == 3 or output_jf == 4)) or 
+      (note_source == "tt" and output_tinta == 2 and (output_jf == 5)) then
         if jf_mode == 1 then
-        if plant_id == 1 then
-          local level = velocity * params:get("plow1_max_level") 
-          crow.ii.jf.play_voice(1,(note_to_play-60)/12,level)
+          if plant_id == 1 then
+            local level = velocity * params:get("plow1_max_level") * 2
+            crow.ii.jf.play_voice(1,(note_to_play-60)/12,level)
+          else
+            local level = velocity * params:get("plow2_max_level") * 2
+            crow.ii.jf.play_voice(2,(note_to_play-60)/12,level)
+          end
         else
-          local level = velocity * params:get("plow2_max_level") 
-          crow.ii.jf.play_voice(2,(note_to_play-60)/12,level)
+          local level = velocity * params:get("plow1_max_level") * 2
+          crow.ii.jf.play_note((note_to_play-60)/12,level)
         end
-      else
-        local level = velocity * params:get("plow1_max_level") 
-        crow.ii.jf.play_note((note_to_play-60)/12,level)
-      end
     end
     
     -- wsyn out
     if (note_source == "flora" and (output_wsyn == 2 or output_wsyn == 4)) or
-      (note_source == "midi" and (output_wsyn == 3 or output_wsyn == 4)) then
-        local pitch = (note_to_play-48)/12
+      (note_source == "midi" and (output_wsyn == 3 or output_wsyn == 4) or
+      (note_source == "tt" and output_tinta == 2 and (output_wsyn == 5))) then
+      
+        local pitch = (note_to_play-60)/12
         local velocity = active_plant == 1 and velocity * params:get("plow1_max_level") or velocity * params:get("plow2_max_level") 
         if plant_id == 1 then
         params:set("wsyn_init",1)
@@ -197,9 +215,10 @@ function plant_sounds_externals:new(active_notes)
     end
 
       -- wdel karplus-strong out
-    if ((note_source == "flora" and (output_wdel_ks == 2 or output_wdel_ks == 3 or output_wdel_ks > 4)) or
-      (note_source == "midi" and (output_wdel_ks > 3 ))) then
-      local pitch = (note_to_play-48)/12
+    if ((note_source == "flora" and (output_wdel_ks == 2 or output_wdel_ks == 3 or output_wdel_ks > 4) and output_wdel_ks < 7) or
+      (note_source == "midi" and output_wdel_ks > 3 and output_wdel_ks < 7) or 
+      (note_source == "tt" and output_tinta == 2 and output_wdel_ks == 7)) then
+      local pitch = (note_to_play-60)/12
       local level = plant_id == 1 and velocity * params:get("plow1_max_level") or velocity * params:get("plow2_max_level") 
       crow.send("ii.wdel.pluck(" .. level .. ")")
       crow.send("ii.wdel.freq(" .. pitch .. ")")
@@ -207,11 +226,13 @@ function plant_sounds_externals:new(active_notes)
     end
 
     -- wdel rate to V8
+
     if ((note_source == "flora" and output_wdel_freq_to_freq > 1) or
-      (note_source == "midi" and output_wdel_freq_to_freq == 2)) then
+        (note_source == "tt" and output_tinta == 2 and output_wdel_freq_to_freq > 1) or
+        (note_source == "midi" and output_wdel_freq_to_freq == 2)) then
       local level = plant_id == 1 and velocity * params:get("plow1_max_level") or velocity * params:get("plow2_max_level") 
       if level > 0.01 then
-        local pitch = (note_to_play-48)/12 
+        local pitch = (note_to_play-60)/12 
         pitch = tostring(pitch)
         local dot = string.find(pitch,"%.")
         pitch = dot and string.sub(pitch,dot) or pitch
@@ -223,8 +244,9 @@ function plant_sounds_externals:new(active_notes)
     end
 
   -- nb out
-  if (note_source == "flora" and (output_engine == 5 or output_engine == 6)) or
-    (note_source == "midi" and (output_engine == 6)) then
+  local nb_voice = params:get("nb_voice_id")
+  if nb_voice > 1 then
+      
       local velocity = plant_id == 1 and velocity * params:get("plow1_max_level") or velocity * params:get("plow2_max_level") 
       if plant_id == 1 then
         -- Grab the chosen voice's player off your param

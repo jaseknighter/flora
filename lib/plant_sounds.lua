@@ -30,9 +30,36 @@ function plant_sounds:new(parent)
     ps.active_notes = {}
   end
 
-  ps.engine_note_on = function(note_to_play, freq, random_note_frequency)
+  ps.find_note = function(note)
+    local note_idx=1
+    for i=1,#notes do
+      if note==notes[i] then note_idx = i end
+    end
+    return note_idx
+  end
+
+  ps.engine_note_on = function(note_to_play, freq, random_note_frequency, note_idx)
     envelopes[parent.id].update_envelope()
+    
+    local tin_target = params:get("tin_target")
+    if tin_target == parent.id or tin_target == 3 then  
+      tt.set_tt_note(note_to_play)
+    end
+
     engine.note_on(note_to_play, freq, random_note_frequency)
+    -- local psn1=params:get("pitchshift1")
+    -- local psn2=params:get("pitchshift2")
+    -- local psn3=params:get("pitchshift3")
+    -- engine.pitchshift_note1(psn1)
+    -- engine.pitchshift_note2(psn2)
+    -- engine.pitchshift_note3(psn3)
+  end
+
+  ps.engine_tin_note_on = function(note_to_play, velo)
+    local freq = MusicUtil.note_num_to_freq(note_to_play)
+    engine.set_env_levels(0,velo,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    -- envelopes[parent.id].update_envelope()
+    engine.note_on(note_to_play, freq, 1)
   end
     
   ps.play = function(node_obj)
@@ -78,16 +105,13 @@ function plant_sounds:new(parent)
           note_to_play = MusicUtil.freq_to_note_num(freq)
           -- if parent.id == 1 then print("note_to_play", note_to_play) end
           -- local output_param = params:get("output")
-          local output_engine = params:get("output_engine")
     
-          if output_engine == 2 or output_engine == 4 then
-            ps.engine_note_on(note_to_play, freq, random_note_frequency)
-          end
-          local midi_out_channel = parent.id == 1 and midi_out_channel1 or midi_out_channel2
-          -- if parent.id == 1 and (output_engine > 1) then 
+          -- print(note_to_play, freq, random_note_frequency)
+          local note_idx = ps.find_note(note_to_play) - 1
+          ps.engine_note_on(note_to_play, freq, random_note_frequency, note_idx)
+
           if parent.id == 1 then 
             clock.run(ps.externals1.note_on,parent.id, note_to_play, freq, random_note_frequency,nil,"flora")
-          -- elseif parent.id == 2 and (output_engine > 1) then 
           elseif parent.id == 2 then 
             clock.run(ps.externals2.note_on,parent.id, note_to_play, freq, random_note_frequency,nil,"flora")
           end 
