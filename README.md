@@ -271,7 +271,7 @@ Tinta params menu
 | tinta enabled            | turns the tinta melody generator on and off                       |
 | dancing notes          | if set to `on` the tinta melody is set relative to the notes played by the plant forms |
 | tinta target            | sets which plant to determine the tinta melody when the dancing notes parameter is set to "on"                       |
-| tinta method              | when `dancing notes` is turned on, one of three methods for setting  |
+| tinta method              | when `dancing notes` is turned on, one of three methods for setting the tinta note may be selected: cycle, closest, and furthest |
 
 
 
