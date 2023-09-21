@@ -242,8 +242,8 @@ Keyboard commands (using an external keyboard)
 | ---------------------- | ----------------------------------------------------------------- |  
 | tin              | set the melody <br> format: `tin=s{1,3,5,s{4,2}}`                      |
 | oct              | shift the octave <br>recommended range: +/- 2 <br> format: `oct=s{0,1}`|
-| vel              | set the velocity of each note <br>recommended range: 0 - 10 <br> format: `vel=ss{0,5}` |
-| rhy              | set the rhythm of each note <br>recommended range: 0.1 - 2 <br> format: `rhy=ss{1,0.25}`  |
+| vel              | set the velocity of each note <br>recommended range: 0 - 10 <br> format: `vel=s{0,5}` |
+| rhy              | set the rhythm of each note <br>recommended range: 0.1 - 2 <br> format: `rhy=s{1,0.25}`  |
 | stop             | stop the melody <br> format: `stop`                                      |
 | play             | play the melody <br> format: `play`                                      |
 | offdance             | don't adjust melody relative to plant melody  <br> format: `offdance`                                      |
