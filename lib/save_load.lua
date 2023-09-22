@@ -126,7 +126,6 @@ end
 ]]
 
 function save_load.init()
-  params:add_separator()
   params:add_separator("GARDENING")
 
   params:add_trigger("save_plant_to_nursery", "> SAVE PLANT TO NURSERY")

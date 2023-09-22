@@ -1095,7 +1095,7 @@ end
   --------------------------------
   -- wow and flutter parameters
   --------------------------------
-  params:add_separator("effects")
+  params:add_separator("effects+sequencing")
 
   params:add_group("wow and flutter",7)
   

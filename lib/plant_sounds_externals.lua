@@ -246,8 +246,8 @@ function plant_sounds_externals:new(active_notes)
   -- nb out
   local nb_voice = params:get("nb_voice_id")
   if nb_voice > 1 then
-      
-      local velocity = plant_id == 1 and velocity * params:get("plow1_max_level") or velocity * params:get("plow2_max_level") 
+      local max_level = plant_id == 1 and params:get("plow1_max_level") or params:get("plow2_max_level") 
+      local velocity = util.linlin(0,max_level,0,1,velocity*max_level)      
       if plant_id == 1 then
         -- Grab the chosen voice's player off your param
         local player = params:lookup_param("nb_voice_id"):get_player()
