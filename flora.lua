@@ -43,7 +43,7 @@ lfo_pattern = lfo_lattice:new_sprocket{
       play_midi_cc_lfos("2lfo", lfo[2].slope)
     end
   end,
-  division = 1/64,
+  division = 1/16,
   enabled = true
 }
 
@@ -256,7 +256,7 @@ function redraw_timer()
     -- local menu_status = true
     if status == false and menu_status == false and initializing == false then
       if screen_dirty then
-        flora_pages.draw_pages()
+        flora_pages.draw_pages(true)
         screen_dirty = false
       elseif pages.index < 4 then
         local notes_only = true
