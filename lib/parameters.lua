@@ -169,6 +169,11 @@ params:add{type = "option", id = "output_tinta", name = "output tinta",
   default = 1,
 }
 
+params:add{type = "option", id = "output_bandsaw", name = "output bandsaw",
+  options = {"plants","tinta","plants+tinta","midi"},
+  default = 1,
+}
+
 -- midi
   params:add_group("midi",15)
   

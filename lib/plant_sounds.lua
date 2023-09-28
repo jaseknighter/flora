@@ -46,7 +46,9 @@ function plant_sounds:new(parent)
       tt.set_tt_note(note_to_play)
     end
 
-    engine.note_on(note_to_play, freq, random_note_frequency)
+    if params:get("output_bandsaw")==1 or params:get("output_bandsaw")>=3 then
+      engine.note_on(note_to_play, freq, random_note_frequency)
+    end
     -- local psn1=params:get("pitchshift1")
     -- local psn2=params:get("pitchshift2")
     -- local psn3=params:get("pitchshift3")
@@ -56,10 +58,12 @@ function plant_sounds:new(parent)
   end
 
   ps.engine_tin_note_on = function(note_to_play, velo)
-    local freq = MusicUtil.note_num_to_freq(note_to_play)
-    engine.set_env_levels(0,velo,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
-    -- envelopes[parent.id].update_envelope()
-    engine.note_on(note_to_play, freq, 1)
+    if params:get("output_bandsaw")==2 or params:get("output_bandsaw")==3 then
+      local freq = MusicUtil.note_num_to_freq(note_to_play)
+      engine.set_env_levels(0,velo,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+      -- envelopes[parent.id].update_envelope()
+      engine.note_on(note_to_play, freq, 1)
+    end
   end
     
   ps.play = function(node_obj)
@@ -108,7 +112,9 @@ function plant_sounds:new(parent)
     
           -- print(note_to_play, freq, random_note_frequency)
           local note_idx = ps.find_note(note_to_play) - 1
-          ps.engine_note_on(note_to_play, freq, random_note_frequency, note_idx)
+          if params:get("output_bandsaw")==1 or params:get("output_bandsaw")==3 then
+            ps.engine_note_on(note_to_play, freq, random_note_frequency, note_idx)
+          end
 
           if parent.id == 1 then 
             clock.run(ps.externals1.note_on,parent.id, note_to_play, freq, random_note_frequency,nil,"flora")

@@ -203,14 +203,14 @@ midi_event = function(data)
 
         if data[1] == midi_in_command1 then -- plant 1 engine note on
           -- envelopes[1].update_envelope()
-          if output_midi == 4 then
+          if params:get("output_bandsaw")==4 then
             plants[1].sounds.engine_note_on(note_to_play, freq, random_note_frequency)
           end
           clock.run(plants[1].sounds.externals1.note_on,1, note_to_play, freq, random_note_frequency, nil,"midi",velocity)
         end
         if data[1] == midi_in_command2 then -- plant 2 engine note on
           -- envelopes[2].update_envelope()
-          if output_midi == 4 then
+          if params:get("output_bandsaw")==4 then
             plants[2].sounds.engine_note_on(note_to_play, freq, random_note_frequency)
           end
           clock.run(plants[2].sounds.externals2.note_on,2, note_to_play, freq, random_note_frequency, nil,"midi",velocity)
