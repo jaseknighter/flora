@@ -38,7 +38,7 @@ function plant_sounds:new(parent)
     return note_idx
   end
 
-  ps.engine_note_on = function(note_to_play, freq, random_note_frequency, note_idx)
+  ps.engine_note_on = function(note_to_play, freq, random_note_frequency, skip_engine)
     envelopes[parent.id].update_envelope()
     
     local tin_target = params:get("tin_target")
@@ -46,7 +46,7 @@ function plant_sounds:new(parent)
       tt.set_tt_note(note_to_play)
     end
 
-    if params:get("output_bandsaw")==1 or params:get("output_bandsaw")>=3 then
+    if skip_engine == false and (params:get("output_bandsaw")==1 or params:get("output_bandsaw")>=3) then
       engine.note_on(note_to_play, freq, random_note_frequency)
     end
     -- local psn1=params:get("pitchshift1")
@@ -112,8 +112,11 @@ function plant_sounds:new(parent)
     
           -- print(note_to_play, freq, random_note_frequency)
           local note_idx = ps.find_note(note_to_play) - 1
+          
           if params:get("output_bandsaw")==1 or params:get("output_bandsaw")==3 then
-            ps.engine_note_on(note_to_play, freq, random_note_frequency, note_idx)
+            ps.engine_note_on(note_to_play, freq, random_note_frequency, false)
+          else
+            ps.engine_note_on(note_to_play, freq, random_note_frequency, true )
           end
 
           if parent.id == 1 then 
