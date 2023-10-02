@@ -271,12 +271,6 @@ function Envelope:new(id, num_plants, env_nodes)
     engine.set_env_levels(table.unpack(env_arrays.levels))
     engine.set_env_times(table.unpack(env_arrays.times))
     engine.set_env_curves(table.unpack(env_arrays.curves))
-    -- clock.run(reset_plow_control_params,e.id)
-    
-    -- reset_plow_control_params(e.id)
-    -- clock.run(set_dirty)
-    set_dirty()
-
   end
 
   e.get_envelope_arrays = function ()

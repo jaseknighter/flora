@@ -22,10 +22,6 @@ set_dirty = function()
   if (pages.index == 4) then
     screen.clear()
   end
-
-  -- screen_dirty = true
-  -- clock.sleep(0.5)
-  -- clock.sleep(0.1)
   screen_dirty = true
 end
 
@@ -87,7 +83,7 @@ controlspec.PITCHSHIFT.default = 0
 WOBBLE_DEFAULT = 0.01
 FLUTTER_DEFAULT = 0.00
 updating_controls = false
-SCREEN_FRAMERATE = 1/10
+SCREEN_FRAMERATE = 1/15
 INITIAL_PLANT_INSTRUCTIONS_1 = 13 
 INITIAL_PLANT_INSTRUCTIONS_2 = 13
 menu_status = false

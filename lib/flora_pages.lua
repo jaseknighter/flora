@@ -77,10 +77,7 @@ function check_plant_position()
 end
 
 local draw_plants = function()
-  local plant1_randomized = string.find(plants[1].sentence, "r")
-  local plant2_randomized = string.find(plants[2].sentence, "r")
-  if notes_only ~= true or plant1_randomized or plant2_randomized then
-    -- screen.clear() 
+  if pages.index < 4 then
     screen.move(0,13)
     screen.level(0)
     screen.rect(0,13,128,51)
@@ -305,7 +302,7 @@ local draw_top_nav = function()
   screen.update()
 end
 
-local draw_pages = function(notes_only)
+local draw_pages = function()
   if initializing == false then
 
     if show_instructions == true then 

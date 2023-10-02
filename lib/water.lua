@@ -300,8 +300,6 @@ water.enc = function(n, delta, alt_key_active)
     else
       active_field_menu_area = 6
     end
-    fields.display()
-
   elseif n == 3 then 
     local incr = util.clamp(delta, -1, 1)
     if water.active_control == 1 then
@@ -397,7 +395,6 @@ water.enc = function(n, delta, alt_key_active)
         end
       end
     end
-    fields.display()
   end
 end
 
@@ -417,7 +414,6 @@ end
 
 water.display = function()
   water.redraw()
-  fields.display()
 end
 
 water.draw_water_nav = function()

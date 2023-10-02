@@ -252,6 +252,7 @@ keyboard.char = function (character)
 end
 
 keyboard.code = function (code, val)
+  screen_dirty = true
   if pages.index==6 then
     if val == 0 then      
       if  string.sub(code,#code-3)  == "CTRL" then 

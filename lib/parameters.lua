@@ -171,7 +171,7 @@ params:add{type = "option", id = "output_tinta", name = "output tinta",
 
 params:add{type = "option", id = "output_bandsaw", name = "output bandsaw",
   options = {"plants","tinta","plants+tinta","midi"},
-  default = 1,
+  default = 3,
 }
 
 -- midi
@@ -807,7 +807,6 @@ params:add_group("just friends",2)
   local clock_tempo_scalar = clock_tempo/(60 * tempo_scalar_offset)
   tempo_offset_note_frequencies = get_note_frequencies(clock_tempo_scalar)
   note_frequencies = get_note_frequencies()
-  -- clock.run(set_dirty)
   set_dirty()
 end
 

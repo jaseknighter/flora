@@ -63,7 +63,6 @@ local enc = function (n, delta)
       end
     end
   end
-  -- clock.run(set_dirty)
   set_dirty()
 end
 
@@ -104,10 +103,7 @@ local key = function (n,z)
       if pages.index == 2  and alt_key_active == false then
         modify.key(n, z)
       elseif pages.index == 4 then
-        -- clock.run(set_dirty)
         envelopes[active_plant].key(n, delta)
-        -- set_dirty()
-        -- clock.run(envelopes[active_plant].update_engine, envelopes[active_plant].graph_nodes)
       elseif pages.index == 5 then
         water.key(n, delta, alt_key_active)
       end
@@ -119,10 +115,7 @@ local key = function (n,z)
       elseif pages.index == 3  and alt_key_active == false then
         plants[active_plant].set_node_length(1.1)
       elseif pages.index == 4 then
-        -- clock.run(set_dirty)
         envelopes[active_plant].key(n, delta)
-        -- set_dirty()
-        -- clock.run(envelopes[active_plant].update_engine, envelopes[active_plant].graph_nodes)
       elseif pages.index == 5 then
         water.key(n, delta, alt_key_active)
       end
@@ -135,7 +128,6 @@ local key = function (n,z)
     plants[1].set_instructions(0)
     plants[2].set_instructions(0)
   end
-  -- clock.run(set_dirty)
   set_dirty()
 end
 

@@ -122,8 +122,6 @@ modify.update_ruleset = function(ruleset_id, predecessor, successor)
     plants[active_plant].current_generation, 
     true
   )
-  
-  -- clock.run(set_dirty)
 end
 
 modify.update_axiom = function(new_axiom)
@@ -387,15 +385,7 @@ function modify.init()
   modify.num_field_menu_areas = 9 + (modify.num_rulesets * 2)
 
   modify.set_control_labels_ids()
-  -- fields.init(num_fields)
 end
-
--- modify.clip_offset = 0
--- modify.instruction_cursor_index = 1
--- local max_visible_chars = 14
-
-
-
 
 modify.get_clipped_instruction = function(instruction)
   modify.max_visible_chars = 25 - #modify.nav_labels[modify.active_control]
@@ -603,20 +593,6 @@ modify.enc = function(n, delta, alt_key_active)
   end
 end
 
--- modify.draw_fields = function()
--- -- TODO: replace magic number 6 with constant
-
---   screen.level(5)
---   screen.aa(1)
---   fields:redraw(
---     modify.active_control - (8 + modify.num_rulesets),
---     note_frequency_menu_index,
---     modify.active_field_menu_area,
---     modify.active_control)
---   screen.update()
---   screen.aa(0)
--- end
-
 modify.draw_modify_nav = function()
   if modify.active_control == 1 then 
     modify.active_field_menu_area = 1
@@ -684,7 +660,6 @@ end
 
 modify.display = function()
   modify.redraw()
-  -- fields.display()
 end
 
 

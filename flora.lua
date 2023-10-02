@@ -256,11 +256,10 @@ function redraw_timer()
     -- local menu_status = true
     if status == false and menu_status == false and initializing == false then
       if screen_dirty then
-        flora_pages.draw_pages(true)
+        flora_pages.draw_pages()
         screen_dirty = false
       elseif pages.index < 4 then
-        local notes_only = true
-        flora_pages.draw_pages(notes_only)
+        flora_pages.draw_pages()
       end
     end
     

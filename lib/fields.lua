@@ -238,11 +238,6 @@ fields.init = function(num_fields)
   screen_dirty = true
 end    
 
-fields.display = function()
-  -- screen_dirty = true
-  -- print("sd")
-end
-
 function fields:redraw (note_frequency_index,note_frequency_menu_index, active_field_menu_area, active_control)
   fields.note_frequency_index = 
     note_frequency_index > 0 and 
