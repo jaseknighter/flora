@@ -55,7 +55,6 @@ function plant_sounds_externals:new(active_notes)
     if (note_source == "flora" and (output_midi == 2 or output_midi == 3)) or
       (note_source == "midi" and output_midi == 5) or
       (note_source == "tt"  and (output_midi == 3 or output_midi == 4) and output_tinta == 2)  then
-      print(note_source)
       local midi_out_channel 
       if note_source == "tt" then
         midi_out_channel = midi_out_channel_tt
