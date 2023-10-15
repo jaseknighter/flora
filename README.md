@@ -224,7 +224,7 @@ Fine grain controls: All of the controls in the above list with the characters '
 
 *Note*: Tempo scalar offset is a parameter that provides macro control over all active note frequencies. It is not yet available from the Water UI screen but can be adjusted from PARAMETERS->EDIT. The Tempo Scalar Offset’s default value of 1.5 can also be changed by updating the variable `tempo_scalar_offset_default` in the lib/globals.lua file.
 
-#### Tinta
+#### Tinta and Tinta Envelope
 ![](images/tinta_wide_inv.png)
 ```
 e1: previous page  
@@ -236,6 +236,7 @@ Tinta makes extensive use of [sequins](https://monome.org/docs/norns/reference/l
 
 Options have been added to the PARAMETERS menu controls to output tinta notes to midi, crow, jf, and w/.
 
+![](images/tinta_env_wide_inv)
 as of flora v2.1, three options have been added to set the envelope used by tinta, using the new `tinta env type` parameter in the `tinta` section of flora's parameters menu:
 
 * `ad`: a kind of attack-decay envelope, using the value of tinta's `vel` parameter for envelope level and the active plant for the envelope's other values (`time` and `curve`)
