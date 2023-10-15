@@ -12,8 +12,6 @@ ArbGraph.__index = ArbGraph
 
 local Graph = require "graph"
 
-local show_bars = true
-
 -------- Private utility methods --------
 
 local function new_arb_graph(x_min, x_max, y_min, y_max)
@@ -55,6 +53,7 @@ function ArbGraph.new_graph(x_min, x_max, y_min, y_max, node_params)
       node_params[i].curve or -4
     )
   end
+
   return arb_graph
 end
 
@@ -118,10 +117,10 @@ function ArbGraph:draw_bars(h_bar_percentage, v_bar_percentage)
   screen.stroke()
 end
 
-function ArbGraph:highlight(self, active_point, highlight_style, h_bar_percentage, v_bar_percentage)
+function ArbGraph:highlight(self, active_point, highlight_style, h_bar_percentage, v_bar_percentage, show_level_time_bars)
   local hs = highlight_style and highlight_style or "rect"
   if self:get_active() then
-    if show_bars then
+    if show_level_time_bars then
       self:draw_bars(h_bar_percentage, v_bar_percentage)  
     end
     if active_point > 0 then
@@ -158,13 +157,13 @@ function ArbGraph:highlight(self, active_point, highlight_style, h_bar_percentag
       -- local width = util.linexp (slo, shi, dlo, dhi, f)
       screen.line_rel(line_width+3,0)
       screen.stroke()
-    elseif hs == "h_bar" then
+    elseif hs == "h_bar" and show_level_time_bars then
       screen.level(15)
       screen.move(self:get_x()-5, self:get_y()+self:get_height()+8)
       local line_width = util.linlin (1, self:get_width(), 1, self:get_width(), self:get_width() * h_bar_percentage)
       screen.line_rel(line_width+3,0)
       screen.stroke()
-    elseif hs == "v_bar" then
+    elseif hs == "v_bar" and show_level_time_bars then
       screen.level(15)
       screen.move(self:get_x()-5, self:get_y()+self:get_height()+8)
       local line_height = util.linlin (1, self:get_height(), 1, self:get_height(), self:get_height() * v_bar_percentage)

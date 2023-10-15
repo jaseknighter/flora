@@ -21,7 +21,7 @@ function plant_sounds:new(parent)
   ps.externals2 = plant_sounds_externals:new(ps.active_notes)
   
   all_notes_off = function()
-    if (params:get("output_midi") > 2) then
+    if (params:get("output_midi") > 1) then
       for _, a in pairs(ps.active_notes) do
         midi_out_device:note_off(a, nil, midi_out_channel1)
         midi_out_device:note_off(a, nil, midi_out_channel2)
@@ -60,7 +60,23 @@ function plant_sounds:new(parent)
   ps.engine_tin_note_on = function(note_to_play, velo)
     if params:get("output_bandsaw")==2 or params:get("output_bandsaw")==3 then
       local freq = MusicUtil.note_num_to_freq(note_to_play)
-      engine.set_env_levels(0,velo,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+      local tin_env = params:get("tin_env")
+      if tin_env == 1 then
+        engine.set_env_levels(0,velo,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+      elseif tin_env == 2 then
+        envelopes[active_plant].update_envelope()
+      elseif tin_env == 3 then
+        local env_arrays = deep_copy(tt.env_arrays)
+        add_nil_values_to_array(env_arrays.levels,MAX_ENVELOPE_NODES)
+        add_nil_values_to_array(env_arrays.times,MAX_ENVELOPE_NODES)
+        add_nil_values_to_array(env_arrays.curves,MAX_ENVELOPE_NODES)
+  
+        engine.set_env_levels(table.unpack(env_arrays.levels))
+        engine.set_env_times(table.unpack(env_arrays.times))
+        engine.set_env_curves(table.unpack(env_arrays.curves))
+      
+      
+      end
       -- envelopes[parent.id].update_envelope()
       engine.note_on(note_to_play, freq, 1)
     end

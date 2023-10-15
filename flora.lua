@@ -119,16 +119,15 @@ function init()
 
   for i=1,num_plants,1
   do
-    envelopes[i] = envelope:new(i, num_plants)
-    envelopes[i].init(num_plants)
+    envelopes[i] = envelope:new(i,tt.env_arrays)
+    envelopes[i].init(num_plants,true)
     local active = i == 1 and true or false
-    local initial_plant_instruction_num = i == 1 and INITIAL_PLANT_INSTRUCTIONS_1 or INITIAL_PLANT_INSTRUCTIONS_2
     envelopes[i].set_active(active)
+    local initial_plant_instruction_num = i == 1 and INITIAL_PLANT_INSTRUCTIONS_1 or INITIAL_PLANT_INSTRUCTIONS_2
     plants[i] = plant:new(i,initial_plant_instruction_num,envelopes[i].graph_nodes)
-    if i == 1 then
-      plants[1].set_active(true)
-    end
   end
+  
+  plants[1].set_active(true)
 
   parameters.add_params(plants)
 
@@ -232,6 +231,10 @@ function init_done()
   lfo_lattice:start()
   lfo.init()
   tt.init()
+
+  tinta_envelope = envelope:new(1)
+  tinta_envelope.init(1,false)
+
   screen.clear()
   initializing = false
 end
@@ -260,6 +263,9 @@ function redraw_timer()
         screen_dirty = false
       elseif pages.index < 4 then
         flora_pages.draw_pages()
+      elseif pages.index == 7 then
+        screen.clear()
+        screen_dirty = true
       end
     end
     

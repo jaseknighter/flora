@@ -33,6 +33,27 @@ string_cut = function(str, start, finish)
   return string.sub(str, start, finish)
 end
 
+deep_copy = function (orig, copies)
+  copies = copies or {}
+  local orig_type = type(orig)
+  local copy
+  if orig_type == 'table' then
+      if copies[orig] then
+          copy = copies[orig]
+      else
+          copy = {}
+          copies[orig] = copy
+          for orig_key, orig_value in next, orig, nil do
+              copy[deep_copy(orig_key, copies)] = deep_copy(orig_value, copies)
+          end
+          setmetatable(copy, deep_copy(getmetatable(orig), copies))
+      end
+  else -- number, string, boolean, etc
+      copy = orig
+  end
+  return copy
+end
+
 round_decimals = function (value_to_round, num_decimals, rounding_direction)
   local rounded_val
   local mult = 10^num_decimals
@@ -67,6 +88,52 @@ quantize_note = function(note_num)
   return new_note_num
 end
 
+-- morphing function
+-- note: the last two parameters are "private" to the function and don't need to included in the inital call to the function
+-- example: `morph(my_callback_function, my_active_check, 1,10,2,10,"log")`
+function morph(callback, active_check, s_val,f_val,duration,steps,shape,id,steps_remaining,next_val)
+  s_val = s_val == nil and 0 or s_val
+  f_val = f_val == nil and 0 or f_val
+  local start_val = s_val < f_val and s_val or f_val
+  local finish_val = s_val < f_val and f_val or s_val
+  local increment = (finish_val-start_val)/steps
+  if next_val and steps_remaining < steps then
+    local delay = duration/steps
+    clock.sync(delay)
+    -- clock.sleep(delay)
+    local return_val = next_val
+    if s_val ~= f_val then
+      callback(return_val, id, false)
+    else
+      callback(f_val, id, true,steps_remaining,steps)
+    end
+  end
+  local steps_remaining = steps_remaining and steps_remaining - 1 or steps 
+  if steps_remaining == nil then
+    print("NILLLL steps remaining",id,steps_remaining, steps, s_val, f_val)
+  end
+  if steps_remaining >= 0 then
+    local value_to_convert
+    if next_val == nil then
+      value_to_convert = start_val
+    elseif s_val < f_val then
+      value_to_convert = next_val and start_val + ((steps-steps_remaining) * increment) 
+    else
+      value_to_convert = next_val and finish_val - ((steps-steps_remaining) * increment) 
+    end 
+
+    if shape == "exp" then --morph along an exponential curve
+      next_val = util.linexp(start_val,finish_val,start_val,finish_val, value_to_convert)
+    elseif shape == "log" then --morph along an log curve
+      next_val = util.explin(start_val,finish_val,start_val,finish_val, value_to_convert)
+    else --morph along a linear curve
+      next_val = util.linlin(start_val,finish_val,start_val,finish_val, value_to_convert)
+    end
+    if active_check() == true then
+      clock.run(morph,callback,active_check,s_val,f_val,duration,steps,shape, id, steps_remaining,next_val)
+    end
+  end
+end
 -------------------------------------------
 -- global variables
 -------------------------------------------
@@ -187,7 +254,7 @@ screen_level_graphics = 16
 screen_size = vector:new(127,64)
 center = vector:new(screen_size.x/2, screen_size.y/2)
 pages = 1 -- WHAT IS THIS FOR?!?!?
-num_pages = 6
+num_pages = 7
 
 plant1_screen_level = 3
 plant2_screen_level = 1
@@ -200,6 +267,7 @@ initializing = true
 RANDOM_ANGLE_MAX = 90
 
 envelopes = {}
+tinta_envelope = {}
 crow_trigger_2 = 0.005
 crow_trigger_4 = 0.005
 INPUT_CROW2_DEFAULT = 1

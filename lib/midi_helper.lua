@@ -179,9 +179,6 @@ midi_event = function(data)
       receiving_configs_from_16n = true
     else
       -- handle other message types
-      local output_midi = params:get("output_midi")
-
-
       local note_to_play = data[2]
       if note_to_play then 
         local velocity = params:get("use_midi_velocity") == 2 and util.linlin(0,127,0,1,data[3]) or nil

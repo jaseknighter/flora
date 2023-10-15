@@ -166,12 +166,12 @@ params:add_separator("inputs/outputs")
 
 params:add{type = "option", id = "output_tinta", name = "output tinta",
   options = {"off","on"},
-  default = 1,
+  default = 2,
 }
 
 params:add{type = "option", id = "output_bandsaw", name = "output bandsaw",
   options = {"plants","tinta","plants+tinta","midi"},
-  default = 3,
+  default = 2,
 }
 
 -- midi
@@ -284,7 +284,7 @@ params:add{type = "option", id = "output_bandsaw", name = "output bandsaw",
   
 
   params:add{type = "option", id = "output_midi", name = "output midi",
-    options = {"off","plants", "tinta", "midi"},
+    options = {"off","plants", "tinta+plants", "tinta", "midi"},
     default = 1,
   }
 
@@ -1094,6 +1094,37 @@ end
     name = "tinta method",
     options = {"cycle","closest","furthest"},
     default = TIN_METHOD,
+  } 
+
+  params:add{
+    type = "option", 
+    id = "tin_env", 
+    name = "tinta env type",
+    options = {"ad","plant","morphing"},
+    default = 3,
+    action = function(value)
+      if value == 1 or value == 2 then 
+        params:set("tin_env_morph",1)
+      else
+        params:set("tin_env_morph",2)
+      end
+    end
+  } 
+
+  params:add{
+    type = "option", 
+    id = "tin_env_morph", 
+    name = "tinta env morph",
+    options = {"false","true"},
+    default = 2,
+  } 
+
+  params:add{
+    type = "option", 
+    id = "tin_env_morph_style", 
+    name = "tinta env morph style",
+    options = {"shuttle","loop","1-shot"},
+    default = 1,
   } 
 
   --------------------------------

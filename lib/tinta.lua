@@ -11,14 +11,33 @@
 t = {}
 
 function t.init()
-  
+  --setup tinta morphing envelope
+  t.env_arrays = deep_copy(envelopes[1].get_envelope_arrays())
+  t.edu = s{5}
+  t.est = s{20}
+  t.esh = s{"lin"}
+  t.edu()
+  t.est()
+  t.esh()
+  t.env_morph_running     = false
+  t.env_total_nodes       = #t.env_arrays.curves
+  t.nodes_morphed         = 0
+  t.env_morph_direction   = "forward"
+  t.env_morph_position    = "plant1"
+
+    -- note: to prevent warning messages when changing the number of envelope segments 
+    --        (warnings like: "warning: wrong count of arguments for command 'set_env_levels'")
+    --        the envelope arrays are filled in  with zeros.
+    --        these zero values will be ignored by the engine
+    
+  --setup tinta
   t.vel=s{3}
   t.oct=s{0} -- tinta octaves
   t.tin=s{1,3,5} --  tinta chords
   t.pat=tl.queue():loop{
-    1,{t.tintabulate,t.tin},
-    1,{t.tintabulate,t.tin},
-    3, {t.tintabulate,t.tin},
+    0.25,{t.tintabulate,t.tin},
+    0.25,{t.tintabulate,t.tin},
+    0.25, {t.tintabulate,t.tin},
   } --loop timeline
   if params:get("tin_enabled") == 2 then
     t.pat:play()     
@@ -26,7 +45,7 @@ function t.init()
 end
 
 
---set new rhyth
+--set new rhythm
 function t.set_rhythm(rhythm)
   t.pat:stop()
   rhythm_loop = {}
@@ -34,25 +53,22 @@ function t.set_rhythm(rhythm)
     table.insert(rhythm_loop,rhythm[i])
     table.insert(rhythm_loop, {t.tintabulate,t.tin})
   end
-
   t.pat=tl.queue():loop{table.unpack(rhythm_loop)}
   t.pat:play()
-
 end
 
+-- tinta melody functions
 local function find_note(n, scale)
   local note
   if n > 0 then
     local base_index = n % #scale == 0 and #scale or n % #scale
     local octave_shift = n % #scale == 0 and math.floor(n/#scale) - 1 or math.floor(n/#scale) 
     note = scale[base_index] + (octave_shift * 12)
-    -- print(n,note)
     return note
   end
 end
 
 function t.set_tt_note(m_note)
-  -- print("m_note",m_note)
   t.note_pre_oct = m_note
 end
 
@@ -98,14 +114,101 @@ function t.get_mel_tin_distances(m_note)
   return closest, furthest
 end 
 
+-- envelope morphing functions
+function t.set_edu(tbl)
+  t.edu = s{table.unpack(tbl)}
+end
+
+function t.set_est(tbl)
+  t.est = s{table.unpack(tbl)}
+end
+
+function t.set_esh(tbl)
+  t.esh = s{table.unpack(tbl)}
+end
+
+function t.env_morph_completed()
+  -- morphing completed!!!
+  t.edu()
+  t.est()
+  t.esh()
+  
+  local morph_style = params:get("tin_env_morph_style")
+  if morph_style == 1 then 
+    t.env_morph_direction = t.env_morph_direction == "forward" and "reverse" or "forward"
+  elseif morph_style == 3 then 
+    params:set("tin_env_morph",1)
+  end
+  t.env_morph_running = false
+end 
+
+function t.set_tinta_env_level(value,node,completed)
+  tinta_envelope.graph_nodes[node].level=value
+  tinta_envelope.graph:edit_graph(tinta_envelope.graph_nodes)
+  t.env_arrays.levels[node]=value
+end 
+
+function t.set_tinta_env_time(value,node,completed)
+  tinta_envelope.graph_nodes[node].time=value
+  tinta_envelope.graph:edit_graph(tinta_envelope.graph_nodes)
+  t.env_arrays.times[node]=value
+end 
+
+function t.set_tinta_env_shape(value,node,completed,steps_remaining,steps)
+  tinta_envelope.graph_nodes[node].curve=value
+  tinta_envelope.graph:edit_graph(tinta_envelope.graph_nodes)
+  t.env_arrays.curves[node]=value
+  if completed == true and (steps_remaining < 1 and node == t.env_total_nodes) then
+    t.env_morph_completed()
+  end
+end 
+
+function t.start_env_morph()
+  local target_plant 
+  local morph_style = params:get("tin_env_morph_style")
+  t.nodes_morphed = 0
+  if morph_style == 1 then
+    target_plant = t.env_morph_direction == "forward" and 2 or 1 
+  else 
+    target_plant = 2
+    t.env_arrays = deep_copy(envelopes[1].get_envelope_arrays())
+    tinta_envelope.graph = deep_copy(envelopes[1].graph)
+    tinta_envelope.graph:edit_graph(t.env_arrays)
+  end
+
+  t.target_plant_env_arrays = deep_copy(envelopes[target_plant].get_envelope_arrays())
+  for i=1, #t.env_arrays.levels do
+    --morph levels
+    local target_level = t.target_plant_env_arrays.levels[i] 
+    clock.run(morph,t.set_tinta_env_level, t.morph_active_check,t.env_arrays.levels[i],target_level,t.edu[t.edu.ix],t.est[t.est.ix],t.esh[t.esh.ix],i)
+    --morph time
+    local target_time = t.target_plant_env_arrays.times[i] 
+    clock.run(morph,t.set_tinta_env_time, t.morph_active_check,t.env_arrays.times[i],target_time,t.edu[t.edu.ix],t.est[t.est.ix],t.esh[t.esh.ix],i)      
+    local target_curve = t.target_plant_env_arrays.curves[i]
+    clock.run(morph,t.set_tinta_env_shape, t.morph_active_check,t.env_arrays.curves[i],target_curve,t.edu[t.edu.ix],t.est[t.est.ix],t.esh[t.esh.ix],i)
+  end 
+end
+
+function t.morph_active_check()
+  return params:get("tin_env") == 3 and params:get("tin_env_morph") == 2
+end
+
 function t.tintabulate()
+  local env_type = params:get("tin_env")
+  local morph = params:get("tin_env_morph")
+  if env_type == 3 and t.env_morph_running == false and morph == 2 then
+    t.env_morph_running = true
+    t.start_env_morph()
+  elseif t.env_morph_running == true and morph == 1 then 
+    t.env_morph_running = false
+
+  end
   local chord_note
   
   if params:get("tin_method")==1 then
     chord_note = t.tin()
   else
     local closest, furthest = t.get_mel_tin_distances(t.note_pre_oct)
-    -- print("closest,furthest",closest,furthest)
     if params:get("tin_method")==2 then
       t.tin:select(closest)
     elseif params:get("tin_method")==3 then
@@ -124,7 +227,6 @@ function t.tintabulate()
     t_note_pre = find_note(chord_note, notes)+oct+12
     t_note = t_note_pre + oct+24
   end
-  -- print("t_note",t_note)
   local output_tinta = params:get("output_tinta")
   if t_note and output_tinta == 2 then
     local vel = t.vel()
@@ -173,6 +275,11 @@ t.cmds = {
   {"sto","p"},
   {"on","dance"},
   {"off","dance"},
+  {"est","art"},
+  {"esto","p"},
+  {"edu=s{","}"},
+  {"est=s{","}"},
+  {"esh=s{","}"},
 }
 t.cmds_idx=1
 t.ctrl_down=false
@@ -225,7 +332,7 @@ function t.check_format()
     if cmd and format_ok then 
       t.cmd=cmd
       t.cmd_params = args
-      if cmd>4 or #args > 0 then 
+      if (cmd>4 and cmd<11) or #args > 0 then 
         t.schr = "> "
         t.cmd_ok=true
       else
@@ -296,8 +403,6 @@ keyboard.code = function (code, val)
       t.history_index = #t.history
       t.new_line = true
 
-
-
       if t.cmd == 1 then -- update octaves
         local tbl = t.str_to_tab(t.cmd_params)
         -- for i=1,#tbl do -- IMPORTANT: keep octaves below 3 so things don't blow up
@@ -321,10 +426,23 @@ keyboard.code = function (code, val)
         params:set("tin_dancing_notes",2)
       elseif t.cmd == 8 then -- dance off
         params:set("tin_dancing_notes",1)
-      end
-    elseif keyboard.ctrl() then
-      if t.ctrl_down == false then
-        t.ctrl_down = true
+      elseif t.cmd == 9 then -- start envelope morph
+        params:set("tin_env_morph",2)
+      elseif t.cmd == 10 then -- stop envelope morph 
+        params:set("tin_env_morph",1)
+      elseif t.cmd == 11 then -- set duration off morphing envelope in beats
+        local tbl = t.str_to_tab(t.cmd_params)
+        t.set_edu(tbl)
+      elseif t.cmd == 12 then -- set steps of to morph envelope
+        local tbl = t.str_to_tab(t.cmd_params)
+        t.set_est(tbl)
+      elseif t.cmd == 13 then -- set shape of morphing envelope
+        local tbl = t.str_to_tab(t.cmd_params)
+        t.set_esh(tbl)
+      elseif keyboard.ctrl() then
+        if t.ctrl_down == false then
+          t.ctrl_down = true
+        end
       end
       t.history_index = #t.history
       -- table.remove(t.history,#t.history)

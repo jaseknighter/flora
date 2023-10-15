@@ -236,6 +236,20 @@ Tinta makes extensive use of [sequins](https://monome.org/docs/norns/reference/l
 
 Options have been added to the PARAMETERS menu controls to output tinta notes to midi, crow, jf, and w/.
 
+as of flora v2.1, three options have been added to set the envelope used by tinta, using the new `tinta env type` parameter in the `tinta` section of flora's parameters menu:
+
+* `ad`: a kind of attack-decay envelope, using the value of tinta's `vel` parameter for envelope level and the active plant for the envelope's other values (`time` and `curve`)
+* `plant`: uses the active plant's envelope (set on the `plow` screen)
+* `morphing`: the shape of tinta's envelope is morphed between the two plant envelopes (set on the `plow` screen). 
+
+for the `morphing` envelope type, the duration and number of steps, and "shape" of the morph may be set with two new tinta commands: `edu` and `est`. 
+
+there are three "styles" of envelope morphing, set with the new `tinta env morph style` parameter:
+
+* `shuttle`: once a morph is completed, a new morph begins going in the opposition direction
+* `loop`: once a morph is completed, a new morph begins, starting with plant 1's envelope shape
+* `1-shot`: once a morph is completed, morphing stops (it can be started again by setting the `tinta env morph` parameter to `true`)
+
 Keyboard commands (using an external keyboard)
 
 | Command                | Description<img width=400/>                                       | 
@@ -248,21 +262,25 @@ Keyboard commands (using an external keyboard)
 | play             | play the melody <br> format: `play`                                      |
 | offdance             | don't adjust melody relative to plant melody  <br> format: `offdance`                                      |
 | ondance             | adjust melody relative to plant melody <br> format: `ondance`                                      |
+| estart             | start envelope morphing <br> format: `estart`                                      |
+| estop             | stop envelope morphing <br> format: `estop`                                      |
+| edu              | set the recommendation morphing duration (in beats) <br>recommended range: 0.125 - 50 <br> format: `edu=s{1,10}`  |
+| est              | set the number of steps to complete the morph (each step generates an envelope) <br>recommended range: 1 - 50 <br> format: `est=s{3,20}`  |
 
 Important note: when setting the rhythm (`rhy`), nested sequins will throw an error (e.g. `rhy=s{1,s{0.5,0.25}}`).
 
 REPL commands (using the Maiden REPL)
 
-Using the maiden REPL to control the tinta interface more complex [sequins](https://monome.org/docs/norns/reference/lib/sequins) functionality can be utilized such as flow-modifiers.
+Using the maiden REPL to control the tinta interface, more [complex sequins](https://monome.org/docs/norns/reference/lib/sequins) functionality can be utilized such as flow-modifiers.
 
-| Command                | Description<img width=400/>                                       | 
+| Tinta Command                | Description<img width=400/>                                       | 
 | ---------------------- | ----------------------------------------------------------------- |  
 | tin              | set the melody <br> format: `tt.tin=s{1,3,5,s{4,2}}`                      |
 | oct              | shift the octave <br>recommended range: +/- 2 <br> format: `tt.oct=s{0,1}`|
 | vel              | set the velocity of each note <br>recommended range: 0 - 10 <br> format: `tt.vel=s{0,5}` |
-| rhy              | set the rhythm of each note <br>recommended range: 0.1 - 2 <br> format: `tt.set_rhythm({1,0.25})`  |
-
-Important note: when setting the rhythm with the maiden repl, a table is passed to the method `tt.set_rhythm` instead of setting the rhythm sequins directly.
+| rhy              | set the rhythm of each note <br>recommended range: 0.1 - 2 <br> format: `tt.set_rhythm({1,0.25})`. (note that when setting the rhythm with the maiden repl, a table is passed to the method `tt.set_rhythm` instead of setting the rhythm directly with sequins.)  |
+| edu              | set the envelope morphing duration (in beats) <br>recommended range: 0.25 - 50 <br> format: `tt.edu=s{1,10}`  |
+| est              | set the number of steps to complete the morph (each step generates an envelope) <br>recommended range: 1 - 25 <br> format: `tt.est=s{3,20}`  |
 
 
 Tinta params menu
@@ -271,7 +289,10 @@ Tinta params menu
 | tinta enabled            | turns the tinta melody generator on and off                       |
 | dancing notes          | if set to `on` the tinta melody is set relative to the notes played by the plant forms |
 | tinta target            | sets which plant to determine the tinta melody when the dancing notes parameter is set to "on"                       |
-| tinta method              | one of three methods for setting the tinta note may be selected: cycle, closest, and furthest |
+| tinta method              | sets how the tinta note is selected: `cycle`, `closest`, and `furthest` |
+| tinta env type              | selects the type of envelope used by tinta: `ad`,`plant`,`morph` |
+| tinta env morph            | starts and stops morphing when the `tinta env type` parameter is set to `morph`|
+| tinta env morph style      | determins how morphing occurs: `shuttle`, `loop`,`1-shot`  |
 
 
 

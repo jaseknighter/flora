@@ -289,8 +289,14 @@ local draw_top_nav = function()
     if show_instructions == true then
       screen.text("tinta instructions")
     elseif menu_status == false then 
-      local label_obj = water.get_control_label()
       label = "tinta"
+      screen.text(label)
+    end
+  elseif pages.index == 7 then
+    if show_instructions == true then
+      screen.text("tinta instructions")
+    elseif menu_status == false then 
+      label = "tinta envelope"
       screen.text(label)
     end
   end
@@ -323,6 +329,8 @@ local draw_pages = function()
         water.display()
       elseif pages.index == 6 then
         tt.redraw()
+      elseif pages.index == 7 then
+        tinta_envelope.redraw()
       end
     end
     draw_top_nav()

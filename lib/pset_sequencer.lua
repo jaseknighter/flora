@@ -83,8 +83,7 @@ local function set_pset_seq_timer()
       local first = params:lookup_param("pset_exclusion_first")
       local last = params:lookup_param("pset_exclusion_last")
       local new_pset_id
-      -- print("yo", params:lookup_param("pset_exclusion_first").min, params:lookup_param("pset_exclusion_last").max)
-        pset_seq_ticks = pset_seq_ticks + 1
+      pset_seq_ticks = pset_seq_ticks + 1
       if pset_seq_ticks == ticks_per_seq_cycle then
         pset_seq_ticks = 1
         local num_psets = last.value - first.value + 1

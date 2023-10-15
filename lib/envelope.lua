@@ -21,7 +21,7 @@
 
 local updating_envelope = false
 
-local add_nil_values_to_array = function(current_array, target_array_size)
+add_nil_values_to_array = function(current_array, target_array_size)
   for i=#current_array+1,target_array_size,1
   do
     table.insert(current_array,0)
@@ -32,7 +32,7 @@ end
 local Envelope = {}
 Envelope.__index = Envelope
 
-function Envelope:new(id, num_plants, env_nodes)
+function Envelope:new(id, env_nodes)
   local e = {}
   e.index = 1
   setmetatable(e, Envelope)
@@ -64,146 +64,33 @@ function Envelope:new(id, num_plants, env_nodes)
   
   e.updating_graph = false
   e.DEFAULT_GRAPH_NODES = id == 1 and DEFAULT_GRAPH_NODES_P1 or DEFAULT_GRAPH_NODES_P2
-  e.graph_nodes = env_nodes and env_nodes or e.DEFAULT_GRAPH_NODES
+  e.graph_nodes = env_nodes and env_nodes or deep_copy(e.DEFAULT_GRAPH_NODES)
   e.active_node = 0
   e.active_node_param = 1
   
   e.env_nav_active_control = 1
   
-  e.update_engine = function()
-    if (updating_envelope == false) then
-      updating_envelope = true
-      -- clock.sync(1)
-      clock.sync(0.05)
-      -- envelopes[active_plant].update_envelope()
-      updating_envelope = false
-    end
-  end
-
-  --------------------------
-  -- envelope modulation 
-  --------------------------
-  --note: get_control_label is called by flora_pages.lua
-  e.get_control_label = function()
-    local label = env_mod_param_labels[e.env_nav_active_control] .. " "
-    local ac = e.env_nav_active_control
-    local env_label = params:get(env_mod_param_ids[ac]..e.id)
-    if ac == 1 or ac == 2 or ac == 4 or ac == 6 then
-      label = label .. env_label .. "%"  
-    else 
-      label = label .. env_label
-    end
-    return label
-  end
-  
-  e.set_modulation_probability = function(name, delta)
-    
-    local mod_param_name = name.. e.id
-    local env_probability = params:get(mod_param_name)
-    params:set(mod_param_name,env_probability+delta)
-  end
-  
-  e.set_modulation_value = function(name, delta)
-    local mod_param_name = name.. e.id
-    local modulation_amount = params:get(mod_param_name)
-    local param = params:lookup_param(mod_param_name)
-    local min_val = param.min
-    local max_val = param.max
-    local increment = (max_val - min_val)/100 * delta
-    params:set(mod_param_name,increment+modulation_amount)
-  end
-  
-  e.set_env_nav_active_control = function(delta)
-    e.env_nav_active_control = e.env_nav_active_control + delta
-    e.env_nav_active_control = util.clamp(e.env_nav_active_control,1,#env_mod_param_labels)
-  end
-  
-  e.set_modulation_params = function(delta)
-    local id = env_mod_param_ids[e.env_nav_active_control]
-    local ac = e.env_nav_active_control
-    if ac == 1 or ac == 2 or ac == 4 or ac == 6 then
-      e.set_modulation_probability(id, delta)
-    else 
-      e.set_modulation_value(id, delta)
-    end
-  end
-  
-  e.modulate_env = function()
-  
-    ------------------------------------
-    -- envelope randomization
-    ------------------------------------
-    local time_probability = math.floor(params:get("time_probability"..e.id))
-    local time_modulation_amount = time_probability > math.random()*100 and params:get("time_modulation"..e.id) or 0
-    local level_probability = math.floor(params:get("level_probability"..e.id))
-    local level_modulation_amount = level_probability > math.random()*100 and params:get("level_modulation"..e.id) or 0
-    local curve_probability = math.floor(params:get("curve_probability"..e.id))
-    local curve_modulation_amount = curve_probability > math.random()*100 and params:get("curve_modulation"..e.id) or 0
-    local randomize_env_probability = params:get("randomize_env_probability"..e.id) 
-    local randomize_envelopes = math.random()*100<randomize_env_probability
-    if randomize_envelopes == true then
-      local env_nodes = envelopes[e.id].graph_nodes
-      for i=1,#env_nodes,1
-      do
-        local param_id_name, param_name, get_control_value_fn, min_val, max_val
-  
-        -- update times
-        if i > 1 then
-          param_id_name = "plow".. e.id.."_time" .. i
-          param_name = "plow".. e.id.."-control" .. i .. "-time"
-          local current_val = (env_nodes[1] and env_nodes[i].time) or 0
-          local prev_val = (env_nodes[i-1] and env_nodes[i-1].time) or 0
-          local next_val = env_nodes[i+1] and env_nodes[i+1].time or envelopes[e.id].env_time_max
-          local control_range = next_val - prev_val
-          local control_value = control_range*math.random(-1,1) * time_modulation_amount/10 + current_val
-          control_value = util.clamp(control_value,prev_val, next_val)
-          local controlspec = cs.new(prev_val,next_val,'lin',0,control_value,'')
-          if env_nodes[i] then
-            local param = params:lookup_param(param_id_name)
-            param.controlspec = controlspec
-            params:set(param.id, control_value) 
-          end
-        end
-  
-        -- update levels
-        if i > 1 and i < #env_nodes then
-          local current_val = (env_nodes[1] and env_nodes[i].level) or 0
-          local new_value = current_val + (level_modulation_amount/10 * math.random(-1,1))
-          new_value = util.clamp(new_value, 0, MAX_AMPLITUDE)
-          params:set("plow".. e.id .. "_level"..i, new_value)
-        end        
-  
-        -- update curves
-        if i > 1 then
-          local new_value = params:get("plow".. e.id .. "_curve"..i) + (curve_modulation_amount/10 * math.random()*math.random(-1,1)*10)
-          new_value = util.clamp(new_value, -10, 10)
-          params:set("plow".. e.id .. "_curve"..i, new_value)
-          -- params:set("plow".. e.id .. "_curve"..i, math.random()*math.random(-10,10))
-        end        
-      end
-    end
-  end
-  
   --------------------------
   -- init
   --------------------------
-  e.init = function(num_plants)
+  e.init = function(num_envs, show_level_time_bars)
     -- setup graph_node_params: each node_param contains an array of:
     --    graph_level: accepts e.y_min to e.y_max, defaults to 1.
     --    time: accepts e.x_min to e.x_max, defaults to 1.
     --    curve: accepts "lin", "exp" or a number where 0 is linear and positive and negative numbers curve the graph up and down, defaults to -4.
     -- setup starting point at 0, 0 
-    e.graph = ArbGraph.new_graph(e.x_min, e.env_time_max, e.y_min, e.env_level_max, e.graph_nodes)
+    e.graph = ArbGraph.new_graph(e.x_min, e.env_time_max, e.y_min, e.env_level_max, e.graph_nodes, show_max_levels)
     e.cursor_location_x = (e.env_time_max/e.x_max) * e.x_max
     e.cursor_location_y = (e.env_level_max/e.y_max) * e.y_max
 
-    local graph_x = 10 + screen_size.x/num_plants*(e.id-1)
+    local graph_x = 10 + screen_size.x/num_envs*(e.id-1)
     local graph_y = 15
-    local graph_width = screen_size.x/num_plants - 10
+    local graph_width = screen_size.x/num_envs - 10
     local graph_height = 35
 
     e.graph:set_position_and_size(graph_x, graph_y, graph_width, graph_height)
     e.graph:set_active(false)
+    e.show_level_time_bars = show_level_time_bars
   end
   
   
@@ -258,7 +145,6 @@ function Envelope:new(id, num_plants, env_nodes)
   e.update_envelope = function()
 
     engine.set_numSegs(#e.graph_nodes)
-    
     local env_arrays = e.get_envelope_arrays()
     -- note: to prevent warning messages when changing the number of envelope segments 
     --        (warnings like: "warning: wrong count of arguments for command 'set_env_levels'")
@@ -428,9 +314,6 @@ function Envelope:new(id, num_plants, env_nodes)
           params:set(param_id,new_val)
         end
         e.graph:edit_graph(e.graph_nodes)
-        -- reset_plow_control_params(e.id)
-  
-        -- clock.run(e.update_engine, e.graph_nodes)
       end
     end
   end
@@ -449,6 +332,111 @@ function Envelope:new(id, num_plants, env_nodes)
     end
   end
   
+
+  --------------------------
+  -- envelope modulation 
+  --------------------------
+  --note: get_control_label is called by flora_pages.lua
+  e.get_control_label = function()
+    local label = env_mod_param_labels[e.env_nav_active_control] .. " "
+    local ac = e.env_nav_active_control
+    local env_label = params:get(env_mod_param_ids[ac]..e.id)
+    if ac == 1 or ac == 2 or ac == 4 or ac == 6 then
+      label = label .. env_label .. "%"  
+    else 
+      label = label .. env_label
+    end
+    return label
+  end
+  
+  e.set_modulation_probability = function(name, delta)
+    
+    local mod_param_name = name.. e.id
+    local env_probability = params:get(mod_param_name)
+    params:set(mod_param_name,env_probability+delta)
+  end
+  
+  e.set_modulation_value = function(name, delta)
+    local mod_param_name = name.. e.id
+    local modulation_amount = params:get(mod_param_name)
+    local param = params:lookup_param(mod_param_name)
+    local min_val = param.min
+    local max_val = param.max
+    local increment = (max_val - min_val)/100 * delta
+    params:set(mod_param_name,increment+modulation_amount)
+  end
+  
+  e.set_env_nav_active_control = function(delta)
+    e.env_nav_active_control = e.env_nav_active_control + delta
+    e.env_nav_active_control = util.clamp(e.env_nav_active_control,1,#env_mod_param_labels)
+  end
+  
+  e.set_modulation_params = function(delta)
+    local id = env_mod_param_ids[e.env_nav_active_control]
+    local ac = e.env_nav_active_control
+    if ac == 1 or ac == 2 or ac == 4 or ac == 6 then
+      e.set_modulation_probability(id, delta)
+    else 
+      e.set_modulation_value(id, delta)
+    end
+  end
+  
+  e.modulate_env = function()
+  
+    ------------------------------------
+    -- envelope randomization
+    ------------------------------------
+    local time_probability = math.floor(params:get("time_probability"..e.id))
+    local time_modulation_amount = time_probability > math.random()*100 and params:get("time_modulation"..e.id) or 0
+    local level_probability = math.floor(params:get("level_probability"..e.id))
+    local level_modulation_amount = level_probability > math.random()*100 and params:get("level_modulation"..e.id) or 0
+    local curve_probability = math.floor(params:get("curve_probability"..e.id))
+    local curve_modulation_amount = curve_probability > math.random()*100 and params:get("curve_modulation"..e.id) or 0
+    local randomize_env_probability = params:get("randomize_env_probability"..e.id) 
+    local randomize_envelopes = math.random()*100<randomize_env_probability
+    if randomize_envelopes == true then
+      local env_nodes = envelopes[e.id].graph_nodes
+      for i=1,#env_nodes,1
+      do
+        local param_id_name, param_name, get_control_value_fn, min_val, max_val
+  
+        -- update times
+        if i > 1 then
+          param_id_name = "plow".. e.id.."_time" .. i
+          param_name = "plow".. e.id.."-control" .. i .. "-time"
+          local current_val = (env_nodes[1] and env_nodes[i].time) or 0
+          local prev_val = (env_nodes[i-1] and env_nodes[i-1].time) or 0
+          local next_val = env_nodes[i+1] and env_nodes[i+1].time or envelopes[e.id].env_time_max
+          local control_range = next_val - prev_val
+          local control_value = control_range*math.random(-1,1) * time_modulation_amount/10 + current_val
+          control_value = util.clamp(control_value,prev_val, next_val)
+          local controlspec = cs.new(prev_val,next_val,'lin',0,control_value,'')
+          if env_nodes[i] then
+            local param = params:lookup_param(param_id_name)
+            param.controlspec = controlspec
+            params:set(param.id, control_value) 
+          end
+        end
+  
+        -- update levels
+        if i > 1 and i < #env_nodes then
+          local current_val = (env_nodes[1] and env_nodes[i].level) or 0
+          local new_value = current_val + (level_modulation_amount/10 * math.random(-1,1))
+          new_value = util.clamp(new_value, 0, MAX_AMPLITUDE)
+          params:set("plow".. e.id .. "_level"..i, new_value)
+        end        
+  
+        -- update curves
+        if i > 1 then
+          local new_value = params:get("plow".. e.id .. "_curve"..i) + (curve_modulation_amount/10 * math.random()*math.random(-1,1)*10)
+          new_value = util.clamp(new_value, -10, 10)
+          params:set("plow".. e.id .. "_curve"..i, new_value)
+          -- params:set("plow".. e.id .. "_curve"..i, math.random()*math.random(-10,10))
+        end        
+      end
+    end
+  end
+
   --------------------------
   -- modulation nav and redraw
   --------------------------
@@ -495,9 +483,10 @@ function Envelope:new(id, num_plants, env_nodes)
         e.active_node,
         hightlight_style,
         time_bar_percentage,
-        level_bar_percentage
+        level_bar_percentage,
+        e.show_level_time_bars
       )
-      if show_env_mod_params and active_plant == e.id then e.draw_modulation_nav() end
+      if pages.index == 4 and show_env_mod_params and active_plant == e.id then e.draw_modulation_nav() end
     end
   end
   return e
