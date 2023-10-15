@@ -236,7 +236,7 @@ Tinta makes extensive use of [sequins](https://monome.org/docs/norns/reference/l
 
 Options have been added to the PARAMETERS menu controls to output tinta notes to midi, crow, jf, and w/.
 
-![](images/tinta_env_wide_inv.jpg)
+![](images/tinta_env_wide_inv.png)
 as of flora v2.1, three options have been added to set the envelope used by tinta, using the new `tinta env type` parameter in the `tinta` section of flora's parameters menu:
 
 * `ad`: a kind of attack-decay envelope, using the value of tinta's `vel` parameter for envelope level and the active plant for the envelope's other values (`time` and `curve`)
