@@ -328,7 +328,7 @@ params:add{type = "option", id = "output_bandsaw", name = "output bandsaw",
   params:add{type = "option", id = "output_crow1", name = "crow out1 mode",
     -- options = {"off","on"},
     options = {"off","plants", "midi", "plants + midi", "tinta"},
-    default = 6,
+    default = 2,
     action = function(value)
       if value == 5 then 
         crow.output[1].action = "{to(5,0),to(5,0.05),to(0,0)}"
