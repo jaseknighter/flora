@@ -27,7 +27,7 @@ Follow the discussion on lines: https://llllllll.co/t/40261
       - [Plow](#plow)
         * [Plow modulation](#plow-modulation)
       - [Water](#water)
-      - [Tinta](#tinta)
+      - [Tinta](#tinta-and-tinta-envelope)
     + [PSET Sequencer](#pset-sequencer)
     + [Generating new L-system axioms and rulesets](#generating-new-l-system-axioms-and-rulesets)
       - [Advanced sequencing](#advanced-sequencing)
