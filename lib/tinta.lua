@@ -1,12 +1,5 @@
--- monome crow script for aug 2023 performances at patch point in berlin and blivande in stockholm
--- @jaseknighter
--- <insert lines link>
-
 -- TODO
 -- humanize rhythm and notes
-
--- s = sequins
--- tl = timeline
 
 t = {}
 
