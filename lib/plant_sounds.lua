@@ -121,24 +121,18 @@ function plant_sounds:new(parent)
           note_to_play = notes[note_to_play]
           
           -- make sure the note to play is not nil before proceeding
-          if note_to_play == nil then 
+          if note_to_play ~= nil then 
             -- print("note to play is nil, don't proceeed!") 
-            return
-          end
           
-          local freq = MusicUtil.note_num_to_freq(note_to_play)
-          freq = freq * cf_scalar
-          note_to_play = MusicUtil.freq_to_note_num(freq)
-          -- if parent.id == 1 then print("note_to_play", note_to_play) end
-          -- local output_param = params:get("output")
-    
-          -- print(note_to_play, freq, random_note_frequency)
-          local note_idx = ps.find_note(note_to_play) - 1
-          
-          if params:get("output_bandsaw")==1 or params:get("output_bandsaw")==3 then
-            ps.engine_note_on(note_to_play, freq, random_note_frequency, false)
-          else
-            ps.engine_note_on(note_to_play, freq, random_note_frequency, true )
+            local freq = MusicUtil.note_num_to_freq(note_to_play)
+            freq = freq * cf_scalar
+            note_to_play = MusicUtil.freq_to_note_num(freq)
+            
+            if params:get("output_bandsaw")==1 or params:get("output_bandsaw")==3 then
+              ps.engine_note_on(note_to_play, freq, random_note_frequency, false)
+            else
+              ps.engine_note_on(note_to_play, freq, random_note_frequency, true )
+            end
           end
 
           if parent.id == 1 then 
