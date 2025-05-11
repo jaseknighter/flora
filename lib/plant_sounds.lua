@@ -119,7 +119,13 @@ function plant_sounds:new(parent)
           note_to_play = note_to_play > 0 and note_to_play or #notes + note_to_play
           note_to_play = note_to_play <= #notes and note_to_play or note_to_play - #notes
           note_to_play = notes[note_to_play]
-
+          
+          -- make sure the note to play is not nil before proceeding
+          if note_to_play == nil then 
+            -- print("note to play is nil, don't proceeed!") 
+            return
+          end
+          
           local freq = MusicUtil.note_num_to_freq(note_to_play)
           freq = freq * cf_scalar
           note_to_play = MusicUtil.freq_to_note_num(freq)
