@@ -122,8 +122,6 @@ function plant_sounds:new(parent)
           
           -- make sure the note to play is not nil before proceeding
           if note_to_play ~= nil then 
-            -- print("note to play is nil, don't proceeed!") 
-          
             local freq = MusicUtil.note_num_to_freq(note_to_play)
             freq = freq * cf_scalar
             note_to_play = MusicUtil.freq_to_note_num(freq)
