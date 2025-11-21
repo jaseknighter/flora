@@ -8,7 +8,7 @@ Demonstration video: https://vimeo.com/496481575
 Follow the discussion on lines: https://llllllll.co/t/40261
 
 ## Documentation
-- [Flora - beta](#flora---beta)
+- [Flora](#Flora)
   * [Documentation](#documentation)
   * [Overview](#overview)
     + [L-systems and their sequencing](#l-systems-and-their-sequencing)
